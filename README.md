@@ -1,39 +1,13 @@
-# demo-front
+## 文件命名
 
-This template should help get you started developing with Vue 3 in Vite.
+- 组件文件：使用 PascalCase，如 UserList.vue
+- 路由页面：使用 kebab-case，如 user-detail.vue
+- 工具函数：使用 camelCase，如 formatDate.ts
+- 样式文件：使用 kebab-case，如 main-layout.scss
 
-## Recommended IDE Setup
+## 变量命名
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+- 变量和函数：使用 camelCase，如 getUserInfo
+- 常量：使用 UPPER_SNAKE_CASE，如 MAX_COUNT
+- 组件名：使用 PascalCase，如 UserTable
+- 接口和类型：使用 PascalCase，如 UserInfo
