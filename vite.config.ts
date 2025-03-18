@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue(),
       vueJsx(),
-      vueDevTools(),
+      mode === 'development' && vueDevTools(), //当 mode 不是 'development' 时， mode === 'development' && vueDevTools() 会返回 false,就不会加载这个插件
       AutoImport({
         // 导入 Vue 函数，如：ref, reactive, toRef 等
         resolvers: [ElementPlusResolver()],
@@ -58,5 +58,7 @@ export default defineConfig(({ mode }) => {
       },
     },
   }
+  // 过滤掉 plugins 数组中的 false 值
+  config.plugins = config.plugins?.filter(Boolean)
   return config
 })
