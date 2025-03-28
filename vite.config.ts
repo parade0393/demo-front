@@ -51,11 +51,14 @@ export default defineConfig(({ mode }) => {
         resolvers: [ElementPlusResolver()],
       }),
     ],
-
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
+    },
+    server: {
+      port: env.VITE_PORT ? parseInt(env.VITE_PORT) : 6060,
+      open: true,
     },
   }
   // 过滤掉 plugins 数组中的 false 值

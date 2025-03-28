@@ -1,12 +1,16 @@
 <script lang="ts" setup>
 import { RouterView } from 'vue-router'
+import { inject, ref } from 'vue'
+
+// 注入刷新视图的key
+const refreshViewKey = inject('refreshViewKey', ref(0))
 </script>
 
 <template>
   <div class="app-main">
     <router-view v-slot="{ Component }">
       <transition name="fade-transform" mode="out-in">
-        <component :is="Component" />
+        <component :is="Component" :key="refreshViewKey" />
       </transition>
     </router-view>
   </div>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, inject } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 // 注入侧边栏折叠状态
 const isCollapse = inject('isCollapse', ref(false))
@@ -49,10 +49,9 @@ const menuItems = ref([
 ])
 
 const router = useRouter()
-const activeMenu = ref('/dashboard')
+const currentRoute = useRoute()
 
 const handleMenuClick = (path: string) => {
-  activeMenu.value = path
   router.push(path)
 }
 </script>
@@ -63,7 +62,7 @@ const handleMenuClick = (path: string) => {
       <h1 class="logo-title">Admin System</h1>
     </div>
     <el-menu
-      :default-active="activeMenu"
+      :default-active="currentRoute.path"
       class="sidebar-menu"
       background-color="#304156"
       text-color="#bfcbd9"

@@ -1,6 +1,9 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+
+// 注入刷新视图的方法
+const refreshView = inject('refreshView') as () => void
 
 interface TagView {
   path: string
@@ -25,14 +28,23 @@ const activeTag = ref('/dashboard')
 watch(
   () => route.path,
   (newPath) => {
-    if (newPath && !visitedViews.value.some((v) => v.path === newPath)) {
+    // 忽略重定向路由和隐藏路由
+    if (
+      newPath &&
+      !newPath.startsWith('/redirect') &&
+      !route.meta.hidden &&
+      !visitedViews.value.some((v) => v.path === newPath)
+    ) {
       visitedViews.value.push({
         path: newPath,
         title: (route.meta.title as string) || '未命名页面',
         name: route.name as string,
       })
     }
-    activeTag.value = newPath
+    // 如果不是重定向路由，则更新激活的标签
+    if (!newPath.startsWith('/redirect')) {
+      activeTag.value = newPath
+    }
   },
   { immediate: true },
 )
@@ -57,6 +69,91 @@ const closeTag = (path: string) => {
     }
   }
 }
+
+// 关闭当前标签
+const closeCurrentTag = () => {
+  if (activeTag.value) {
+    closeTag(activeTag.value)
+  }
+  closeDropdown()
+}
+
+// 关闭所有标签
+const closeAllTags = () => {
+  // 保留第一个标签（仪表盘）
+  const firstTag = visitedViews.value[0]
+  visitedViews.value = [firstTag]
+  router.push(firstTag.path)
+  closeDropdown()
+}
+
+// 关闭左侧标签
+const closeLeftTags = () => {
+  const index = visitedViews.value.findIndex((v) => v.path === activeTag.value)
+  if (index > 0) {
+    // 保留第一个标签（仪表盘）和当前激活标签及其右侧的标签
+    const firstTag = visitedViews.value[0]
+
+    // 创建新的数组，包含第一个标签和当前激活标签及其右侧的标签
+    visitedViews.value = [firstTag, ...visitedViews.value.slice(index)]
+  }
+  closeDropdown()
+}
+
+// 关闭右侧标签
+const closeRightTags = () => {
+  if (activeTag.value) {
+    const index = visitedViews.value.findIndex((v) => v.path === activeTag.value)
+    if (index >= 0 && index < visitedViews.value.length - 1) {
+      visitedViews.value = visitedViews.value.slice(0, index + 1)
+
+      // // 如果当前激活的标签被关闭，则跳转到选中的标签
+      // if (!visitedViews.value.some((v) => v.path === activeTag.value)) {
+      //   router.push(selectedTag.value.path)
+      // }
+    }
+  }
+  closeDropdown()
+}
+
+// 关闭其他标签
+const closeOtherTags = () => {
+  // 保留第一个标签（仪表盘）和当前激活的标签
+  const firstTag = visitedViews.value[0]
+  const currentTag = visitedViews.value.find((v) => v.path === activeTag.value)
+
+  if (currentTag && currentTag.path !== firstTag.path) {
+    visitedViews.value = [firstTag, currentTag]
+  } else {
+    visitedViews.value = [firstTag]
+  }
+
+  closeDropdown()
+}
+
+// 刷新当前页面
+const refreshCurrentTag = () => {
+  // 使用注入的refreshView方法刷新页面
+  refreshView()
+  closeDropdown()
+}
+
+// 下拉菜单相关
+const dropdownVisible = ref(false)
+
+// const toggleDropdown = () => {
+//   dropdownVisible.value = !dropdownVisible.value
+// }
+
+const closeDropdown = () => {
+  dropdownVisible.value = false
+}
+
+// 判断标签是否可关闭
+const isClosable = computed(() => (tag: TagView) => {
+  // 仪表盘标签不可关闭
+  return tag.path !== '/dashboard'
+})
 </script>
 
 <template>
@@ -66,7 +163,7 @@ const closeTag = (path: string) => {
         <div class="tags-view-item" v-for="tag in visitedViews" :key="tag.path">
           <el-tag
             :effect="activeTag === tag.path ? 'dark' : 'plain'"
-            closable
+            :closable="isClosable(tag)"
             :disable-transitions="false"
             @click="handleTagClick(tag.path)"
             @close="closeTag(tag.path)"
@@ -76,6 +173,43 @@ const closeTag = (path: string) => {
           </el-tag>
         </div>
       </el-scrollbar>
+    </div>
+
+    <!-- 操作图标和下拉菜单 -->
+    <div class="tags-view-actions">
+      <el-dropdown trigger="hover" @visible-change="dropdownVisible = $event">
+        <el-button type="primary" size="small" circle>
+          <el-icon><More /></el-icon>
+        </el-button>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="closeCurrentTag">
+              <el-icon><Close /></el-icon>
+              <span>关闭当前</span>
+            </el-dropdown-item>
+            <el-dropdown-item @click="closeOtherTags">
+              <el-icon><CircleClose /></el-icon>
+              <span>关闭其他</span>
+            </el-dropdown-item>
+            <el-dropdown-item @click="closeLeftTags">
+              <el-icon><Back /></el-icon>
+              <span>关闭左侧</span>
+            </el-dropdown-item>
+            <el-dropdown-item @click="closeRightTags">
+              <el-icon><Right /></el-icon>
+              <span>关闭右侧</span>
+            </el-dropdown-item>
+            <el-dropdown-item @click="refreshCurrentTag">
+              <el-icon><Refresh /></el-icon>
+              <span>刷新当前</span>
+            </el-dropdown-item>
+            <el-dropdown-item @click="closeAllTags">
+              <el-icon><Delete /></el-icon>
+              <span>关闭所有</span>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </div>
   </div>
 </template>
@@ -89,8 +223,14 @@ const closeTag = (path: string) => {
   box-shadow:
     0 1px 3px 0 rgba(0, 0, 0, 0.12),
     0 0 3px 0 rgba(0, 0, 0, 0.04);
+  position: relative;
+  display: flex;
+  align-items: center;
 
   .tags-view-wrapper {
+    flex: 1;
+    overflow: hidden;
+
     .el-scrollbar__wrap {
       height: 34px;
     }
@@ -105,6 +245,42 @@ const closeTag = (path: string) => {
 
       .tag-item {
         margin-right: 5px;
+      }
+    }
+  }
+
+  .tags-view-actions {
+    padding-right: 10px;
+    display: flex;
+    align-items: center;
+    height: 100%;
+
+    .el-button {
+      margin-left: 8px;
+      padding: 6px;
+    }
+  }
+
+  .contextmenu {
+    margin: 0;
+    background: #fff;
+    z-index: 3000;
+    position: absolute;
+    list-style-type: none;
+    padding: 5px 0;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #333;
+    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
+
+    li {
+      margin: 0;
+      padding: 7px 16px;
+      cursor: pointer;
+
+      &:hover {
+        background: #eee;
       }
     }
   }

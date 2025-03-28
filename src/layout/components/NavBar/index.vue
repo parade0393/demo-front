@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { inject, ref } from 'vue'
+import BreadCrumb from './components/BreadCrumb.vue'
 const emit = defineEmits(['toggle-side-bar'])
 
 // 注入侧边栏折叠状态
@@ -36,7 +37,7 @@ const handleCommand = (command: string) => {
           <Expand v-else />
         </el-icon>
       </div>
-      <breadcrumb class="breadcrumb-container" />
+      <BreadCrumb class="breadcrumb-container" />
     </div>
     <div class="navbar__right">
       <div class="right-menu">
@@ -83,8 +84,8 @@ const handleCommand = (command: string) => {
     align-items: center;
 
     .hamburger-container {
-      line-height: 46px;
-      height: 100%;
+      // line-height: 46px;
+      // height: 100%;
       float: left;
       cursor: pointer;
       transition: background 0.3s;

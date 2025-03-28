@@ -1,13 +1,29 @@
 <script lang="ts" setup>
 import { ref, provide } from 'vue'
+// import { useRouter } from 'vue-router'
 import AppMain from './components/AppMain/index.vue'
 import NavBar from './components/NavBar/index.vue'
 import SideBar from './components/SideBar/index.vue'
 import TagsView from './components/TagsView/index.vue'
 
+// const router = useRouter()
+
 // 侧边栏折叠状态
 const isCollapse = ref(false)
 provide('isCollapse', isCollapse)
+
+// 用于刷新视图的key
+const refreshViewKey = ref(0)
+
+// 提供刷新视图的方法
+const refreshView = () => {
+  // 增加key值，强制重新渲染组件
+  refreshViewKey.value += 1
+}
+
+// 提供刷新方法和key给子组件使用
+provide('refreshView', refreshView)
+provide('refreshViewKey', refreshViewKey)
 
 const toggleSideBar = () => {
   isCollapse.value = !isCollapse.value
