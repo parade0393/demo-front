@@ -13,7 +13,7 @@
     "format": "prettier --write src/",
     "lint:lint-staged": "lint-staged",
     "commit": "git add . && git-cz",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "config": {
     "commitizen": {
