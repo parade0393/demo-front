@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { inject, ref } from 'vue'
 import BreadCrumb from './components/BreadCrumb.vue'
+import SettingsDrawer from '../SettingsDrawer/index.vue'
 const emit = defineEmits(['toggle-side-bar'])
 
 // 注入侧边栏折叠状态
@@ -26,6 +27,14 @@ const handleCommand = (command: string) => {
     console.log('个人信息')
   }
 }
+
+// 设置抽屉控制
+const settingsVisible = ref(false)
+
+// 打开设置抽屉
+const openSettings = () => {
+  settingsVisible.value = true
+}
 </script>
 
 <template>
@@ -41,6 +50,13 @@ const handleCommand = (command: string) => {
     </div>
     <div class="navbar__right">
       <div class="right-menu">
+        <!-- 设置图标 -->
+        <div class="settings-container" @click="openSettings">
+          <el-tooltip content="系统设置" placement="bottom">
+            <el-icon :size="20"><Setting /></el-icon>
+          </el-tooltip>
+        </div>
+
         <el-dropdown class="avatar-container" trigger="click" @command="handleCommand">
           <div class="avatar-wrapper">
             <el-avatar :size="30" :src="userInfo.avatar" />
@@ -65,6 +81,9 @@ const handleCommand = (command: string) => {
       </div>
     </div>
   </div>
+
+  <!-- 设置抽屉 -->
+  <SettingsDrawer v-model:visible="settingsVisible" />
 </template>
 
 <style lang="scss" scoped>
@@ -84,11 +103,14 @@ const handleCommand = (command: string) => {
     align-items: center;
 
     .hamburger-container {
-      // line-height: 46px;
-      // height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
       float: left;
       cursor: pointer;
       transition: background 0.3s;
+      padding: 0 10px;
 
       &:hover {
         background: rgba(0, 0, 0, 0.025);
@@ -111,8 +133,24 @@ const handleCommand = (command: string) => {
       display: flex;
       align-items: center;
 
+      .settings-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 0 15px;
+        cursor: pointer;
+        color: #606266;
+        transition: all 0.3s;
+
+        &:hover {
+          color: var(--el-color-primary);
+        }
+      }
+
       .avatar-container {
         cursor: pointer;
+        margin-left: 10px;
 
         .avatar-wrapper {
           display: flex;

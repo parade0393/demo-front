@@ -1,9 +1,14 @@
 <script lang="ts" setup>
-import { ref, inject } from 'vue'
+import { ref, inject, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useConfigStore } from '@/stores/config'
 
 // 注入侧边栏折叠状态
 const isCollapse = inject('isCollapse', ref(false))
+
+// 使用配置store获取主题色
+const configStore = useConfigStore()
+const primaryColor = computed(() => configStore.config.theme.primaryColor)
 
 // 模拟菜单数据
 const menuItems = ref([
@@ -66,7 +71,7 @@ const handleMenuClick = (path: string) => {
       class="sidebar-menu"
       background-color="#304156"
       text-color="#bfcbd9"
-      active-text-color="#409EFF"
+      :active-text-color="primaryColor"
       unique-opened
       :collapse="isCollapse"
       :collapse-transition="false"
