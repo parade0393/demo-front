@@ -16,7 +16,7 @@ html.dark {
   --el-mask-color-extra-light: rgba(0, 0, 0, 0.3);
 
   // 覆盖Element Plus的暗色模式样式
-  color-scheme: dark;
+  color-scheme: dark; //告诉浏览器当前页面使用暗色方案，这会影响浏览器默认的滚动条、表单控件等原生元素的样式。
   --el-color-white: #ffffff;
   --el-color-black: #000000;
   --el-color-primary-light-9: #1f1f1f;

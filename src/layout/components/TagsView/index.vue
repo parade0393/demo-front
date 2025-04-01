@@ -218,11 +218,9 @@ const isClosable = computed(() => (tag: TagView) => {
 .tags-view-container {
   height: 34px;
   width: 100%;
-  background: #fff;
-  border-bottom: 1px solid #d8dce5;
-  box-shadow:
-    0 1px 3px 0 rgba(0, 0, 0, 0.12),
-    0 0 3px 0 rgba(0, 0, 0, 0.04);
+  background: var(--el-bg-color);
+  border-bottom: 1px solid var(--el-border-color-light);
+  box-shadow: var(--el-box-shadow-light);
   position: relative;
   display: flex;
   align-items: center;
@@ -263,7 +261,7 @@ const isClosable = computed(() => (tag: TagView) => {
 
   .contextmenu {
     margin: 0;
-    background: #fff;
+    background: var(--el-bg-color);
     z-index: 3000;
     position: absolute;
     list-style-type: none;
@@ -271,8 +269,8 @@ const isClosable = computed(() => (tag: TagView) => {
     border-radius: 4px;
     font-size: 12px;
     font-weight: 400;
-    color: #333;
-    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
+    color: var(--el-text-color-primary);
+    box-shadow: var(--el-box-shadow-light);
 
     li {
       margin: 0;
@@ -280,7 +278,7 @@ const isClosable = computed(() => (tag: TagView) => {
       cursor: pointer;
 
       &:hover {
-        background: #eee;
+        background: var(--el-fill-color-light);
       }
     }
   }

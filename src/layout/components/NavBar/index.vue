@@ -91,8 +91,8 @@ const openSettings = () => {
   height: 50px;
   overflow: hidden;
   position: relative;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  background: var(--el-bg-color);
+  box-shadow: 0 1px 4px var(--el-mask-color-extra-light);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -111,9 +111,10 @@ const openSettings = () => {
       cursor: pointer;
       transition: background 0.3s;
       padding: 0 10px;
+      color: var(--el-text-color-regular);
 
       &:hover {
-        background: rgba(0, 0, 0, 0.025);
+        background: var(--el-mask-color-extra-light);
       }
     }
 
@@ -140,7 +141,7 @@ const openSettings = () => {
         height: 100%;
         padding: 0 15px;
         cursor: pointer;
-        color: #606266;
+        color: var(--el-text-color-regular);
         transition: all 0.3s;
 
         &:hover {
@@ -158,6 +159,7 @@ const openSettings = () => {
 
           .user-name {
             margin: 0 5px;
+            color: var(--el-text-color-regular);
           }
         }
       }
