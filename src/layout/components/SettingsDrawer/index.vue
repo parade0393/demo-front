@@ -21,6 +21,11 @@ const configStore = useConfigStore()
 // 本地主题色变量，用于颜色选择器
 const primaryColor = ref(configStore.config.theme.primaryColor)
 
+// 本地模式变量，用于开关组件
+const darkMode = ref(configStore.config.theme.darkMode)
+const mourningMode = ref(configStore.config.theme.mourningMode)
+const colorWeakMode = ref(configStore.config.theme.colorWeakMode)
+
 // 预设的主题色选项
 const presetColors = [
   '#409EFF', // 默认蓝色
@@ -39,6 +44,21 @@ watch(primaryColor, (newColor) => {
   configStore.updateThemeColor(newColor)
 })
 
+// 监听暗色模式变化并更新
+watch(darkMode, (isDark) => {
+  configStore.toggleDarkTheme(isDark)
+})
+
+// 监听哀悼模式变化并更新
+watch(mourningMode, (isMourning) => {
+  configStore.toggleMourning(isMourning)
+})
+
+// 监听色弱模式变化并更新
+watch(colorWeakMode, (isColorWeak) => {
+  configStore.toggleColorWeak(isColorWeak)
+})
+
 // 关闭抽屉
 const closeDrawer = () => {
   drawerVisible.value = false
@@ -48,6 +68,9 @@ const closeDrawer = () => {
 const resetSettings = () => {
   configStore.resetConfig()
   primaryColor.value = configStore.config.theme.primaryColor
+  darkMode.value = configStore.config.theme.darkMode
+  mourningMode.value = configStore.config.theme.mourningMode
+  colorWeakMode.value = configStore.config.theme.colorWeakMode
 }
 </script>
 
@@ -71,6 +94,18 @@ const resetSettings = () => {
             :predefine="presetColors"
             color-format="hex"
           />
+        </div>
+        <div class="setting-item">
+          <span class="setting-label">暗色模式</span>
+          <el-switch v-model="darkMode" />
+        </div>
+        <div class="setting-item">
+          <span class="setting-label">哀悼模式</span>
+          <el-switch v-model="mourningMode" />
+        </div>
+        <div class="setting-item">
+          <span class="setting-label">色弱模式</span>
+          <el-switch v-model="colorWeakMode" />
         </div>
       </div>
 

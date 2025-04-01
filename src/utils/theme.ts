@@ -57,6 +57,32 @@ export function toggleDarkMode(isDark: boolean) {
 }
 
 /**
+ * 切换哀悼模式（黑白模式）
+ *
+ * @param isMourning 是否启用哀悼模式
+ */
+export function toggleMourningMode(isMourning: boolean) {
+  if (isMourning) {
+    document.documentElement.classList.add('mourning')
+  } else {
+    document.documentElement.classList.remove('mourning')
+  }
+}
+
+/**
+ * 切换色弱模式
+ *
+ * @param isColorWeak 是否启用色弱模式
+ */
+export function toggleColorWeakMode(isColorWeak: boolean) {
+  if (isColorWeak) {
+    document.documentElement.classList.add('color-weak')
+  } else {
+    document.documentElement.classList.remove('color-weak')
+  }
+}
+
+/**
  * 切换浅色主题下的侧边栏颜色方案
  *
  * @param isBlue 布尔值，表示是否开启深蓝色侧边栏颜色方案

@@ -101,9 +101,6 @@ declare global {
     WritableComputedRef,
   } from 'vue'
   import('vue')
-  // @ts-ignore
-  export type { ThemeConfig, AppConfig } from '../stores/config'
-  import('../stores/config')
 }
 
 // for vue template auto import
