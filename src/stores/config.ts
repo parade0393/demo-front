@@ -1,12 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { useCssVar } from '@vueuse/core'
-import {
-  generateThemeColors,
-  toggleDarkMode,
-  toggleMourningMode,
-  toggleColorWeakMode,
-} from '@/utils/theme'
+import { toggleDarkMode, toggleMourningMode, toggleColorWeakMode, applyTheme } from '@/utils/theme'
 import type { AppConfig } from '@/types/config'
 import { defaultConfig } from '@/config/theme'
 
@@ -21,14 +15,7 @@ export const useConfigStore = defineStore('config', () => {
   // 更新主题色
   function updateThemeColor(color: string) {
     config.value.theme.primaryColor = color
-    const el = document.documentElement
-    // 更新CSS变量，实现动态主题切换
-    useCssVar('--el-color-primary', el).value = color
-
-    const colors = generateThemeColors(color)
-    Object.entries(colors).forEach(([key, value]) => {
-      useCssVar(`--el-color-${key}`, el).value = value
-    })
+    applyTheme(color)
   }
 
   // 切换暗色模式

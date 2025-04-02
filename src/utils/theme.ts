@@ -1,3 +1,4 @@
+import { useCssVar } from '@vueuse/core'
 // 辅助函数：将十六进制颜色转换为 RGB
 function hexToRgb(hex: string): [number, number, number] {
   const bigint = parseInt(hex.slice(1), 16)
@@ -18,7 +19,7 @@ function adjustBrightness(hex: string, factor: number): string {
   return rgbToHex(...newRgb)
 }
 
-export function generateThemeColors(primary: string) {
+function generateThemeColors(primary: string) {
   const colors: Record<string, string> = {
     primary,
   }
@@ -33,6 +34,14 @@ export function generateThemeColors(primary: string) {
   colors['primary-dark-2'] = adjustBrightness(primary, -0.2)
 
   return colors
+}
+
+export function applyTheme(color: string) {
+  const el = document.documentElement
+  const colors = generateThemeColors(color)
+  Object.entries(colors).forEach(([key, value]) => {
+    useCssVar(`--el-color-${key}`, el).value = value
+  })
 }
 
 /**
