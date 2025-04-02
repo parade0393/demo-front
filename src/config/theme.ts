@@ -34,6 +34,8 @@ export const defaultConfig = {
     darkMode: false,
     mourningMode: false,
     colorWeakMode: false,
+  },
+  layout: {
     layoutMode: layoutModes[0], // 默认使用左侧菜单布局
     tagsViewStyle: tagsViewStyles[0], // 默认使用卡片式标签页
   },

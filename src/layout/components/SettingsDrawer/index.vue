@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { ref, watch, computed } from 'vue'
 import { useConfigStore } from '@/stores/config'
-import { presetColors } from '@/config/theme'
-import { layoutModes, tagsViewStyles } from '@/config/theme'
+import { presetColors, layoutModes, tagsViewStyles } from '@/config/theme'
 
 const props = defineProps<{
   visible: boolean
@@ -57,35 +56,38 @@ const closeDrawer = () => {
   drawerVisible.value = false
 }
 
-//复制配置到剪贴板
 // 本地布局模式变量
 const layoutMode = computed({
-  get: () => configStore.config.theme.layoutMode,
+  get: () => configStore.config.layout.layoutMode,
   set: (val) => {
     if (val) {
-      configStore.config.theme.layoutMode = val
+      configStore.config.layout.layoutMode = val
     }
   },
 })
 
 // 本地标签页风格变量
 const tagsViewStyle = computed({
-  get: () => configStore.config.theme.tagsViewStyle,
+  get: () => configStore.config.layout.tagsViewStyle,
   set: (val) => {
     if (val) {
-      configStore.config.theme.tagsViewStyle = val
+      configStore.config.layout.tagsViewStyle = val
     }
   },
 })
 
 const copyConfig = () => {
   const config = {
-    primaryColor: primaryColor.value,
-    darkMode: darkMode.value,
-    mourningMode: mourningMode.value,
-    colorWeakMode: colorWeakMode.value,
-    layoutMode: layoutMode.value,
-    tagsViewStyle: tagsViewStyle.value,
+    theme: {
+      primaryColor: primaryColor.value,
+      darkMode: darkMode.value,
+      mourningMode: mourningMode.value,
+      colorWeakMode: colorWeakMode.value,
+    },
+    layout: {
+      layoutMode: layoutMode.value,
+      tagsViewStyle: tagsViewStyle.value,
+    },
   }
   // 将配置转换为Json格式的字符串并复制到剪贴板
   const configString = JSON.stringify(config, null, 2)

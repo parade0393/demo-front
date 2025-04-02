@@ -160,7 +160,7 @@ import { useConfigStore } from '@/stores/config'
 const configStore = useConfigStore()
 
 // 获取标签页风格
-const tagsViewStyle = computed(() => configStore.config.theme.tagsViewStyle)
+const tagsViewStyle = computed(() => configStore.config.layout.tagsViewStyle)
 </script>
 
 <template>

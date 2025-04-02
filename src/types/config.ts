@@ -14,6 +14,10 @@ export interface ThemeConfig {
   mourningMode: boolean
   // 色弱模式
   colorWeakMode: boolean
+}
+
+// 布局配置类型定义
+export interface LayoutConfig {
   // 布局模式
   layoutMode: LayoutMode
   // 标签页风格
@@ -24,5 +28,6 @@ export interface ThemeConfig {
 export interface AppConfig {
   // 主题相关配置
   theme: ThemeConfig
-  // 后续可以添加更多配置项类别
+  // 布局相关配置
+  layout: LayoutConfig
 }
