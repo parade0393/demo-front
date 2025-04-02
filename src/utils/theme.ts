@@ -35,13 +35,6 @@ export function generateThemeColors(primary: string) {
   return colors
 }
 
-export function applyTheme(colors: Record<string, string>) {
-  const el = document.documentElement
-  Object.entries(colors).forEach(([key, value]) => {
-    el.style.setProperty(`--el-color-${key}`, value)
-  })
-}
-
 /**
  * 切换暗黑模式
  *
