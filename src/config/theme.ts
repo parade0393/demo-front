@@ -10,6 +10,23 @@ export const presetColors = [
   '#FF69B4', // 粉色
 ]
 
+// 预设的布局模式选项
+export const layoutModes = [
+  'left-sidebar', // 左侧菜单布局
+  'right-sidebar', // 右侧菜单布局
+  'top-menu', // 顶部菜单布局
+  'mixed', // 混合布局（顶部+侧边）
+  'compact', // 紧凑布局
+] as const
+
+// 预设的标签页风格选项
+export const tagsViewStyles = [
+  'card', // 卡片式（带阴影）
+  'line', // 线条式（只有底边框）
+  'capsule', // 胶囊式（圆角）
+  'compact', // 紧凑式（无边距）
+] as const
+
 // 默认配置
 export const defaultConfig = {
   theme: {
@@ -17,5 +34,7 @@ export const defaultConfig = {
     darkMode: false,
     mourningMode: false,
     colorWeakMode: false,
+    layoutMode: layoutModes[0], // 默认使用左侧菜单布局
+    tagsViewStyle: tagsViewStyles[0], // 默认使用卡片式标签页
   },
 }

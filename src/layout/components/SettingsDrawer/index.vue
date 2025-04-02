@@ -2,6 +2,7 @@
 import { ref, watch, computed } from 'vue'
 import { useConfigStore } from '@/stores/config'
 import { presetColors } from '@/config/theme'
+import { layoutModes, tagsViewStyles } from '@/config/theme'
 
 const props = defineProps<{
   visible: boolean
@@ -57,12 +58,34 @@ const closeDrawer = () => {
 }
 
 //复制配置到剪贴板
+// 本地布局模式变量
+const layoutMode = computed({
+  get: () => configStore.config.theme.layoutMode,
+  set: (val) => {
+    if (val) {
+      configStore.config.theme.layoutMode = val
+    }
+  },
+})
+
+// 本地标签页风格变量
+const tagsViewStyle = computed({
+  get: () => configStore.config.theme.tagsViewStyle,
+  set: (val) => {
+    if (val) {
+      configStore.config.theme.tagsViewStyle = val
+    }
+  },
+})
+
 const copyConfig = () => {
   const config = {
     primaryColor: primaryColor.value,
     darkMode: darkMode.value,
     mourningMode: mourningMode.value,
     colorWeakMode: colorWeakMode.value,
+    layoutMode: layoutMode.value,
+    tagsViewStyle: tagsViewStyle.value,
   }
   // 将配置转换为Json格式的字符串并复制到剪贴板
   const configString = JSON.stringify(config, null, 2)
@@ -106,6 +129,22 @@ const copyConfig = () => {
         <div class="setting-item">
           <span class="setting-label">色弱模式</span>
           <el-switch v-model="colorWeakMode" />
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="section-title">布局设置</h3>
+        <div class="setting-item">
+          <span class="setting-label">布局模式</span>
+          <el-select v-model="layoutMode" placeholder="请选择布局模式">
+            <el-option v-for="mode in layoutModes" :key="mode" :label="mode" :value="mode" />
+          </el-select>
+        </div>
+        <div class="setting-item">
+          <span class="setting-label">标签页风格</span>
+          <el-select v-model="tagsViewStyle" placeholder="请选择标签页风格">
+            <el-option v-for="style in tagsViewStyles" :key="style" :label="style" :value="style" />
+          </el-select>
         </div>
       </div>
 

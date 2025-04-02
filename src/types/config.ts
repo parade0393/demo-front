@@ -1,3 +1,9 @@
+// 布局模式类型
+export type LayoutMode = 'left-sidebar' | 'right-sidebar' | 'top-menu' | 'mixed' | 'compact'
+
+// 标签页风格类型
+export type TagsViewStyle = 'card' | 'line' | 'capsule' | 'compact'
+
 // 主题配置类型定义
 export interface ThemeConfig {
   // 主题色
@@ -8,6 +14,10 @@ export interface ThemeConfig {
   mourningMode: boolean
   // 色弱模式
   colorWeakMode: boolean
+  // 布局模式
+  layoutMode: LayoutMode
+  // 标签页风格
+  tagsViewStyle: TagsViewStyle
 }
 
 // 应用全局配置类型定义

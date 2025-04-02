@@ -154,10 +154,17 @@ const isClosable = computed(() => (tag: TagView) => {
   // 仪表盘标签不可关闭
   return tag.path !== '/dashboard'
 })
+import { useConfigStore } from '@/stores/config'
+
+// 使用配置store
+const configStore = useConfigStore()
+
+// 获取标签页风格
+const tagsViewStyle = computed(() => configStore.config.theme.tagsViewStyle)
 </script>
 
 <template>
-  <div class="tags-view-container">
+  <div class="tags-view-container" :class="`style-${tagsViewStyle}`">
     <div class="tags-view-wrapper">
       <el-scrollbar>
         <div class="tags-view-item" v-for="tag in visitedViews" :key="tag.path">
@@ -168,6 +175,7 @@ const isClosable = computed(() => (tag: TagView) => {
             @click="handleTagClick(tag.path)"
             @close="closeTag(tag.path)"
             class="tag-item"
+            :class="[`style-${tagsViewStyle}`]"
           >
             {{ tag.title }}
           </el-tag>
@@ -280,6 +288,42 @@ const isClosable = computed(() => (tag: TagView) => {
       &:hover {
         background: var(--el-fill-color-light);
       }
+    }
+  }
+
+  &.style-card {
+    .tags-view-item .tag-item {
+      margin: 4px;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &.style-line {
+    .tags-view-item .tag-item {
+      margin: 4px 8px;
+      border-radius: 0;
+      border-bottom-width: 2px;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      box-shadow: none;
+    }
+  }
+
+  &.style-capsule {
+    .tags-view-item .tag-item {
+      margin: 4px;
+      border-radius: 16px;
+      padding: 0 12px;
+    }
+  }
+
+  &.style-compact {
+    .tags-view-item .tag-item {
+      margin: 2px;
+      border-radius: 2px;
+      padding: 0 8px;
     }
   }
 }
