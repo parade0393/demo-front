@@ -8,12 +8,15 @@ import {
   toggleColorWeakMode,
 } from '@/utils/theme'
 import type { AppConfig } from '@/types/config'
-import { defaultConfig } from '@/types/config'
+import { defaultConfig } from '@/config/theme'
 
 // 创建配置中心store
 export const useConfigStore = defineStore('config', () => {
   // 使用ref存储配置，方便响应式更新
   const config = ref<AppConfig>({ ...defaultConfig })
+
+  // 初始化主题配置
+  updateThemeColor(defaultConfig.theme.primaryColor)
 
   // 更新主题色
   function updateThemeColor(color: string) {

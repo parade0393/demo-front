@@ -37,7 +37,6 @@ export function generateThemeColors(primary: string) {
 
 export function applyTheme(colors: Record<string, string>) {
   const el = document.documentElement
-
   Object.entries(colors).forEach(([key, value]) => {
     el.style.setProperty(`--el-color-${key}`, value)
   })

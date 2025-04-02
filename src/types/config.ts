@@ -16,13 +16,3 @@ export interface AppConfig {
   theme: ThemeConfig
   // 后续可以添加更多配置项类别
 }
-
-// 默认配置
-export const defaultConfig: AppConfig = {
-  theme: {
-    primaryColor: '#409EFF', // Element Plus 默认主题色
-    darkMode: false,
-    mourningMode: false,
-    colorWeakMode: false,
-  },
-}

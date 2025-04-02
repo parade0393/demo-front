@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, watch, computed } from 'vue'
 import { useConfigStore } from '@/stores/config'
+import { presetColors } from '@/config/theme'
 
 const props = defineProps<{
   visible: boolean
@@ -25,18 +26,6 @@ const primaryColor = ref(configStore.config.theme.primaryColor)
 const darkMode = ref(configStore.config.theme.darkMode)
 const mourningMode = ref(configStore.config.theme.mourningMode)
 const colorWeakMode = ref(configStore.config.theme.colorWeakMode)
-
-// 预设的主题色选项
-const presetColors = [
-  '#409EFF', // 默认蓝色
-  '#67C23A', // 绿色
-  '#E6A23C', // 黄色
-  '#F56C6C', // 红色
-  '#909399', // 灰色
-  '#9370DB', // 紫色
-  '#00BFFF', // 天蓝色
-  '#FF69B4', // 粉色
-]
 
 // 监听主题色变化并更新
 watch(primaryColor, (newColor) => {
