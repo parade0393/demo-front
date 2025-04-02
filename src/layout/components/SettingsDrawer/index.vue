@@ -20,18 +20,21 @@ const emit = defineEmits<{
 const configStore = useConfigStore()
 
 // 本地主题色变量，用于颜色选择器
-const primaryColor = ref(configStore.config.theme.primaryColor)
+const primaryColor = computed({
+  get: () => configStore.config.theme.primaryColor,
+  set: (val) => {
+    if (val) {
+      configStore.updateThemeColor(val)
+    } else {
+      configStore.updateThemeColor(presetColors[0])
+    }
+  },
+})
 
 // 本地模式变量，用于开关组件
 const darkMode = ref(configStore.config.theme.darkMode)
 const mourningMode = ref(configStore.config.theme.mourningMode)
 const colorWeakMode = ref(configStore.config.theme.colorWeakMode)
-
-// 监听主题色变化并更新
-watch(primaryColor, (newColor) => {
-  console.log('新主题色:', newColor)
-  configStore.updateThemeColor(newColor)
-})
 
 // 监听暗色模式变化并更新
 watch(darkMode, (isDark) => {
@@ -53,13 +56,26 @@ const closeDrawer = () => {
   drawerVisible.value = false
 }
 
-// 重置配置
-const resetSettings = () => {
-  configStore.resetConfig()
-  primaryColor.value = configStore.config.theme.primaryColor
-  darkMode.value = configStore.config.theme.darkMode
-  mourningMode.value = configStore.config.theme.mourningMode
-  colorWeakMode.value = configStore.config.theme.colorWeakMode
+//复制配置到剪贴板
+const copyConfig = () => {
+  const config = {
+    primaryColor: primaryColor.value,
+    darkMode: darkMode.value,
+    mourningMode: mourningMode.value,
+    colorWeakMode: colorWeakMode.value,
+  }
+  // 将配置转换为Json格式的字符串并复制到剪贴板
+  const configString = JSON.stringify(config, null, 2)
+  navigator.clipboard
+    .writeText(configString)
+    .then(() => {
+      // 提示复制成功
+      ElMessage.success('配置已复制到剪贴板')
+    })
+    .catch(() => {
+      // 提示复制失败
+      ElMessage.error('复制配置失败')
+    })
 }
 </script>
 
@@ -94,8 +110,7 @@ const resetSettings = () => {
       </div>
 
       <div class="drawer-footer">
-        <el-button type="primary" @click="closeDrawer">确定</el-button>
-        <el-button @click="resetSettings">重置</el-button>
+        <el-button type="primary" @click="copyConfig">复制</el-button>
       </div>
     </div>
   </el-drawer>

@@ -89,6 +89,7 @@
     "watchSyncEffect": true,
     "AppConfig": true,
     "ThemeConfig": true,
-    "useConfigStore": true
+    "useConfigStore": true,
+    "ElMessage": true
   }
 }
