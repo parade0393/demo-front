@@ -77,12 +77,7 @@ const resetSettings = () => {
         <h3 class="section-title">主题设置</h3>
         <div class="setting-item">
           <span class="setting-label">主题色</span>
-          <el-color-picker
-            v-model="primaryColor"
-            show-alpha
-            :predefine="presetColors"
-            color-format="hex"
-          />
+          <el-color-picker v-model="primaryColor" :predefine="presetColors" color-format="hex" />
         </div>
         <div class="setting-item">
           <span class="setting-label">暗色模式</span>

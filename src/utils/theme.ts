@@ -80,16 +80,3 @@ export function toggleColorWeakMode(isColorWeak: boolean) {
     document.documentElement.classList.remove('color-weak')
   }
 }
-
-/**
- * 切换浅色主题下的侧边栏颜色方案
- *
- * @param isBlue 布尔值，表示是否开启深蓝色侧边栏颜色方案
- */
-export function toggleSidebarColor(isBuleSidebar: boolean) {
-  if (isBuleSidebar) {
-    document.documentElement.classList.add('sidebar-color-blue')
-  } else {
-    document.documentElement.classList.remove('sidebar-color-blue')
-  }
-}
