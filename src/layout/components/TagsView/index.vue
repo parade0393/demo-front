@@ -245,9 +245,6 @@ const tagsViewStyle = computed(() => configStore.config.layout.tagsViewStyle)
       display: inline-block;
       position: relative;
       cursor: pointer;
-      height: 26px;
-      line-height: 26px;
-      margin: 4px 5px 0 5px;
 
       .tag-item {
         margin-right: 5px;

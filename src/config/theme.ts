@@ -16,7 +16,6 @@ export const layoutModes = [
   'right-sidebar', // 右侧菜单布局
   'top-menu', // 顶部菜单布局
   'mixed', // 混合布局（顶部+侧边）
-  'compact', // 紧凑布局
 ] as const
 
 // 预设的标签页风格选项
