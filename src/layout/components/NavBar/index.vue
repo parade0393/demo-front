@@ -1,7 +1,10 @@
 <script lang="ts" setup>
-import { inject, ref } from 'vue'
+import { inject, ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import BreadCrumb from './components/BreadCrumb.vue'
 import SettingsDrawer from '../SettingsDrawer/index.vue'
+import Logo from '../Logo/index.vue'
+import { useConfigStore } from '@/stores/config'
 const emit = defineEmits(['toggle-side-bar'])
 
 // 注入侧边栏折叠状态
@@ -9,6 +12,77 @@ const isCollapse = inject('isCollapse')
 const toggleSideBar = () => {
   // 触发父组件的toggleSideBar事件
   emit('toggle-side-bar')
+}
+
+// 使用配置store获取布局模式
+const configStore = useConfigStore()
+const layoutMode = computed(() => configStore.config.layout.layoutMode)
+const primaryColor = computed(() => configStore.config.theme.primaryColor)
+
+// 判断是否显示顶部菜单
+const showTopMenu = computed(() => {
+  return layoutMode.value === 'top-menu' || layoutMode.value === 'mixed'
+})
+
+// 模拟顶部菜单数据
+const menuItems = ref([
+  {
+    path: '/dashboard',
+    name: '仪表盘',
+    icon: 'Odometer',
+  },
+  {
+    path: '/system',
+    name: '系统管理',
+    icon: 'Setting',
+    children: [
+      {
+        path: '/system/user',
+        name: '用户管理',
+        icon: 'User',
+      },
+      {
+        path: '/system/role',
+        name: '角色管理',
+        icon: 'UserFilled',
+      },
+    ],
+  },
+  {
+    path: '/content',
+    name: '内容管理',
+    icon: 'Document',
+    children: [
+      {
+        path: '/content/article',
+        name: '文章管理',
+        icon: 'Tickets',
+      },
+      {
+        path: '/content/category',
+        name: '分类管理',
+        icon: 'Files',
+      },
+    ],
+  },
+])
+
+const router = useRouter()
+const currentRoute = useRoute()
+
+// 当前激活的顶级菜单
+const activeTopMenu = computed(() => {
+  const path = currentRoute.path
+  return (
+    menuItems.value.find(
+      (item) =>
+        path === item.path || (item.children && item.children.some((child) => child.path === path)),
+    )?.path || '/dashboard'
+  )
+})
+
+const handleMenuClick = (path: string) => {
+  router.push(path)
 }
 
 // 模拟用户数据
@@ -38,15 +112,41 @@ const openSettings = () => {
 </script>
 
 <template>
-  <div class="navbar">
+  <div class="navbar" :class="{ 'with-top-menu': showTopMenu }">
     <div class="navbar__left">
-      <div class="hamburger-container" @click="toggleSideBar">
+      <!-- 在top-menu模式下显示Logo -->
+      <Logo v-if="layoutMode === 'top-menu'" class="navbar-logo" :collapse="false" />
+
+      <!-- 在非top-menu模式下显示折叠按钮 -->
+      <div v-if="layoutMode !== 'top-menu'" class="hamburger-container" @click="toggleSideBar">
         <el-icon :size="20">
           <Fold v-if="isCollapse" />
           <Expand v-else />
         </el-icon>
       </div>
-      <BreadCrumb class="breadcrumb-container" />
+
+      <!-- 在非顶部菜单模式或混合模式下显示面包屑 -->
+      <BreadCrumb v-if="!showTopMenu" class="breadcrumb-container" />
+
+      <!-- 顶部菜单 -->
+      <div v-if="showTopMenu" class="top-menu-container">
+        <el-menu
+          :default-active="activeTopMenu"
+          mode="horizontal"
+          :background-color="'transparent'"
+          text-color="#303133"
+          :active-text-color="primaryColor"
+        >
+          <template v-for="item in menuItems" :key="item.path">
+            <el-menu-item :index="item.path" @click="handleMenuClick(item.path)">
+              <el-icon v-if="item.icon">
+                <component :is="item.icon" />
+              </el-icon>
+              <span>{{ item.name }}</span>
+            </el-menu-item>
+          </template>
+        </el-menu>
+      </div>
     </div>
     <div class="navbar__right">
       <div class="right-menu">
@@ -97,6 +197,47 @@ const openSettings = () => {
   justify-content: space-between;
   align-items: center;
   padding: 0 15px;
+
+  &.with-top-menu {
+    height: 60px;
+    padding: 0;
+
+    .navbar__left {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      flex: 1;
+    }
+
+    .top-menu-container {
+      height: 100%;
+      flex: 1;
+
+      :deep(.el-menu) {
+        border-bottom: none;
+        height: 100%;
+
+        .el-menu-item {
+          height: 60px;
+          line-height: 60px;
+        }
+      }
+    }
+  }
+
+  .navbar-logo {
+    height: 60px;
+    background: transparent;
+    padding: 0 15px;
+
+    :deep(.logo-container) {
+      background: transparent;
+
+      .logo-title {
+        color: var(--el-text-color-primary);
+      }
+    }
+  }
 
   .navbar__left {
     display: flex;

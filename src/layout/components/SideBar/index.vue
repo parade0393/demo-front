@@ -2,13 +2,15 @@
 import { ref, inject, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useConfigStore } from '@/stores/config'
+import Logo from '../Logo/index.vue'
 
 // 注入侧边栏折叠状态
 const isCollapse = inject('isCollapse', ref(false))
 
-// 使用配置store获取主题色
+// 使用配置store获取主题色和布局模式
 const configStore = useConfigStore()
 const primaryColor = computed(() => configStore.config.theme.primaryColor)
+const layoutMode = computed(() => configStore.config.layout.layoutMode)
 
 // 模拟菜单数据
 const menuItems = ref([
@@ -56,6 +58,16 @@ const menuItems = ref([
 const router = useRouter()
 const currentRoute = useRoute()
 
+// 当前激活的顶级菜单路径
+const activeTopMenu = computed(() => {
+  const path = currentRoute.path
+  const activeItem = menuItems.value.find(
+    (item) =>
+      path === item.path || (item.children && item.children.some((child) => child.path === path)),
+  )
+  return activeItem?.path
+})
+
 const handleMenuClick = (path: string) => {
   router.push(path)
 }
@@ -63,9 +75,7 @@ const handleMenuClick = (path: string) => {
 
 <template>
   <div class="sidebar">
-    <div class="logo-container">
-      <h1 class="logo-title">Admin System</h1>
-    </div>
+    <Logo :collapse="isCollapse" />
     <el-menu
       :default-active="currentRoute.path"
       class="sidebar-menu"
@@ -76,7 +86,27 @@ const handleMenuClick = (path: string) => {
       :collapse="isCollapse"
       :collapse-transition="false"
     >
-      <template v-for="item in menuItems" :key="item.path">
+      <!-- 在mixed模式下，只显示当前激活的一级菜单的子菜单 -->
+      <template v-if="layoutMode === 'mixed' && activeTopMenu">
+        <template v-for="item in menuItems" :key="item.path">
+          <template v-if="item.path === activeTopMenu && item.children && item.children.length > 0">
+            <el-menu-item
+              v-for="child in item.children"
+              :key="child.path"
+              :index="child.path"
+              @click="handleMenuClick(child.path)"
+            >
+              <el-icon v-if="child.icon">
+                <component :is="child.icon" />
+              </el-icon>
+              <span>{{ child.name }}</span>
+            </el-menu-item>
+          </template>
+        </template>
+      </template>
+
+      <!-- 在非mixed模式下，显示完整菜单 -->
+      <template v-else v-for="item in menuItems" :key="item.path">
         <el-sub-menu v-if="item.children && item.children.length > 0" :index="item.path">
           <template #title>
             <el-icon v-if="item.icon">
@@ -111,21 +141,6 @@ const handleMenuClick = (path: string) => {
 .sidebar {
   height: 100%;
   background-color: #304156;
-
-  .logo-container {
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #2b3649;
-
-    .logo-title {
-      color: #fff;
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-    }
-  }
 
   .sidebar-menu {
     border-right: none;
