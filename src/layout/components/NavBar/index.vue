@@ -115,7 +115,12 @@ const openSettings = () => {
   <div class="navbar" :class="{ 'with-top-menu': showTopMenu }">
     <div class="navbar__left">
       <!-- 在top-menu模式下显示Logo -->
-      <Logo v-if="layoutMode === 'top-menu'" class="navbar-logo" :collapse="false" />
+      <Logo
+        v-if="layoutMode === 'top-menu'"
+        class="navbar-logo"
+        :collapse="false"
+        :in-navbar="true"
+      />
 
       <!-- 在非top-menu模式下显示折叠按钮 -->
       <div v-if="layoutMode !== 'top-menu'" class="hamburger-container" @click="toggleSideBar">
@@ -138,7 +143,28 @@ const openSettings = () => {
           :active-text-color="primaryColor"
         >
           <template v-for="item in menuItems" :key="item.path">
-            <el-menu-item :index="item.path" @click="handleMenuClick(item.path)">
+            <!-- 有子菜单的项使用el-sub-menu -->
+            <el-sub-menu v-if="item.children && item.children.length > 0" :index="item.path">
+              <template #title>
+                <el-icon v-if="item.icon">
+                  <component :is="item.icon" />
+                </el-icon>
+                <span>{{ item.name }}</span>
+              </template>
+              <el-menu-item
+                v-for="child in item.children"
+                :key="child.path"
+                :index="child.path"
+                @click="handleMenuClick(child.path)"
+              >
+                <el-icon v-if="child.icon">
+                  <component :is="child.icon" />
+                </el-icon>
+                <span>{{ child.name }}</span>
+              </el-menu-item>
+            </el-sub-menu>
+            <!-- 没有子菜单的项使用el-menu-item -->
+            <el-menu-item v-else :index="item.path" @click="handleMenuClick(item.path)">
               <el-icon v-if="item.icon">
                 <component :is="item.icon" />
               </el-icon>
@@ -189,7 +215,7 @@ const openSettings = () => {
 <style lang="scss" scoped>
 .navbar {
   height: 50px;
-  overflow: hidden;
+  overflow: visible; /* 修改为visible，确保下拉菜单可见 */
   position: relative;
   background: var(--el-bg-color);
   box-shadow: 0 1px 4px var(--el-mask-color-extra-light);
@@ -197,6 +223,7 @@ const openSettings = () => {
   justify-content: space-between;
   align-items: center;
   padding: 0 15px;
+  z-index: 1002; /* 确保顶部菜单在侧边栏之上 */
 
   &.with-top-menu {
     height: 60px;

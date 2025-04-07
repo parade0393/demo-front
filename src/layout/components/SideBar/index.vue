@@ -68,6 +68,13 @@ const activeTopMenu = computed(() => {
   return activeItem?.path
 })
 
+// 判断当前激活的菜单是否有子菜单
+const hasChildrenForActiveMenu = computed(() => {
+  if (!activeTopMenu.value) return false
+  const activeItem = menuItems.value.find((item) => item.path === activeTopMenu.value)
+  return activeItem?.children && activeItem.children.length > 0
+})
+
 const handleMenuClick = (path: string) => {
   router.push(path)
 }
@@ -86,9 +93,21 @@ const handleMenuClick = (path: string) => {
       :collapse="isCollapse"
       :collapse-transition="false"
     >
-      <!-- 在mixed模式下，只显示当前激活的一级菜单的子菜单 -->
-      <template v-if="layoutMode === 'mixed' && activeTopMenu">
-        <template v-for="item in menuItems" :key="item.path">
+      <!-- 在mixed模式下的侧边栏逻辑 -->
+      <template v-if="layoutMode === 'mixed'">
+        <!-- 如果当前是仪表盘页面或没有子菜单的页面，显示所有一级菜单 -->
+        <template v-if="currentRoute.path === '/dashboard' || !hasChildrenForActiveMenu">
+          <template v-for="item in menuItems" :key="item.path">
+            <el-menu-item :index="item.path" @click="handleMenuClick(item.path)">
+              <el-icon v-if="item.icon">
+                <component :is="item.icon" />
+              </el-icon>
+              <span>{{ item.name }}</span>
+            </el-menu-item>
+          </template>
+        </template>
+        <!-- 否则显示当前激活的一级菜单的子菜单 -->
+        <template v-else v-for="item in menuItems" :key="item.path">
           <template v-if="item.path === activeTopMenu && item.children && item.children.length > 0">
             <el-menu-item
               v-for="child in item.children"

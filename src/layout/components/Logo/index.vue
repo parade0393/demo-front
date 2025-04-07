@@ -9,17 +9,30 @@ interface Props {
   showTitle?: boolean
   /** 自定义类名 */
   className?: string
+  /** 是否在顶部导航栏中显示 */
+  inNavbar?: boolean
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   collapse: false,
   showTitle: true,
   className: '',
+  inNavbar: false,
 })
 
-// 使用配置store获取主题色
+// 使用配置store获取主题色和布局模式
 const configStore = useConfigStore()
 const primaryColor = computed(() => configStore.config.theme.primaryColor)
+
+// 根据是否在导航栏中动态计算标题颜色
+const titleColor = computed(() => {
+  // 如果在导航栏中（顶部菜单模式），使用深色文本
+  if (props.inNavbar) {
+    return '#303133'
+  }
+  // 否则使用白色文本（侧边栏模式）
+  return '#fff'
+})
 </script>
 
 <template>
@@ -75,7 +88,7 @@ const primaryColor = computed(() => configStore.config.theme.primaryColor)
   .logo-title {
     display: inline-block;
     margin: 0;
-    color: #fff;
+    color: v-bind(titleColor);
     font-weight: 600;
     line-height: 50px;
     font-size: 16px;

@@ -201,6 +201,8 @@ const toggleSideBar = () => {
     .main-container {
       .main-header {
         padding: 0;
+        position: relative;
+        z-index: 1002; // 确保顶部菜单在侧边栏之上
       }
 
       .main-content {
