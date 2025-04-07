@@ -95,21 +95,19 @@ const toggleSideBar = () => {
     <!-- 混合布局（顶部+侧边） -->
     <template v-else-if="layoutMode === 'mixed'">
       <el-container class="main-container">
-        <el-header height="60px" class="main-header">
-          <NavBar @toggle-side-bar="toggleSideBar" />
-        </el-header>
-        <el-container>
-          <el-aside :width="isCollapse ? '64px' : '210px'" class="sidebar-container">
-            <SideBar />
-          </el-aside>
-          <el-container class="main-content" :class="{ collapsed: isCollapse }">
-            <el-header height="34px" class="tags-view-header">
-              <TagsView />
-            </el-header>
-            <el-main class="app-main-container">
-              <AppMain />
-            </el-main>
-          </el-container>
+        <el-aside :width="isCollapse ? '64px' : '210px'" class="sidebar-container">
+          <SideBar />
+        </el-aside>
+        <el-container class="main-content" :class="{ collapsed: isCollapse }">
+          <el-header height="60px" class="main-header">
+            <NavBar @toggle-side-bar="toggleSideBar" />
+          </el-header>
+          <el-header height="34px" class="tags-view-header">
+            <TagsView />
+          </el-header>
+          <el-main class="app-main-container">
+            <AppMain />
+          </el-main>
         </el-container>
       </el-container>
     </template>
@@ -203,18 +201,36 @@ const toggleSideBar = () => {
         padding: 0;
         position: relative;
         z-index: 1002; // 确保顶部菜单在侧边栏之上
+        height: 60px; // 确保高度一致
+      }
+
+      .sidebar-container {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1001;
       }
 
       .main-content {
         margin-left: 210px;
-        height: calc(100% - 60px);
+        position: relative;
+        height: 100%;
+        overflow: hidden;
+        transition: margin-left 0.28s;
 
         &.collapsed {
           margin-left: 64px;
         }
 
+        .tags-view-header {
+          padding: 0;
+        }
+
         .app-main-container {
-          height: calc(100% - 34px);
+          padding: 0;
+          height: calc(100% - 94px); // 60px顶部菜单 + 34px标签视图
+          overflow: hidden;
         }
       }
     }

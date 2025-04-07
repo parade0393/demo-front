@@ -24,8 +24,16 @@ const showTopMenu = computed(() => {
   return layoutMode.value === 'top-menu' || layoutMode.value === 'mixed'
 })
 
+// 定义菜单项接口
+interface MenuItem {
+  path: string
+  name: string
+  icon?: string
+  children?: MenuItem[]
+}
+
 // 模拟顶部菜单数据
-const menuItems = ref([
+const menuItems = ref<MenuItem[]>([
   {
     path: '/dashboard',
     name: '仪表盘',
@@ -73,12 +81,42 @@ const currentRoute = useRoute()
 // 当前激活的顶级菜单
 const activeTopMenu = computed(() => {
   const path = currentRoute.path
-  return (
-    menuItems.value.find(
-      (item) =>
-        path === item.path || (item.children && item.children.some((child) => child.path === path)),
-    )?.path || '/dashboard'
-  )
+
+  // 递归查找匹配的菜单项
+  const findMatchingMenuItem = (
+    items: MenuItem[],
+    currentPath: string,
+    isTopLevel = false,
+  ): MenuItem | null => {
+    for (const item of items) {
+      // 检查当前项是否匹配
+      if (item.path === currentPath) {
+        return isTopLevel ? item : null
+      }
+
+      // 检查子项
+      if (item.children && item.children.length > 0) {
+        // 直接检查子项是否匹配
+        const directChildMatch = item.children.find((child) => child.path === currentPath)
+        if (directChildMatch) {
+          return isTopLevel ? item : null
+        }
+
+        // 递归检查更深层级的子项
+        const deepMatch = findMatchingMenuItem(item.children, currentPath, false)
+        if (deepMatch) {
+          return isTopLevel ? item : deepMatch
+        }
+      }
+    }
+    return null
+  }
+
+  // 从顶级菜单开始查找
+  const matchedItem = findMatchingMenuItem(menuItems.value, path, true)
+
+  // 如果找到匹配项，返回其路径，否则返回默认路径
+  return matchedItem ? matchedItem.path : '/dashboard'
 })
 
 const handleMenuClick = (path: string) => {
@@ -130,8 +168,11 @@ const openSettings = () => {
         </el-icon>
       </div>
 
-      <!-- 在非顶部菜单模式或混合模式下显示面包屑 -->
-      <BreadCrumb v-if="!showTopMenu" class="breadcrumb-container" />
+      <!-- 在非顶部菜单模式且非混合模式下显示面包屑 -->
+      <BreadCrumb
+        v-if="layoutMode !== 'top-menu' && layoutMode !== 'mixed'"
+        class="breadcrumb-container"
+      />
 
       <!-- 顶部菜单 -->
       <div v-if="showTopMenu" class="top-menu-container">
@@ -141,6 +182,7 @@ const openSettings = () => {
           :background-color="'transparent'"
           text-color="#303133"
           :active-text-color="primaryColor"
+          @select="handleMenuClick"
         >
           <template v-for="item in menuItems" :key="item.path">
             <!-- 有子菜单的项使用el-sub-menu -->
