@@ -20,8 +20,6 @@ interface Props {
   uniqueOpened?: boolean
   /** 是否开启折叠动画 */
   collapseTransition?: boolean
-  /** 是否显示子菜单 */
-  showSubMenu?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -31,10 +29,18 @@ const props = withDefaults(defineProps<Props>(), {
   textColor: '#bfcbd9',
   uniqueOpened: true,
   collapseTransition: false,
-  showSubMenu: true,
 })
 
 const { activeTopMenu, handleMenuClick, currentRoute, layoutMode } = useMenu()
+
+const showSubMenu = computed(() => {
+  // 在顶部菜单模式下，子菜单不显示
+  if (props.mode === 'horizontal' && layoutMode.value === 'mixed') {
+    return false
+  }
+  // 在侧边菜单模式下，子菜单显示
+  return true
+})
 
 // 计算当前激活的菜单项
 const activeMenu = computed(() => {
@@ -48,6 +54,28 @@ const activeMenu = computed(() => {
     return currentRoute.path
   }
   return currentRoute.path
+})
+
+function showElSub(menu: MenuItem) {
+  if (menu.children && menu.children.length > 0 && showSubMenu.value) {
+    return true
+  }
+  return false
+}
+//当前顶级菜单
+const currentActiveTopMenu = computed(() => {
+  const result = props.menuItems.find((item) => {
+    return item.path === activeTopMenu.value
+  })
+  if (result) {
+    if (result.children && result.children.length > 0) {
+      return result.children
+    } else {
+      return [result]
+    }
+  } else {
+    return []
+  }
 })
 </script>
 
@@ -65,42 +93,48 @@ const activeMenu = computed(() => {
   >
     <!-- 混合模式下的侧边栏菜单 -->
     <template v-if="layoutMode === 'mixed'">
-      <!-- 当前激活的顶级菜单有子菜单时，显示其子菜单 -->
-      <template v-for="item in menuItems" :key="item.path">
-        <template v-if="item.path === activeTopMenu && item.children && item.children.length > 0">
-          <el-menu-item
-            v-for="child in item.children"
-            :key="child.path"
-            :index="child.path"
-            @click="handleMenuClick(child.path)"
-          >
-            <el-icon v-if="child.icon">
-              <component :is="child.icon" />
+      <template v-if="mode === 'horizontal'">
+        <template v-for="item in menuItems" :key="item.path">
+          <el-menu-item :index="item.path" @click="handleMenuClick(item.path)">
+            <el-icon v-if="item.icon">
+              <component :is="item.icon" />
             </el-icon>
-            <span>{{ child.name }}</span>
+            <span>{{ item.name }}</span>
           </el-menu-item>
         </template>
       </template>
-
-      <!-- 当前激活的顶级菜单没有子菜单时，显示所有一级菜单 -->
-      <template
-        v-if="
-          !menuItems.some(
-            (item) => item.path === activeTopMenu && item.children && item.children.length > 0,
-          )
-        "
-      >
-        <el-menu-item
-          v-for="item in menuItems"
-          :key="item.path"
-          :index="item.path"
-          @click="handleMenuClick(item.path)"
-        >
-          <el-icon v-if="item.icon">
-            <component :is="item.icon" />
-          </el-icon>
-          <span>{{ item.name }}</span>
-        </el-menu-item>
+      <template v-else-if="currentActiveTopMenu">
+        <template v-for="menu in currentActiveTopMenu" :key="menu.path">
+          <el-sub-menu v-if="menu.children && menu.children.length > 0" :index="menu.path">
+            <template #title>
+              <el-icon v-if="menu.icon">
+                <component :is="menu.icon" />
+              </el-icon>
+              <span>{{ menu.name }}</span>
+            </template>
+            <el-menu-item
+              v-for="child in menu.children"
+              :key="child.path"
+              :index="child.path"
+              @click="handleMenuClick(child.path)"
+            >
+              <el-icon v-if="child.icon">
+                <component :is="child.icon" />
+              </el-icon>
+              <span>{{ child.name }}</span>
+            </el-menu-item>
+          </el-sub-menu>
+          <el-menu-item
+            v-else-if="!menu.children"
+            :index="menu.path"
+            @click="handleMenuClick(menu.path)"
+          >
+            <el-icon v-if="menu.icon">
+              <component :is="menu.icon" />
+            </el-icon>
+            <span>{{ menu.name }}</span>
+          </el-menu-item>
+        </template>
       </template>
     </template>
 
@@ -108,10 +142,7 @@ const activeMenu = computed(() => {
     <template v-else>
       <template v-for="item in menuItems" :key="item.path">
         <!-- 有子菜单的项 -->
-        <el-sub-menu
-          v-if="item.children && item.children.length > 0 && showSubMenu"
-          :index="item.path"
-        >
+        <el-sub-menu v-if="showElSub(item)" :index="item.path">
           <template #title>
             <el-icon v-if="item.icon">
               <component :is="item.icon" />

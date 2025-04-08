@@ -26,9 +26,12 @@ export function useMenu() {
     if (layoutMode.value === 'top-menu') {
       return currentRoute.path
     }
-    return currentRoute.path.split('/').filter(Boolean).length > 1
-      ? currentRoute.path.match(/^\/[^\/]+/)?.[0] || '/'
-      : '/'
+    const result =
+      currentRoute.path.split('/').filter(Boolean).length > 0
+        ? currentRoute.path.match(/^\/[^\/]+/)?.[0] || '/'
+        : '/'
+    console.log(result)
+    return result
   })
 
   // 菜单点击处理
