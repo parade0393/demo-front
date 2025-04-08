@@ -58,14 +58,11 @@ const menuItems = ref([
 const router = useRouter()
 const currentRoute = useRoute()
 
-// 当前激活的顶级菜单路径
+// 当前激活的顶级菜单
 const activeTopMenu = computed(() => {
-  const path = currentRoute.path
-  const activeItem = menuItems.value.find(
-    (item) =>
-      path === item.path || (item.children && item.children.some((child) => child.path === path)),
-  )
-  return activeItem?.path
+  return currentRoute.path.split('/').filter(Boolean).length > 1
+    ? currentRoute.path.match(/^\/[^/]+/)?.[0] || '/'
+    : '/'
 })
 
 const handleMenuClick = (path: string) => {

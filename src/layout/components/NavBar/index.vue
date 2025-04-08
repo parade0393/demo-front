@@ -80,43 +80,12 @@ const currentRoute = useRoute()
 
 // 当前激活的顶级菜单
 const activeTopMenu = computed(() => {
-  const path = currentRoute.path
-
-  // 递归查找匹配的菜单项
-  const findMatchingMenuItem = (
-    items: MenuItem[],
-    currentPath: string,
-    isTopLevel = false,
-  ): MenuItem | null => {
-    for (const item of items) {
-      // 检查当前项是否匹配
-      if (item.path === currentPath) {
-        return isTopLevel ? item : null
-      }
-
-      // 检查子项
-      if (item.children && item.children.length > 0) {
-        // 直接检查子项是否匹配
-        const directChildMatch = item.children.find((child) => child.path === currentPath)
-        if (directChildMatch) {
-          return isTopLevel ? item : null
-        }
-
-        // 递归检查更深层级的子项
-        const deepMatch = findMatchingMenuItem(item.children, currentPath, false)
-        if (deepMatch) {
-          return isTopLevel ? item : deepMatch
-        }
-      }
-    }
-    return null
+  if (layoutMode.value === 'top-menu') {
+    return currentRoute.path
   }
-
-  // 从顶级菜单开始查找
-  const matchedItem = findMatchingMenuItem(menuItems.value, path, true)
-
-  // 如果找到匹配项，返回其路径，否则返回默认路径
-  return matchedItem ? matchedItem.path : '/dashboard'
+  return currentRoute.path.split('/').filter(Boolean).length > 1
+    ? currentRoute.path.match(/^\/[^/]+/)?.[0] || '/'
+    : '/'
 })
 
 const handleMenuClick = (path: string) => {
@@ -185,8 +154,11 @@ const openSettings = () => {
           @select="handleMenuClick"
         >
           <template v-for="item in menuItems" :key="item.path">
-            <!-- 有子菜单的项使用el-sub-menu -->
-            <el-sub-menu v-if="item.children && item.children.length > 0" :index="item.path">
+            <!-- top-menu模式：有子菜单的项使用el-sub-menu -->
+            <el-sub-menu
+              v-if="layoutMode === 'top-menu' && item.children && item.children.length > 0"
+              :index="item.path"
+            >
               <template #title>
                 <el-icon v-if="item.icon">
                   <component :is="item.icon" />
@@ -205,8 +177,12 @@ const openSettings = () => {
                 <span>{{ child.name }}</span>
               </el-menu-item>
             </el-sub-menu>
-            <!-- 没有子菜单的项使用el-menu-item -->
-            <el-menu-item v-else :index="item.path" @click="handleMenuClick(item.path)">
+            <!-- mixed模式：所有菜单项都使用el-menu-item，包括有子菜单的项 -->
+            <el-menu-item
+              v-else-if="layoutMode === 'mixed' || !item.children || item.children.length === 0"
+              :index="item.path"
+              @click="handleMenuClick(item.path)"
+            >
               <el-icon v-if="item.icon">
                 <component :is="item.icon" />
               </el-icon>
