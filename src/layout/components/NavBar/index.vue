@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { inject, ref, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { inject, ref } from 'vue'
 import BreadCrumb from './components/BreadCrumb.vue'
 import SettingsDrawer from '../SettingsDrawer/index.vue'
 import Logo from '../Logo/index.vue'
-import { useConfigStore } from '@/stores/config'
+import AppMenu from '@/components/AppMenu/index.vue'
+import { menuItems } from '@/config/menu'
+import { useMenu } from '@/hooks/useMenu'
 const emit = defineEmits(['toggle-side-bar'])
 
 // 注入侧边栏折叠状态
@@ -14,83 +15,8 @@ const toggleSideBar = () => {
   emit('toggle-side-bar')
 }
 
-// 使用配置store获取布局模式
-const configStore = useConfigStore()
-const layoutMode = computed(() => configStore.config.layout.layoutMode)
-const primaryColor = computed(() => configStore.config.theme.primaryColor)
-
-// 判断是否显示顶部菜单
-const showTopMenu = computed(() => {
-  return layoutMode.value === 'top-menu' || layoutMode.value === 'mixed'
-})
-
-// 定义菜单项接口
-interface MenuItem {
-  path: string
-  name: string
-  icon?: string
-  children?: MenuItem[]
-}
-
-// 模拟顶部菜单数据
-const menuItems = ref<MenuItem[]>([
-  {
-    path: '/dashboard',
-    name: '仪表盘',
-    icon: 'Odometer',
-  },
-  {
-    path: '/system',
-    name: '系统管理',
-    icon: 'Setting',
-    children: [
-      {
-        path: '/system/user',
-        name: '用户管理',
-        icon: 'User',
-      },
-      {
-        path: '/system/role',
-        name: '角色管理',
-        icon: 'UserFilled',
-      },
-    ],
-  },
-  {
-    path: '/content',
-    name: '内容管理',
-    icon: 'Document',
-    children: [
-      {
-        path: '/content/article',
-        name: '文章管理',
-        icon: 'Tickets',
-      },
-      {
-        path: '/content/category',
-        name: '分类管理',
-        icon: 'Files',
-      },
-    ],
-  },
-])
-
-const router = useRouter()
-const currentRoute = useRoute()
-
-// 当前激活的顶级菜单
-const activeTopMenu = computed(() => {
-  if (layoutMode.value === 'top-menu') {
-    return currentRoute.path
-  }
-  return currentRoute.path.split('/').filter(Boolean).length > 1
-    ? currentRoute.path.match(/^\/[^/]+/)?.[0] || '/'
-    : '/'
-})
-
-const handleMenuClick = (path: string) => {
-  router.push(path)
-}
+// 使用菜单hooks获取相关数据和方法
+const { layoutMode, primaryColor, showTopMenu } = useMenu()
 
 // 模拟用户数据
 const userInfo = ref({
@@ -145,51 +71,14 @@ const openSettings = () => {
 
       <!-- 顶部菜单 -->
       <div v-if="showTopMenu" class="top-menu-container">
-        <el-menu
-          :default-active="activeTopMenu"
-          mode="horizontal"
-          :background-color="'transparent'"
-          text-color="#303133"
+        <AppMenu
+          :menu-items="menuItems"
           :active-text-color="primaryColor"
-          @select="handleMenuClick"
-        >
-          <template v-for="item in menuItems" :key="item.path">
-            <!-- top-menu模式：有子菜单的项使用el-sub-menu -->
-            <el-sub-menu
-              v-if="layoutMode === 'top-menu' && item.children && item.children.length > 0"
-              :index="item.path"
-            >
-              <template #title>
-                <el-icon v-if="item.icon">
-                  <component :is="item.icon" />
-                </el-icon>
-                <span>{{ item.name }}</span>
-              </template>
-              <el-menu-item
-                v-for="child in item.children"
-                :key="child.path"
-                :index="child.path"
-                @click="handleMenuClick(child.path)"
-              >
-                <el-icon v-if="child.icon">
-                  <component :is="child.icon" />
-                </el-icon>
-                <span>{{ child.name }}</span>
-              </el-menu-item>
-            </el-sub-menu>
-            <!-- mixed模式：所有菜单项都使用el-menu-item，包括有子菜单的项 -->
-            <el-menu-item
-              v-else-if="layoutMode === 'mixed' || !item.children || item.children.length === 0"
-              :index="item.path"
-              @click="handleMenuClick(item.path)"
-            >
-              <el-icon v-if="item.icon">
-                <component :is="item.icon" />
-              </el-icon>
-              <span>{{ item.name }}</span>
-            </el-menu-item>
-          </template>
-        </el-menu>
+          mode="horizontal"
+          background-color="transparent"
+          text-color="#303133"
+          :show-sub-menu="layoutMode === 'top-menu'"
+        />
       </div>
     </div>
     <div class="navbar__right">
