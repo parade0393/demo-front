@@ -77,7 +77,7 @@ const openSettings = () => {
           mode="horizontal"
           background-color="transparent"
           text-color="#303133"
-          :show-sub-menu="layoutMode === 'top-menu'"
+          :show-sub-menu="false"
         />
       </div>
     </div>

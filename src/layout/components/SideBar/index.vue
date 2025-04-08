@@ -9,7 +9,7 @@ import { useMenu } from '@/hooks/useMenu'
 const isCollapse = inject('isCollapse', ref(false))
 
 // 使用菜单hooks获取相关数据和方法
-const { primaryColor, layoutMode } = useMenu()
+const { primaryColor } = useMenu()
 </script>
 
 <template>
@@ -19,7 +19,6 @@ const { primaryColor, layoutMode } = useMenu()
       :menu-items="menuItems"
       :active-text-color="primaryColor"
       :collapse="isCollapse"
-      :in-mixed-mode="layoutMode === 'mixed'"
       background-color="#304156"
       text-color="#bfcbd9"
       class="sidebar-menu"

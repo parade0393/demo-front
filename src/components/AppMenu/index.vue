@@ -4,16 +4,24 @@ import type { MenuItem } from '@/config/menu'
 import { useMenu } from '@/hooks/useMenu'
 
 interface Props {
+  /** 菜单项数组 */
   menuItems: MenuItem[]
+  /** 菜单模式，水平或垂直 */
   mode?: 'horizontal' | 'vertical'
+  /** 是否折叠菜单 */
   collapse?: boolean
+  /** 菜单背景色 */
   backgroundColor?: string
+  /** 菜单文本颜色 */
   textColor?: string
+  /** 菜单激活文本颜色 */
   activeTextColor?: string
+  /** 是否只保持一个子菜单展开 */
   uniqueOpened?: boolean
+  /** 是否开启折叠动画 */
   collapseTransition?: boolean
+  /** 是否显示子菜单 */
   showSubMenu?: boolean
-  inMixedMode?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -24,14 +32,22 @@ const props = withDefaults(defineProps<Props>(), {
   uniqueOpened: true,
   collapseTransition: false,
   showSubMenu: true,
-  inMixedMode: false,
 })
 
-const { activeTopMenu, handleMenuClick, currentRoute } = useMenu()
+const { activeTopMenu, handleMenuClick, currentRoute, layoutMode } = useMenu()
 
 // 计算当前激活的菜单项
 const activeMenu = computed(() => {
-  return props.inMixedMode ? activeTopMenu.value : currentRoute.path
+  // 在混合模式下，顶部菜单和侧边菜单的激活项计算方式不同
+  if (layoutMode.value === 'mixed') {
+    // 如果是水平模式（顶部菜单），激活项应该是顶级菜单路径
+    if (props.mode === 'horizontal') {
+      return activeTopMenu.value
+    }
+    // 如果是垂直模式（侧边菜单），激活项应该是当前路由路径
+    return currentRoute.path
+  }
+  return currentRoute.path
 })
 </script>
 
@@ -48,7 +64,8 @@ const activeMenu = computed(() => {
     class="app-menu"
   >
     <!-- 混合模式下的侧边栏菜单 -->
-    <template v-if="inMixedMode">
+    <template v-if="layoutMode === 'mixed'">
+      <!-- 当前激活的顶级菜单有子菜单时，显示其子菜单 -->
       <template v-for="item in menuItems" :key="item.path">
         <template v-if="item.path === activeTopMenu && item.children && item.children.length > 0">
           <el-menu-item
@@ -63,6 +80,27 @@ const activeMenu = computed(() => {
             <span>{{ child.name }}</span>
           </el-menu-item>
         </template>
+      </template>
+
+      <!-- 当前激活的顶级菜单没有子菜单时，显示所有一级菜单 -->
+      <template
+        v-if="
+          !menuItems.some(
+            (item) => item.path === activeTopMenu && item.children && item.children.length > 0,
+          )
+        "
+      >
+        <el-menu-item
+          v-for="item in menuItems"
+          :key="item.path"
+          :index="item.path"
+          @click="handleMenuClick(item.path)"
+        >
+          <el-icon v-if="item.icon">
+            <component :is="item.icon" />
+          </el-icon>
+          <span>{{ item.name }}</span>
+        </el-menu-item>
       </template>
     </template>
 
