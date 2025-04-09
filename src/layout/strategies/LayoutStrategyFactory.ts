@@ -8,8 +8,6 @@ import { LeftSidebarStrategy } from './LeftSidebarStrategy'
 import { RightSidebarStrategy } from './RightSidebarStrategy'
 import { TopMenuStrategy } from './TopMenuStrategy'
 import { MixedStrategy } from './MixedStrategy'
-import { CompactStrategy } from './CompactStrategy'
-
 /**
  * 布局策略工厂类
  * 使用单例模式实现
@@ -25,7 +23,6 @@ export class LayoutStrategyFactory {
     this.strategies.set('right-sidebar', new RightSidebarStrategy())
     this.strategies.set('top-menu', new TopMenuStrategy())
     this.strategies.set('mixed', new MixedStrategy())
-    this.strategies.set('compact', new CompactStrategy())
   }
 
   /**
