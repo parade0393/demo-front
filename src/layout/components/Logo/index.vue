@@ -53,7 +53,7 @@ const titleColor = computed(() => {
           fill="#34495e"
         />
       </svg>
-      <h1 v-if="showTitle" class="logo-title">Admin System</h1>
+      <h1 v-if="showTitle && !collapse" class="logo-title">Admin System</h1>
     </router-link>
   </div>
 </template>
