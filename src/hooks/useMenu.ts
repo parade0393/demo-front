@@ -1,38 +1,19 @@
 import { computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useConfigStore } from '@/stores/config'
+import { useLayoutStrategy } from './useLayoutStrategy'
 
 /**
  * 菜单相关的公共逻辑
+ * 注意：布局相关的逻辑已移至useLayoutStrategy
  */
 export function useMenu() {
   const router = useRouter()
-  const currentRoute = useRoute()
   const configStore = useConfigStore()
-
-  // 获取布局模式
-  const layoutMode = computed(() => configStore.config.layout.layoutMode)
+  const { layoutMode, showTopMenu, activeTopMenu, currentRoute } = useLayoutStrategy()
 
   // 获取主题色
   const primaryColor = computed(() => configStore.config.theme.primaryColor)
-
-  // 判断是否显示顶部菜单
-  const showTopMenu = computed(() => {
-    return layoutMode.value === 'top-menu' || layoutMode.value === 'mixed'
-  })
-
-  // 当前激活的顶级菜单
-  const activeTopMenu = computed(() => {
-    if (layoutMode.value === 'top-menu') {
-      return currentRoute.path
-    }
-    const result =
-      currentRoute.path.split('/').filter(Boolean).length > 0
-        ? currentRoute.path.match(/^\/[^\/]+/)?.[0] || '/'
-        : '/'
-    console.log(result)
-    return result
-  })
 
   // 菜单点击处理
   const handleMenuClick = (path: string) => {

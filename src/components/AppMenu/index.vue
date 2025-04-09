@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import type { MenuItem } from '@/config/menu'
-import { useMenu } from '@/hooks/useMenu'
+import { useRouter } from 'vue-router'
+import { useLayoutStrategy } from '@/hooks/useLayoutStrategy'
 import RecursiveMenuItem from './components/RecursiveMenuItem.vue'
 
 interface Props {
@@ -32,35 +33,31 @@ const props = withDefaults(defineProps<Props>(), {
   collapseTransition: false,
 })
 
-const { activeTopMenu, handleMenuClick, currentRoute, layoutMode } = useMenu()
+const router = useRouter()
+const { shouldShowSubMenu, getActiveMenu, getTopMenuItems, getSideMenuItems } = useLayoutStrategy()
 
-// 判断是否显示子菜单，混合模式的顶部菜单不显示
+// 判断是否显示子菜单
 const showSubMenu = computed(() => {
-  return !(props.mode === 'horizontal' && layoutMode.value === 'mixed')
+  return shouldShowSubMenu(props.mode)
 })
 
 // 计算当前激活的菜单项
 const activeMenu = computed(() => {
-  if (layoutMode.value === 'mixed' && props.mode === 'horizontal') {
-    return activeTopMenu.value
-  }
-  return currentRoute.path
+  return getActiveMenu(props.mode)
 })
 
-// // 判断菜单项是否有子菜单且应该显示
-// const shouldShowSubMenu = (menu: MenuItem) => {
-//   return menu.children && menu.children.length > 0 && showSubMenu.value
-// }
+// 菜单点击处理
+const handleMenuClick = (path: string) => {
+  router.push(path)
+}
 
-// 获取当前激活的顶级菜单及其子菜单
-const currentActiveTopMenu = computed(() => {
-  // 查找当前激活的顶级菜单
-  const activeMenu = props.menuItems.find((item) => item.path === activeTopMenu.value)
-
-  if (!activeMenu) return []
-
-  // 如果有子菜单，返回子菜单数组；否则返回自身作为数组
-  return activeMenu.children?.length ? activeMenu.children : [activeMenu]
+// 获取当前模式下应该显示的菜单项
+const displayMenuItems = computed(() => {
+  if (props.mode === 'horizontal') {
+    return getTopMenuItems(props.menuItems)
+  } else {
+    return getSideMenuItems(props.menuItems)
+  }
 })
 </script>
 
@@ -76,47 +73,14 @@ const currentActiveTopMenu = computed(() => {
     :collapse-transition="collapseTransition"
     class="app-menu"
   >
-    <!-- 混合模式 -->
-    <template v-if="layoutMode === 'mixed'">
-      <!-- 顶部菜单 - 只显示一级菜单 -->
-      <template v-if="mode === 'horizontal'">
-        <el-menu-item
-          v-for="item in menuItems"
-          :key="item.path"
-          :index="item.path"
-          @click="handleMenuClick(item.path)"
-        >
-          <el-icon v-if="item.icon">
-            <component :is="item.icon" />
-          </el-icon>
-          <span>{{ item.name }}</span>
-        </el-menu-item>
-      </template>
-
-      <!-- 侧边菜单 - 显示当前选中顶级菜单的子菜单 -->
-      <template v-else>
-        <template v-for="menu in currentActiveTopMenu" :key="menu.path">
-          <!-- 使用递归组件渲染菜单项 -->
-          <recursive-menu-item
-            :menu-item="menu"
-            :base-path="menu.path"
-            @menu-click="handleMenuClick"
-          />
-        </template>
-      </template>
-    </template>
-
-    <!-- 标准模式 -->
-    <template v-else>
-      <template v-for="item in menuItems" :key="item.path">
-        <!-- 使用递归组件渲染菜单项 -->
-        <recursive-menu-item
-          :menu-item="item"
-          :base-path="item.path"
-          :show-sub-menu="showSubMenu"
-          @menu-click="handleMenuClick"
-        />
-      </template>
+    <template v-for="item in displayMenuItems" :key="item.path">
+      <!-- 使用递归组件渲染菜单项 -->
+      <recursive-menu-item
+        :menu-item="item"
+        :base-path="item.path"
+        :show-sub-menu="showSubMenu"
+        @menu-click="handleMenuClick"
+      />
     </template>
   </el-menu>
 </template>
