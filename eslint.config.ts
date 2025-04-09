@@ -36,4 +36,17 @@ export default defineConfigWithVueTs(
       globals: autoImportGlobals.globals, // 挂载到 languageOptions.globals
     },
   },
+  {
+    name: 'app/unused-vars',
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
+  },
 )
