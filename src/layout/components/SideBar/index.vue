@@ -46,7 +46,7 @@ const textColor = computed(() => {
 <style lang="scss" scoped>
 .sidebar {
   height: 100%;
-  background-color: #304156;
+  // 移除硬编码的背景色，使用sidebar-styles.scss中定义的样式
 
   .sidebar-menu {
     border-right: none;

@@ -23,6 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
 // 使用配置store获取主题色和布局模式
 const configStore = useConfigStore()
 const primaryColor = computed(() => configStore.config.theme.primaryColor)
+const sidebarStyle = computed(() => configStore.config.theme.sidebarStyle)
 
 // 根据是否在导航栏中动态计算标题颜色
 const titleColor = computed(() => {
@@ -30,7 +31,11 @@ const titleColor = computed(() => {
   if (props.inNavbar) {
     return '#303133'
   }
-  // 否则使用白色文本（侧边栏模式）
+  // 否则根据侧边栏风格决定文本颜色
+  if (sidebarStyle.value === 'simple-white') {
+    return '#303133'
+  }
+  // 经典蓝风格使用白色文本
   return '#fff'
 })
 </script>
@@ -63,7 +68,6 @@ const titleColor = computed(() => {
   height: 50px;
   padding: 10px;
   overflow: hidden;
-  background: #304156;
   transition: all 0.3s;
 
   &.collapse {
