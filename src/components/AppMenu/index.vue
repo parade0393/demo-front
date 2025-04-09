@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { MenuItem } from '@/config/menu'
 import { useMenu } from '@/hooks/useMenu'
+import RecursiveMenuItem from './components/RecursiveMenuItem.vue'
 
 interface Props {
   /** 菜单项数组 */
@@ -46,10 +47,10 @@ const activeMenu = computed(() => {
   return currentRoute.path
 })
 
-// 判断菜单项是否有子菜单且应该显示
-const shouldShowSubMenu = (menu: MenuItem) => {
-  return menu.children && menu.children.length > 0 && showSubMenu.value
-}
+// // 判断菜单项是否有子菜单且应该显示
+// const shouldShowSubMenu = (menu: MenuItem) => {
+//   return menu.children && menu.children.length > 0 && showSubMenu.value
+// }
 
 // 获取当前激活的顶级菜单及其子菜单
 const currentActiveTopMenu = computed(() => {
@@ -95,35 +96,12 @@ const currentActiveTopMenu = computed(() => {
       <!-- 侧边菜单 - 显示当前选中顶级菜单的子菜单 -->
       <template v-else>
         <template v-for="menu in currentActiveTopMenu" :key="menu.path">
-          <!-- 有子菜单的项 -->
-          <el-sub-menu v-if="menu.children && menu.children.length > 0" :index="menu.path">
-            <template #title>
-              <el-icon v-if="menu.icon">
-                <component :is="menu.icon" />
-              </el-icon>
-              <span>{{ menu.name }}</span>
-            </template>
-
-            <el-menu-item
-              v-for="child in menu.children"
-              :key="child.path"
-              :index="child.path"
-              @click="handleMenuClick(child.path)"
-            >
-              <el-icon v-if="child.icon">
-                <component :is="child.icon" />
-              </el-icon>
-              <span>{{ child.name }}</span>
-            </el-menu-item>
-          </el-sub-menu>
-
-          <!-- 没有子菜单的项 -->
-          <el-menu-item v-else :index="menu.path" @click="handleMenuClick(menu.path)">
-            <el-icon v-if="menu.icon">
-              <component :is="menu.icon" />
-            </el-icon>
-            <span>{{ menu.name }}</span>
-          </el-menu-item>
+          <!-- 使用递归组件渲染菜单项 -->
+          <recursive-menu-item
+            :menu-item="menu"
+            :base-path="menu.path"
+            @menu-click="handleMenuClick"
+          />
         </template>
       </template>
     </template>
@@ -131,35 +109,13 @@ const currentActiveTopMenu = computed(() => {
     <!-- 标准模式 -->
     <template v-else>
       <template v-for="item in menuItems" :key="item.path">
-        <!-- 有子菜单的项 -->
-        <el-sub-menu v-if="shouldShowSubMenu(item)" :index="item.path">
-          <template #title>
-            <el-icon v-if="item.icon">
-              <component :is="item.icon" />
-            </el-icon>
-            <span>{{ item.name }}</span>
-          </template>
-
-          <el-menu-item
-            v-for="child in item.children"
-            :key="child.path"
-            :index="child.path"
-            @click="handleMenuClick(child.path)"
-          >
-            <el-icon v-if="child.icon">
-              <component :is="child.icon" />
-            </el-icon>
-            <span>{{ child.name }}</span>
-          </el-menu-item>
-        </el-sub-menu>
-
-        <!-- 没有子菜单的项或顶部菜单模式下的所有项 -->
-        <el-menu-item v-else :index="item.path" @click="handleMenuClick(item.path)">
-          <el-icon v-if="item.icon">
-            <component :is="item.icon" />
-          </el-icon>
-          <span>{{ item.name }}</span>
-        </el-menu-item>
+        <!-- 使用递归组件渲染菜单项 -->
+        <recursive-menu-item
+          :menu-item="item"
+          :base-path="item.path"
+          :show-sub-menu="showSubMenu"
+          @menu-click="handleMenuClick"
+        />
       </template>
     </template>
   </el-menu>
