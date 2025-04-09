@@ -1,126 +1,40 @@
 // 侧边栏风格样式定义
+// 使用通用CSS变量实现主题切换，变量定义在sidebar-theme-vars.scss中
 
-// 经典蓝风格（默认）
-html.sidebar-classic-blue {
-  .sidebar {
-    background-color: #304156;
+// 通用侧边栏样式，使用统一的CSS变量
+.sidebar {
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
 
-    // Logo区域使用更深的蓝色背景
-    .logo-container {
-      background-color: #263445;
-    }
-
-    .el-menu {
-      background-color: #304156;
-    }
-
-    .el-menu-item,
-    .el-sub-menu__title {
-      color: #bfcbd9;
-
-      &:hover {
-        background-color: #263445;
-      }
-    }
+  // Logo区域背景
+  .logo-container {
+    background-color: var(--sidebar-logo-bg);
   }
 
-  // 主内容区域样式
-  .main-container {
-    background-color: #f0f2f5;
+  .el-menu {
+    background-color: var(--sidebar-menu-bg);
+  }
+
+  .el-menu-item,
+  .el-sub-menu__title {
+    color: var(--sidebar-menu-text);
+
+    &:hover {
+      background-color: var(--sidebar-menu-hover-bg);
+    }
   }
 }
 
-// 极简白风格
-html.sidebar-simple-white {
-  .sidebar {
-    background-color: #ffffff;
-    border-right: 1px solid #e6e6e6;
-
-    // Logo区域使用灰色背景
-    .logo-container {
-      background-color: #f5f7fa;
-    }
-
-    .el-menu {
-      background-color: #ffffff;
-    }
-
-    .el-menu-item,
-    .el-sub-menu__title {
-      color: #303133;
-
-      &:hover {
-        background-color: #f5f7fa;
-      }
-    }
-  }
-
-  // 主内容区域使用灰色背景，增强与侧边栏的区分
-  .main-container {
-    background-color: #f5f7fa;
-  }
-}
-
-// 暗黑模式下的侧边栏样式适配
-html.dark {
-  // 暗黑模式下的经典蓝风格（保持原样，因为已经是深色）
-  &.sidebar-classic-blue .sidebar {
-    background-color: #304156;
-
-    // 暗黑模式下Logo区域使用更深的蓝色
-    .logo-container {
-      background-color: #263445;
-    }
-
-    .el-menu {
-      background-color: #304156;
-    }
-  }
-
-  // 暗黑模式下主内容区域
-  &.sidebar-classic-blue .main-container {
-    background-color: #1a1a1a;
-  }
-
-  // 暗黑模式下的极简白风格（需要调整为深色）
-  &.sidebar-simple-white .sidebar {
-    background-color: #1d1e1f;
-    border-right: 1px solid #2c2c2c;
-
-    // 暗黑模式下Logo区域使用更深的背景
-    .logo-container {
-      background-color: #18191a;
-    }
-
-    .el-menu {
-      background-color: #1d1e1f;
-    }
-
-    .el-menu-item,
-    .el-sub-menu__title {
-      color: #e5eaf3;
-
-      &:hover {
-        background-color: #262727;
-      }
-    }
-  }
-
-  // 暗黑模式下主内容区域
-  &.sidebar-simple-white .main-container {
-    background-color: #18191a;
-  }
+// 主内容区域样式
+.main-container {
+  background-color: var(--sidebar-main-bg);
 }
 
 // 哀悼模式和色弱模式下的适配
 html.mourning,
 html.color-weak {
   // 确保在这些模式下背景色对比度适当
-  &.sidebar-classic-blue .sidebar .logo-container {
-    background-color: #263445;
-  }
-
-  &.sidebar-simple-white .sidebar .logo-container {
-    background-color: #f5f7fa;
+  .sidebar .logo-container {
+    background-color: var(--sidebar-logo-bg);
   }
 }

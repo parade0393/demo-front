@@ -30,6 +30,7 @@ export const tagsViewStyles = [
 export const sidebarStyles = [
   'classic-blue', // 经典蓝色
   'simple-white', // 极简白色
+  'dark-purple', // 暗夜紫色
 ] as const
 
 // 默认配置

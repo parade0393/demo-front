@@ -149,6 +149,7 @@ const copyConfig = () => {
           <el-radio-group v-model="sidebarStyle" size="small">
             <el-radio-button label="classic-blue">经典蓝</el-radio-button>
             <el-radio-button label="simple-white">极简白</el-radio-button>
+            <el-radio-button label="dark-purple">暗夜紫</el-radio-button>
           </el-radio-group>
         </div>
       </div>

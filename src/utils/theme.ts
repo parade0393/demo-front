@@ -86,11 +86,16 @@ export function toggleColorWeakMode(isColorWeak: boolean) {
 /**
  * 切换侧边栏背景色风格
  *
- * @param style 侧边栏风格，'classic-blue'为经典蓝，'simple-white'为极简白
+ * @param style 侧边栏风格，'classic-blue'为经典蓝，'simple-white'为极简白，'dark-purple'为暗夜紫
  */
-export function toggleSidebarStyle(style: 'classic-blue' | 'simple-white') {
+export function toggleSidebarStyle(style: 'classic-blue' | 'simple-white' | 'dark-purple') {
   // 先移除所有侧边栏风格类
-  document.documentElement.classList.remove('sidebar-classic-blue', 'sidebar-simple-white')
+  document.documentElement.classList.remove(
+    'sidebar-classic-blue',
+    'sidebar-simple-white',
+    'sidebar-dark-purple',
+  )
   // 添加对应的风格类
   document.documentElement.classList.add(`sidebar-${style}`)
+  // CSS变量会根据类名自动应用，无需手动设置
 }

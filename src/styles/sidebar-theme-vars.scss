@@ -1,0 +1,72 @@
+// 侧边栏主题变量定义
+// 这个文件集中管理所有侧边栏主题相关的CSS变量
+
+// 定义通用的侧边栏变量
+:root {
+  // 通用侧边栏变量（默认使用经典蓝风格的值）
+  --sidebar-bg: #304156;
+  --sidebar-logo-bg: #263445;
+  --sidebar-menu-bg: #304156;
+  --sidebar-menu-text: #bfcbd9;
+  --sidebar-menu-hover-bg: #263445;
+  --sidebar-main-bg: #f0f2f5;
+  --sidebar-border: transparent;
+
+  // 暗黑模式下的变量覆盖
+  &.dark {
+    // 暗黑模式下的通用变量保持不变（因为默认是深色的）
+  }
+
+  // 各种主题风格的变量值
+  // 经典蓝风格变量
+  &.sidebar-classic-blue {
+    --sidebar-bg: #304156;
+    --sidebar-logo-bg: #263445;
+    --sidebar-menu-bg: #304156;
+    --sidebar-menu-text: #bfcbd9;
+    --sidebar-menu-hover-bg: #263445;
+    --sidebar-main-bg: #f0f2f5;
+    --sidebar-border: transparent;
+  }
+
+  // 极简白风格变量
+  &.sidebar-simple-white {
+    --sidebar-bg: #ffffff;
+    --sidebar-logo-bg: #f5f7fa;
+    --sidebar-menu-bg: #ffffff;
+    --sidebar-menu-text: #303133;
+    --sidebar-menu-hover-bg: #f5f7fa;
+    --sidebar-main-bg: #f5f7fa;
+    --sidebar-border: #e6e6e6;
+  }
+
+  // 暗夜紫风格变量
+  &.sidebar-dark-purple {
+    --sidebar-bg: #2b1c3d;
+    --sidebar-logo-bg: #1e1429;
+    --sidebar-menu-bg: #2b1c3d;
+    --sidebar-menu-text: #c8b6db;
+    --sidebar-menu-hover-bg: #3a2853;
+    --sidebar-main-bg: #f0f0f5;
+    --sidebar-border: transparent;
+  }
+
+  // 暗黑模式下的主题覆盖
+  &.dark {
+    // 暗黑模式下极简白风格变量
+    &.sidebar-simple-white {
+      --sidebar-bg: #1d1e1f;
+      --sidebar-logo-bg: #18191a;
+      --sidebar-menu-bg: #1d1e1f;
+      --sidebar-menu-text: #e5eaf3;
+      --sidebar-menu-hover-bg: #262727;
+      --sidebar-main-bg: #18191a;
+      --sidebar-border: #2c2c2c;
+    }
+
+    // 暗黑模式下的暗夜紫风格变量
+    &.sidebar-dark-purple {
+      --sidebar-main-bg: #1a1a1a;
+    }
+  }
+}
