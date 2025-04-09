@@ -82,3 +82,15 @@ export function toggleColorWeakMode(isColorWeak: boolean) {
     document.documentElement.classList.remove('color-weak')
   }
 }
+
+/**
+ * 切换侧边栏背景色风格
+ *
+ * @param style 侧边栏风格，'classic-blue'为经典蓝，'simple-white'为极简白
+ */
+export function toggleSidebarStyle(style: 'classic-blue' | 'simple-white') {
+  // 先移除所有侧边栏风格类
+  document.documentElement.classList.remove('sidebar-classic-blue', 'sidebar-simple-white')
+  // 添加对应的风格类
+  document.documentElement.classList.add(`sidebar-${style}`)
+}

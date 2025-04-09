@@ -1,6 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { toggleDarkMode, toggleMourningMode, toggleColorWeakMode, applyTheme } from '@/utils/theme'
+import {
+  toggleDarkMode,
+  toggleMourningMode,
+  toggleColorWeakMode,
+  applyTheme,
+  toggleSidebarStyle,
+} from '@/utils/theme'
 import type { AppConfig } from '@/types/config'
 import { defaultConfig } from '@/config/theme'
 
@@ -36,11 +42,21 @@ export const useConfigStore = defineStore('config', () => {
     toggleColorWeakMode(isColorWeak)
   }
 
+  // 切换侧边栏风格
+  function updateSidebarStyle(style: 'classic-blue' | 'simple-white') {
+    config.value.theme.sidebarStyle = style
+    toggleSidebarStyle(style)
+  }
+
+  // 初始化侧边栏风格
+  toggleSidebarStyle(config.value.theme.sidebarStyle)
+
   return {
     config,
     updateThemeColor,
     toggleDarkTheme,
     toggleMourning,
     toggleColorWeak,
+    updateSidebarStyle,
   }
 })

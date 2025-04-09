@@ -37,6 +37,16 @@ const darkMode = ref(configStore.config.theme.darkMode)
 const mourningMode = ref(configStore.config.theme.mourningMode)
 const colorWeakMode = ref(configStore.config.theme.colorWeakMode)
 
+// 侧边栏风格变量
+const sidebarStyle = computed({
+  get: () => configStore.config.theme.sidebarStyle,
+  set: (val) => {
+    if (val) {
+      configStore.updateSidebarStyle(val)
+    }
+  },
+})
+
 // 监听暗色模式变化并更新
 watch(darkMode, (isDark) => {
   configStore.toggleDarkTheme(isDark)
@@ -84,6 +94,7 @@ const copyConfig = () => {
       darkMode: darkMode.value,
       mourningMode: mourningMode.value,
       colorWeakMode: colorWeakMode.value,
+      sidebarStyle: sidebarStyle.value,
     },
     layout: {
       layoutMode: layoutMode.value,
@@ -132,6 +143,13 @@ const copyConfig = () => {
         <div class="setting-item">
           <span class="setting-label">色弱模式</span>
           <el-switch v-model="colorWeakMode" />
+        </div>
+        <div class="setting-item">
+          <span class="setting-label">侧边栏风格</span>
+          <el-radio-group v-model="sidebarStyle" size="small">
+            <el-radio-button label="classic-blue">经典蓝</el-radio-button>
+            <el-radio-button label="simple-white">极简白</el-radio-button>
+          </el-radio-group>
         </div>
       </div>
 

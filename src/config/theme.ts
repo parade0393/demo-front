@@ -26,6 +26,12 @@ export const tagsViewStyles = [
   'compact', // 紧凑式（无边距）
 ] as const
 
+// 预设的侧边栏风格选项
+export const sidebarStyles = [
+  'classic-blue', // 经典蓝色
+  'simple-white', // 极简白色
+] as const
+
 // 默认配置
 export const defaultConfig = {
   theme: {
@@ -33,6 +39,7 @@ export const defaultConfig = {
     darkMode: false,
     mourningMode: false,
     colorWeakMode: false,
+    sidebarStyle: sidebarStyles[0], // 默认使用经典蓝色侧边栏
   },
   layout: {
     layoutMode: layoutModes[0], // 默认使用左侧菜单布局

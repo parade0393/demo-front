@@ -1,0 +1,71 @@
+// 侧边栏风格样式定义
+
+// 经典蓝风格（默认）
+html.sidebar-classic-blue {
+  .sidebar {
+    background-color: #304156;
+
+    .el-menu {
+      background-color: #304156;
+    }
+
+    .el-menu-item,
+    .el-sub-menu__title {
+      color: #bfcbd9;
+
+      &:hover {
+        background-color: #263445;
+      }
+    }
+  }
+}
+
+// 极简白风格
+html.sidebar-simple-white {
+  .sidebar {
+    background-color: #ffffff;
+
+    .el-menu {
+      background-color: #ffffff;
+    }
+
+    .el-menu-item,
+    .el-sub-menu__title {
+      color: #303133;
+
+      &:hover {
+        background-color: #f5f7fa;
+      }
+    }
+  }
+}
+
+// 暗黑模式下的侧边栏样式适配
+html.dark {
+  // 暗黑模式下的经典蓝风格（保持原样，因为已经是深色）
+  &.sidebar-classic-blue .sidebar {
+    background-color: #304156;
+
+    .el-menu {
+      background-color: #304156;
+    }
+  }
+
+  // 暗黑模式下的极简白风格（需要调整为深色）
+  &.sidebar-simple-white .sidebar {
+    background-color: #1d1e1f;
+
+    .el-menu {
+      background-color: #1d1e1f;
+    }
+
+    .el-menu-item,
+    .el-sub-menu__title {
+      color: #e5eaf3;
+
+      &:hover {
+        background-color: #262727;
+      }
+    }
+  }
+}
