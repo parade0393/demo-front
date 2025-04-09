@@ -90,6 +90,7 @@
     "AppConfig": true,
     "ThemeConfig": true,
     "useConfigStore": true,
-    "ElMessage": true
+    "ElMessage": true,
+    "useMenu": true
   }
 }

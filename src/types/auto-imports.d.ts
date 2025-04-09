@@ -72,6 +72,7 @@ declare global {
   const useCssVars: (typeof import('vue'))['useCssVars']
   const useId: (typeof import('vue'))['useId']
   const useLink: (typeof import('vue-router'))['useLink']
+  const useMenu: (typeof import('../hooks/useMenu'))['useMenu']
   const useModel: (typeof import('vue'))['useModel']
   const useRoute: (typeof import('vue-router'))['useRoute']
   const useRouter: (typeof import('vue-router'))['useRouter']
@@ -175,6 +176,7 @@ declare module 'vue' {
     readonly useCssVars: UnwrapRef<(typeof import('vue'))['useCssVars']>
     readonly useId: UnwrapRef<(typeof import('vue'))['useId']>
     readonly useLink: UnwrapRef<(typeof import('vue-router'))['useLink']>
+    readonly useMenu: UnwrapRef<(typeof import('../hooks/useMenu'))['useMenu']>
     readonly useModel: UnwrapRef<(typeof import('vue'))['useModel']>
     readonly useRoute: UnwrapRef<(typeof import('vue-router'))['useRoute']>
     readonly useRouter: UnwrapRef<(typeof import('vue-router'))['useRouter']>
