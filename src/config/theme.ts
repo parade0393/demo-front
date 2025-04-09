@@ -33,6 +33,29 @@ export const sidebarStyles = [
   'dark-purple', // 暗夜紫色
 ] as const
 
+// 侧边栏风格名称映射
+export const sidebarStyleNames = {
+  'classic-blue': '经典蓝',
+  'simple-white': '极简白',
+  'dark-purple': '暗夜紫',
+}
+
+// 布局模式名称映射
+export const layoutModeNames = {
+  'left-sidebar': '左侧菜单',
+  'right-sidebar': '右侧菜单',
+  'top-menu': '顶部菜单',
+  mixed: '混合布局',
+}
+
+// 标签页风格名称映射
+export const tagsViewStyleNames = {
+  card: '卡片式',
+  line: '线条式',
+  capsule: '胶囊式',
+  compact: '紧凑式',
+}
+
 // 默认配置
 export const defaultConfig = {
   theme: {

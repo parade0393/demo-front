@@ -1,7 +1,15 @@
 <script lang="ts" setup>
 import { ref, watch, computed } from 'vue'
 import { useConfigStore } from '@/stores/config'
-import { presetColors, layoutModes, tagsViewStyles } from '@/config/theme'
+import {
+  presetColors,
+  layoutModes,
+  tagsViewStyles,
+  sidebarStyles,
+  sidebarStyleNames,
+  layoutModeNames,
+  tagsViewStyleNames,
+} from '@/config/theme'
 import LayoutModeIcon from '@/layout/components/LayoutModeIcon/index.vue'
 
 const props = defineProps<{
@@ -147,9 +155,9 @@ const copyConfig = () => {
         <div class="setting-item">
           <span class="setting-label">侧边栏风格</span>
           <el-radio-group v-model="sidebarStyle" size="small">
-            <el-radio-button label="classic-blue">经典蓝</el-radio-button>
-            <el-radio-button label="simple-white">极简白</el-radio-button>
-            <el-radio-button label="dark-purple">暗夜紫</el-radio-button>
+            <el-radio-button v-for="style in sidebarStyles" :key="style" :label="style">
+              {{ sidebarStyleNames[style] }}
+            </el-radio-button>
           </el-radio-group>
         </div>
       </div>
@@ -172,17 +180,7 @@ const copyConfig = () => {
                 :primary-color="primaryColor"
               />
               <span class="layout-mode-label">
-                {{
-                  mode === 'left-sidebar'
-                    ? '左侧菜单'
-                    : mode === 'right-sidebar'
-                      ? '右侧菜单'
-                      : mode === 'top-menu'
-                        ? '顶部菜单'
-                        : mode === 'mixed'
-                          ? '混合布局'
-                          : mode
-                }}
+                {{ layoutModeNames[mode] }}
               </span>
             </div>
           </div>
@@ -190,7 +188,12 @@ const copyConfig = () => {
         <div class="setting-item">
           <span class="setting-label">标签页风格</span>
           <el-select v-model="tagsViewStyle" placeholder="请选择标签页风格">
-            <el-option v-for="style in tagsViewStyles" :key="style" :label="style" :value="style" />
+            <el-option
+              v-for="style in tagsViewStyles"
+              :key="style"
+              :label="tagsViewStyleNames[style]"
+              :value="style"
+            />
           </el-select>
         </div>
       </div>
