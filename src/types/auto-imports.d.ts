@@ -71,6 +71,7 @@ declare global {
   const useCssModule: (typeof import('vue'))['useCssModule']
   const useCssVars: (typeof import('vue'))['useCssVars']
   const useId: (typeof import('vue'))['useId']
+  const useLayoutStrategy: (typeof import('../hooks/useLayoutStrategy'))['useLayoutStrategy']
   const useLink: (typeof import('vue-router'))['useLink']
   const useMenu: (typeof import('../hooks/useMenu'))['useMenu']
   const useModel: (typeof import('vue'))['useModel']
@@ -175,6 +176,9 @@ declare module 'vue' {
     readonly useCssModule: UnwrapRef<(typeof import('vue'))['useCssModule']>
     readonly useCssVars: UnwrapRef<(typeof import('vue'))['useCssVars']>
     readonly useId: UnwrapRef<(typeof import('vue'))['useId']>
+    readonly useLayoutStrategy: UnwrapRef<
+      (typeof import('../hooks/useLayoutStrategy'))['useLayoutStrategy']
+    >
     readonly useLink: UnwrapRef<(typeof import('vue-router'))['useLink']>
     readonly useMenu: UnwrapRef<(typeof import('../hooks/useMenu'))['useMenu']>
     readonly useModel: UnwrapRef<(typeof import('vue'))['useModel']>

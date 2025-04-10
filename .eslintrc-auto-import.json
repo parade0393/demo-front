@@ -91,6 +91,7 @@
     "ThemeConfig": true,
     "useConfigStore": true,
     "ElMessage": true,
-    "useMenu": true
+    "useMenu": true,
+    "useLayoutStrategy": true
   }
 }

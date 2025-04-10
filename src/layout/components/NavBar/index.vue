@@ -75,8 +75,8 @@ const openSettings = () => {
           :menu-items="menuItems"
           :active-text-color="primaryColor"
           mode="horizontal"
-          background-color="transparent"
-          text-color="#303133"
+          :background-color="'var(--sidebar-menu-bg)'"
+          :text-color="'var(--sidebar-menu-text)'"
         />
       </div>
     </div>
@@ -134,6 +134,8 @@ const openSettings = () => {
   &.with-top-menu {
     height: 60px;
     padding: 0;
+    background-color: var(--sidebar-menu-bg);
+    color: var(--sidebar-menu-text);
 
     .navbar__left {
       display: flex;
@@ -149,10 +151,15 @@ const openSettings = () => {
       :deep(.el-menu) {
         border-bottom: none;
         height: 100%;
+        background-color: var(--sidebar-menu-bg) !important;
 
         .el-menu-item {
           height: 60px;
           line-height: 60px;
+
+          &:hover {
+            background-color: var(--sidebar-menu-hover-bg) !important;
+          }
         }
       }
     }
@@ -215,7 +222,7 @@ const openSettings = () => {
         height: 100%;
         padding: 0 15px;
         cursor: pointer;
-        color: var(--el-text-color-regular);
+        color: inherit;
         transition: all 0.3s;
 
         &:hover {
@@ -233,7 +240,7 @@ const openSettings = () => {
 
           .user-name {
             margin: 0 5px;
-            color: var(--el-text-color-regular);
+            color: inherit;
           }
         }
       }

@@ -37,7 +37,12 @@ const handleClick = (path: string) => {
 
 <template>
   <!-- 有子菜单的项 -->
-  <el-sub-menu v-if="hasVisibleChildren" :index="menuItem.path" :popper-append-to-body="true">
+  <el-sub-menu
+    v-if="hasVisibleChildren"
+    :index="menuItem.path"
+    :popper-append-to-body="true"
+    popper-class="custom-popper-menu"
+  >
     <template #title>
       <el-icon v-if="menuItem.icon">
         <component :is="menuItem.icon" />
