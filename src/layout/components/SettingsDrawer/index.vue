@@ -155,7 +155,7 @@ const copyConfig = () => {
         <div class="setting-item">
           <span class="setting-label">侧边栏风格</span>
           <el-radio-group v-model="sidebarStyle" size="small">
-            <el-radio-button v-for="style in sidebarStyles" :key="style" :label="style">
+            <el-radio-button v-for="style in sidebarStyles" :key="style" :value="style">
               {{ sidebarStyleNames[style] }}
             </el-radio-button>
           </el-radio-group>
