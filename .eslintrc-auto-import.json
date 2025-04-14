@@ -92,6 +92,7 @@
     "useConfigStore": true,
     "ElMessage": true,
     "useMenu": true,
-    "useLayoutStrategy": true
+    "useLayoutStrategy": true,
+    "useUserStore": true
   }
 }

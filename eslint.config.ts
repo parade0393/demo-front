@@ -24,7 +24,7 @@ export default defineConfigWithVueTs(
       'vue/multi-word-component-names': [
         'error',
         {
-          ignores: ['index'], // 允许 index.vue 但强制其他 Vue 组件使用多单词名称
+          ignores: ['index', '404'], // 允许 index.vue 但强制其他 Vue 组件使用多单词名称
         },
       ],
     },
