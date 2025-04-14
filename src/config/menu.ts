@@ -58,4 +58,9 @@ export const menuItems = ref<MenuItem[]>([
       },
     ],
   },
+  {
+    path: '/api-demo',
+    name: '测试',
+    icon: 'Test',
+  },
 ])

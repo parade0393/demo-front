@@ -12,6 +12,7 @@ import type { ApiResponse } from '@/utils/request'
 export interface LoginParams {
   username: string
   password: string
+  [key: string]: unknown
 }
 
 /**
@@ -28,6 +29,7 @@ export interface LoginResult {
 export interface PaginationParams {
   page: number
   pageSize: number
+  [key: string]: unknown
 }
 
 /**
@@ -108,9 +110,13 @@ export const articleApi = {
    * @returns 完整的响应结构
    */
   getArticleWithFullResponse(id: number) {
-    return request.get<Article, ApiResponse<Article>>(`/api/articles/${id}`, null, {
-      returnData: false, // 设置为false，返回完整响应结构
-    })
+    return request.get<Article, ApiResponse<Article>>(
+      `/api/articles/${id}`,
+      {},
+      {
+        returnData: false, // 设置为false，返回完整响应结构
+      },
+    )
   },
 }
 

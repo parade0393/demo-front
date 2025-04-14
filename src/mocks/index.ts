@@ -158,6 +158,9 @@ export function setupMSW() {
     worker
       .start({
         onUnhandledRequest: 'bypass', // 对未处理的请求直接放行
+        serviceWorker: {
+          url: `${import.meta.env.BASE_URL}mockServiceWorker.js`,
+        },
       })
       .catch(console.error)
 
