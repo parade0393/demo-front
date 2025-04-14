@@ -24,7 +24,6 @@ const router = createRouter({
         {
           path: '/system',
           name: 'System',
-          component: () => import('@/views/system/index.vue'),
           meta: { title: '系统管理' },
           redirect: '/system/user',
           children: [
@@ -40,12 +39,23 @@ const router = createRouter({
               component: () => import('@/views/system/role/index.vue'),
               meta: { title: '角色管理' },
             },
+            {
+              path: '/system/menu',
+              name: 'Menu',
+              component: () => import('@/views/system/menu/index.vue'),
+              meta: { title: '菜单管理' },
+            },
+            {
+              path: '/system/dept',
+              name: 'Dept',
+              component: () => import('@/views/system/dept/index.vue'),
+              meta: { title: '部门管理' },
+            },
           ],
         },
         {
           path: '/content',
           name: 'Content',
-          component: () => import('@/views/content/index.vue'),
           meta: { title: '内容管理' },
           redirect: '/content/article',
           children: [

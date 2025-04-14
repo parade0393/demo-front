@@ -39,6 +39,16 @@ export const menuItems = ref<MenuItem[]>([
         name: '角色管理',
         icon: 'UserFilled',
       },
+      {
+        path: '/system/menu',
+        name: '菜单管理',
+        icon: 'Menu',
+      },
+      {
+        path: '/system/dept',
+        name: '部门管理',
+        icon: 'OfficeBuilding',
+      },
     ],
   },
   {
