@@ -8,6 +8,10 @@ import 'element-plus/dist/index.css'
 // 如果您正在使用CDN引入，请删除下面一行。
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
+// 导入并启动MSW（仅在开发环境）
+import { setupMSW } from './mocks'
+setupMSW()
+
 import App from './App.vue'
 import router from './router'
 

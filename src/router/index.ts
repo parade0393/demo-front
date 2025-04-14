@@ -58,6 +58,12 @@ const router = createRouter({
             },
           ],
         },
+        {
+          path: '/api-demo',
+          name: 'ApiDemo',
+          component: () => import('@/views/ApiDemo.vue'),
+          meta: { title: 'API演示' },
+        },
       ],
     },
   ],
