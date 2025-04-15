@@ -19,26 +19,28 @@ const emit = defineEmits<{
   (e: 'menu-click', path: string): void
 }>()
 
-// 判断是否有子菜单且应该显示
-const hasVisibleChildren = computed(() => {
+// 获取可见的子节点
+const visibleChildren = computed(() => {
   if (!props.menuItem.children || props.menuItem.children.length === 0) {
+    return []
+  }
+  return props.menuItem.children.filter((child) => !child.meta?.hidden)
+})
+
+// 判断是否应该显示子菜单
+const shouldShowSubMenu = computed(() => {
+  // 如果没有子节点，不显示子菜单
+  if (visibleChildren.value.length === 0) {
     return false
   }
 
-  // 获取可见的子菜单项
-  const visibleChildren = props.menuItem.children.filter((child) => !child.meta?.hidden)
-
-  // 如果只有一个可见的子菜单项，且父级路由没有设置 alwaysShow，则不显示父级菜单
-  if (visibleChildren.length === 1 && !props.menuItem.meta?.alwaysShow) {
-    return false
-  }
-
-  // 如果是根路由（path 为 '/'），总是显示子菜单
-  if (props.menuItem.path === '/') {
+  // 如果有多个子节点，显示子菜单
+  if (visibleChildren.value.length > 1) {
     return true
   }
 
-  return props.showSubMenu && visibleChildren.length > 0
+  // 如果只有一个子节点，根据 alwaysShow 决定是否显示子菜单
+  return props.menuItem.meta?.alwaysShow === true
 })
 
 // 处理菜单点击
@@ -48,9 +50,9 @@ const handleClick = (path: string) => {
 </script>
 
 <template>
-  <!-- 有子菜单的项 -->
+  <!-- 有子节点且需要显示子菜单的情况 -->
   <el-sub-menu
-    v-if="hasVisibleChildren"
+    v-if="shouldShowSubMenu"
     :index="menuItem.path"
     :popper-append-to-body="true"
     popper-class="custom-popper-menu"
@@ -63,31 +65,27 @@ const handleClick = (path: string) => {
     </template>
 
     <!-- 递归渲染子菜单项 -->
-    <template v-for="child in menuItem.children" :key="child.path">
-      <!-- 递归调用自身，处理多级菜单 -->
+    <template v-for="child in visibleChildren" :key="child.path">
       <recursive-menu-item
-        v-if="child.children && child.children.length > 0 && !child.meta?.hidden"
         :menu-item="child"
         :base-path="menuItem.path"
         :show-sub-menu="showSubMenu"
         @menu-click="handleClick"
       />
-
-      <!-- 渲染叶子节点 -->
-      <el-menu-item
-        v-else-if="!child.meta?.hidden"
-        :index="menuItem.path + '/' + child.path"
-        @click="handleClick(menuItem.path + '/' + child.path)"
-      >
-        <el-icon v-if="child.meta?.icon">
-          <component :is="child.meta.icon" />
-        </el-icon>
-        <span>{{ child.meta?.title }}</span>
-      </el-menu-item>
     </template>
   </el-sub-menu>
 
-  <!-- 没有子菜单的项 -->
+  <!-- 只有一个子节点且不需要显示子菜单的情况 -->
+  <template v-else-if="visibleChildren.length === 1">
+    <recursive-menu-item
+      :menu-item="visibleChildren[0]"
+      :base-path="menuItem.path"
+      :show-sub-menu="showSubMenu"
+      @menu-click="handleClick"
+    />
+  </template>
+
+  <!-- 叶子节点的情况 -->
   <el-menu-item
     v-else-if="!menuItem.meta?.hidden"
     :index="menuItem.path"

@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLayoutStrategy } from '@/hooks/useLayoutStrategy'
 import RecursiveMenuItem from './components/RecursiveMenuItem.vue'
+import type { RouteRecordRaw } from 'vue-router'
 
 interface Props {
   /** 菜单项数组 */
