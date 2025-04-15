@@ -93,6 +93,9 @@
     "ElMessage": true,
     "useMenu": true,
     "useLayoutStrategy": true,
-    "useUserStore": true
+    "useUserStore": true,
+    "Layout": true,
+    "constantRoutes": true,
+    "usePermissionStore": true
   }
 }

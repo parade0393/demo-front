@@ -4,9 +4,39 @@
  */
 import { http, HttpResponse, delay } from 'msw'
 import { setupWorker } from 'msw/browser'
+import type { RequestHandler } from 'msw'
 
 // 导入API响应类型
 import type { ApiResponse } from '@/utils/request'
+
+// 定义模块类型
+type ModuleType = {
+  default?: unknown
+  [key: string]: unknown
+}
+
+// 检查是否为 RequestHandler 数组
+const isRequestHandlerArray = (value: unknown): value is RequestHandler[] => {
+  return Array.isArray(value) && value.every((item) => 'info' in item && 'test' in item)
+}
+
+// 使用 Glob 导入所有模块的 handlers
+const modules = import.meta.glob<ModuleType>('./modules/*.ts', { eager: true })
+const moduleHandlers = Object.values(modules)
+  .map((module) => {
+    // 收集所有可能是 handlers 数组的导出
+    const possibleHandlers = Object.values(module).filter(isRequestHandlerArray)
+
+    // 如果有找到 handlers 数组，使用第一个
+    if (possibleHandlers.length > 0) {
+      return possibleHandlers[0]
+    }
+
+    // 如果没有找到，尝试使用默认导出
+    return isRequestHandlerArray(module.default) ? module.default : []
+  })
+  .filter(Boolean)
+  .flat() as RequestHandler[]
 
 /**
  * 创建标准响应格式
@@ -42,9 +72,10 @@ export interface Article {
   author: string
   createTime: string
 }
-
+console.log(moduleHandlers)
 // Mock处理程序
 const handlers = [
+  ...moduleHandlers,
   // 用户登录
   http.post('/api/login', async ({ request }) => {
     // 模拟网络延迟
@@ -146,6 +177,7 @@ const handlers = [
   }),
 ]
 
+console.log(handlers)
 // 创建MSW worker
 export const worker = setupWorker(...handlers)
 

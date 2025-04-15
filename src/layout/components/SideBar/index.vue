@@ -2,9 +2,11 @@
 import { inject, ref, computed } from 'vue'
 import Logo from '../Logo/index.vue'
 import AppMenu from '@/components/AppMenu/index.vue'
-import { menuItems } from '@/config/menu'
 import { useMenu } from '@/hooks/useMenu'
+import { usePermissionStore } from '@/stores/permission'
+import { storeToRefs } from 'pinia'
 
+const { routes } = storeToRefs(usePermissionStore())
 // 注入侧边栏折叠状态
 const isCollapse = inject('isCollapse', ref(false))
 
@@ -20,7 +22,7 @@ const textColor = computed(() => 'var(--sidebar-menu-text)')
   <div class="sidebar">
     <Logo :collapse="isCollapse" />
     <AppMenu
-      :menu-items="menuItems"
+      :menu-items="routes"
       :active-text-color="primaryColor"
       :collapse="isCollapse"
       :background-color="backgroundColor"

@@ -1,9 +1,19 @@
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
+import type { LocationQuery, RouteLocationRaw } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import type { FormInstance, FormRules } from 'element-plus'
+import { userApi } from '@/api'
+import { usePermissionStore } from '@/stores/permission'
+import type { LoginParams } from '@/api/modules/user'
+
+// 获取路由实例
+const router = useRouter()
+const route = useRoute()
+const permissionStore = usePermissionStore()
 
 // 登录表单
-const loginForm = reactive({
+const loginForm = reactive<LoginParams>({
   username: '',
   password: '',
 })
@@ -35,12 +45,51 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
 
   await formEl.validate(async (valid) => {
     if (valid) {
-      //调用登录接口
-      //获取用户信息
-      //获取用户菜单
-      //跳转到首页
+      loading.value = true
+      try {
+        // 调用登录接口
+        const loginRes = await userApi.login(loginForm)
+        // 保存Token
+        permissionStore.setToken(loginRes.token)
+
+        // 获取用户信息
+        const userInfoRes = await userApi.getUserInfo()
+        permissionStore.setUserInfo(userInfoRes)
+
+        //下面这行代码优化一下,需要考虑异常路由的情况
+        const redirectPath = handleRedirect(route.query)
+        router.push(redirectPath)
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error('登录失败:', error.message)
+        } else {
+          console.error('登录失败:', error)
+        }
+      } finally {
+        loading.value = false
+      }
     }
   })
+}
+
+function handleRedirect(query: LocationQuery): RouteLocationRaw {
+  // 默认跳转路径
+  const defaultPath = '/'
+
+  // 获取原始重定向路径
+  const rawRedirect = (query.redirect as string) || defaultPath
+
+  try {
+    // 6. 使用Vue Router解析路径
+    const resolved = router.resolve(rawRedirect)
+    return {
+      path: resolved.path,
+      query: resolved.query,
+    }
+  } catch {
+    // 7. 异常处理：返回安全路径
+    return { path: defaultPath }
+  }
 }
 
 // 提供测试账号信息

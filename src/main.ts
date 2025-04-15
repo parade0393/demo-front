@@ -14,6 +14,8 @@ setupMSW()
 
 import App from './App.vue'
 import router from './router'
+// 导入路由守卫
+import './router/permission'
 
 const app = createApp(App)
 

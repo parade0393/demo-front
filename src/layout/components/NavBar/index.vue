@@ -4,10 +4,12 @@ import BreadCrumb from './components/BreadCrumb.vue'
 import SettingsDrawer from '../SettingsDrawer/index.vue'
 import Logo from '../Logo/index.vue'
 import AppMenu from '@/components/AppMenu/index.vue'
-import { menuItems } from '@/config/menu'
 import { useMenu } from '@/hooks/useMenu'
-const emit = defineEmits(['toggle-side-bar'])
+import { usePermissionStore } from '@/stores/permission'
+import { storeToRefs } from 'pinia'
 
+const emit = defineEmits(['toggle-side-bar'])
+const { routes } = storeToRefs(usePermissionStore())
 // 注入侧边栏折叠状态
 const isCollapse = inject('isCollapse')
 const toggleSideBar = () => {
@@ -72,7 +74,7 @@ const openSettings = () => {
       <!-- 顶部菜单 -->
       <div v-if="showTopMenu" class="top-menu-container">
         <AppMenu
-          :menu-items="menuItems"
+          :menu-items="routes"
           :active-text-color="primaryColor"
           mode="horizontal"
           :background-color="'var(--sidebar-menu-bg)'"

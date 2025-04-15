@@ -51,6 +51,10 @@ const getSystemVersion = (): string => {
   return import.meta.env.VITE_APP_VERSION || '1.0.0'
 }
 
+const getUserToken = (): string => {
+  return localStorage.getItem('token') || ''
+}
+
 /**
  * 请求类
  */
@@ -69,6 +73,7 @@ class Request {
 
         // 添加系统版本号到header
         config.headers['X-System-Version'] = getSystemVersion()
+        config.headers['Authorization'] = getUserToken()
 
         // 添加自定义headers
         if (requestOptions.customHeaders) {

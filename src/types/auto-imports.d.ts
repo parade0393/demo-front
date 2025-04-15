@@ -8,8 +8,10 @@ export {}
 declare global {
   const EffectScope: (typeof import('vue'))['EffectScope']
   const ElMessage: (typeof import('element-plus/es'))['ElMessage']
+  const Layout: (typeof import('../stores/permission'))['Layout']
   const acceptHMRUpdate: (typeof import('pinia'))['acceptHMRUpdate']
   const computed: (typeof import('vue'))['computed']
+  const constantRoutes: (typeof import('../stores/permission'))['constantRoutes']
   const createApp: (typeof import('vue'))['createApp']
   const createPinia: (typeof import('pinia'))['createPinia']
   const customRef: (typeof import('vue'))['customRef']
@@ -75,6 +77,7 @@ declare global {
   const useLink: (typeof import('vue-router'))['useLink']
   const useMenu: (typeof import('../hooks/useMenu'))['useMenu']
   const useModel: (typeof import('vue'))['useModel']
+  const usePermissionStore: (typeof import('../stores/permission'))['usePermissionStore']
   const useRoute: (typeof import('vue-router'))['useRoute']
   const useRouter: (typeof import('vue-router'))['useRouter']
   const useSlots: (typeof import('vue'))['useSlots']
@@ -114,8 +117,10 @@ declare module 'vue' {
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<(typeof import('vue'))['EffectScope']>
     readonly ElMessage: UnwrapRef<(typeof import('element-plus/es'))['ElMessage']>
+    readonly Layout: UnwrapRef<(typeof import('../stores/permission'))['Layout']>
     readonly acceptHMRUpdate: UnwrapRef<(typeof import('pinia'))['acceptHMRUpdate']>
     readonly computed: UnwrapRef<(typeof import('vue'))['computed']>
+    readonly constantRoutes: UnwrapRef<(typeof import('../stores/permission'))['constantRoutes']>
     readonly createApp: UnwrapRef<(typeof import('vue'))['createApp']>
     readonly createPinia: UnwrapRef<(typeof import('pinia'))['createPinia']>
     readonly customRef: UnwrapRef<(typeof import('vue'))['customRef']>
@@ -183,11 +188,13 @@ declare module 'vue' {
     readonly useLink: UnwrapRef<(typeof import('vue-router'))['useLink']>
     readonly useMenu: UnwrapRef<(typeof import('../hooks/useMenu'))['useMenu']>
     readonly useModel: UnwrapRef<(typeof import('vue'))['useModel']>
+    readonly usePermissionStore: UnwrapRef<
+      (typeof import('../stores/permission'))['usePermissionStore']
+    >
     readonly useRoute: UnwrapRef<(typeof import('vue-router'))['useRoute']>
     readonly useRouter: UnwrapRef<(typeof import('vue-router'))['useRouter']>
     readonly useSlots: UnwrapRef<(typeof import('vue'))['useSlots']>
     readonly useTemplateRef: UnwrapRef<(typeof import('vue'))['useTemplateRef']>
-    readonly useUserStore: UnwrapRef<(typeof import('../stores/user'))['useUserStore']>
     readonly watch: UnwrapRef<(typeof import('vue'))['watch']>
     readonly watchEffect: UnwrapRef<(typeof import('vue'))['watchEffect']>
     readonly watchPostEffect: UnwrapRef<(typeof import('vue'))['watchPostEffect']>
