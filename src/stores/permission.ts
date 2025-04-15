@@ -7,25 +7,9 @@ import { ref, computed } from 'vue'
 import { type RouteRecordRaw } from 'vue-router'
 import router from '@/router'
 import type { ServerMenuItem, UserInfo } from '@/api/modules/user'
-
+import { constantRoutes } from '@/router'
 // 布局组件
 export const Layout = () => import('@/layout/index.vue')
-
-// 静态路由（不需要权限的路由）
-export const constantRoutes: RouteRecordRaw[] = [
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import('@/views/login/index.vue'),
-    meta: { hidden: true },
-  },
-  {
-    path: '/404',
-    name: '404',
-    component: () => import('@/views/error/404.vue'),
-    meta: { hidden: true },
-  },
-]
 
 // 使用 import.meta.glob 动态导入所有视图组件
 const modules = import.meta.glob('../views/**/*.vue')
