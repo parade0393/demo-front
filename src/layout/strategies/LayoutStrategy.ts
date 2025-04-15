@@ -2,7 +2,7 @@
  * 布局策略接口
  * 定义了不同布局模式需要实现的方法
  */
-import type { MenuItem } from '@/config/menu'
+import type { RouteRecordRaw } from 'vue-router'
 
 export interface LayoutStrategy {
   /**
@@ -10,7 +10,7 @@ export interface LayoutStrategy {
    * @param menuItems 所有菜单项
    * @returns 顶部菜单项
    */
-  getTopMenuItems(menuItems: MenuItem[]): MenuItem[]
+  getTopMenuItems(menuItems: RouteRecordRaw[]): RouteRecordRaw[]
 
   /**
    * 获取侧边菜单项
@@ -18,7 +18,7 @@ export interface LayoutStrategy {
    * @param activeTopMenu 当前激活的顶级菜单路径
    * @returns 侧边菜单项
    */
-  getSideMenuItems(menuItems: MenuItem[], activeTopMenu: string): MenuItem[]
+  getSideMenuItems(menuItems: RouteRecordRaw[], activeTopMenu: string): RouteRecordRaw[]
 
   /**
    * 是否显示顶部菜单

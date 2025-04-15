@@ -1,21 +1,20 @@
 /**
  * 混合布局策略（顶部+侧边）
  */
-import type { MenuItem } from '@/config/menu'
 import type { LayoutStrategy } from './LayoutStrategy'
-
+import type { RouteRecordRaw } from 'vue-router'
 export class MixedStrategy implements LayoutStrategy {
   /**
    * 获取顶部菜单项 - 混合模式只在顶部显示一级菜单
    */
-  getTopMenuItems(menuItems: MenuItem[]): MenuItem[] {
+  getTopMenuItems(menuItems: RouteRecordRaw[]): RouteRecordRaw[] {
     return menuItems
   }
 
   /**
    * 获取侧边菜单项 - 混合模式在侧边显示当前激活顶级菜单的子菜单
    */
-  getSideMenuItems(menuItems: MenuItem[], activeTopMenu: string): MenuItem[] {
+  getSideMenuItems(menuItems: RouteRecordRaw[], activeTopMenu: string): RouteRecordRaw[] {
     // 查找当前激活的顶级菜单
     const activeMenu = menuItems.find((item) => item.path === activeTopMenu)
 

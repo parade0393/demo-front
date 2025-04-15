@@ -1,13 +1,12 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import type { MenuItem } from '@/config/menu'
 import { useRouter } from 'vue-router'
 import { useLayoutStrategy } from '@/hooks/useLayoutStrategy'
 import RecursiveMenuItem from './components/RecursiveMenuItem.vue'
 
 interface Props {
   /** 菜单项数组 */
-  menuItems: MenuItem[]
+  menuItems: RouteRecordRaw[]
   /** 菜单模式，水平或垂直 */
   mode?: 'horizontal' | 'vertical'
   /** 是否折叠菜单 */

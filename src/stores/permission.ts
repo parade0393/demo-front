@@ -28,7 +28,7 @@ export const constantRoutes: RouteRecordRaw[] = [
 ]
 
 // 使用 import.meta.glob 动态导入所有视图组件
-const modules = import.meta.glob('@/views/**/*.vue')
+const modules = import.meta.glob('../views/**/*.vue')
 
 /**
  * 将后端返回的菜单数据转换为路由配置
@@ -38,25 +38,43 @@ function generateRoutes(menus: ServerMenuItem[]): RouteRecordRaw[] {
   const result: RouteRecordRaw[] = []
 
   for (const menu of menus) {
-    const route = { ...menu } as RouteRecordRaw
+    const route: Partial<RouteRecordRaw> = {
+      path: menu.path,
+      name: menu.name,
+      meta: {
+        title: menu.meta.title,
+        icon: menu.meta.icon,
+        hidden: menu.meta.hidden,
+        keepAlive: menu.meta.keepAlive,
+        alwaysShow: menu.meta.alwaysShow,
+      },
+    }
+
+    // 如果有重定向，添加到路由配置中
+    if (menu.redirect) {
+      route.redirect = menu.redirect
+    }
 
     // 处理组件
-    if (route.component?.toString() === 'Layout') {
+    if (menu.component?.toString() === 'Layout') {
       route.component = Layout
-    } else {
-      // 动态导入组件，解析失败时使用 404 页面
-      const componentPath = `@/views/${menu.component}.vue`
-      route.component = modules[componentPath]
-        ? modules[componentPath]
-        : () => import('@/views/error/404.vue')
+    } else if (menu.component) {
+      // 检查组件是否存在
+      const modulePath = `../views/${menu.component}.vue`
+      if (modules[modulePath]) {
+        route.component = modules[modulePath]
+      } else {
+        console.warn(`Component not found: ${menu.component}`)
+        route.component = () => import('@/views/error/404.vue')
+      }
     }
 
     // 处理子路由
-    if (menu.children && menu.children.length > 0) {
+    if (menu.children?.length) {
       route.children = generateRoutes(menu.children)
     }
 
-    result.push(route)
+    result.push(route as RouteRecordRaw)
   }
 
   return result

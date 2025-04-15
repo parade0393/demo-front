@@ -1,13 +1,10 @@
 <script lang="ts" setup>
 import { ref, provide, computed } from 'vue'
-// import { useRouter } from 'vue-router'
 import AppMain from './components/AppMain/index.vue'
 import NavBar from './components/NavBar/index.vue'
 import SideBar from './components/SideBar/index.vue'
 import TagsView from './components/TagsView/index.vue'
 import { useConfigStore } from '@/stores/config'
-
-// const router = useRouter()
 
 // 获取配置信息
 const configStore = useConfigStore()

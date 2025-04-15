@@ -9,32 +9,6 @@ import type { ServerMenuItem } from '@/api/modules/user'
 // admin用户的菜单数据
 const adminMenus: ServerMenuItem[] = [
   {
-    path: '/',
-    component: 'Layout',
-    redirect: '/dashboard',
-    name: 'Root',
-    meta: {
-      title: '首页',
-      icon: 'home',
-      hidden: false,
-      alwaysShow: false,
-    },
-    children: [
-      {
-        path: '/dashboard',
-        component: 'dashboard/index',
-        name: 'Dashboard',
-        meta: {
-          title: '仪表盘',
-          icon: 'Odometer',
-          hidden: false,
-          keepAlive: true,
-          alwaysShow: false,
-        },
-      },
-    ],
-  },
-  {
     path: '/system',
     component: 'Layout',
     redirect: '/system/user',
@@ -164,32 +138,6 @@ const adminMenus: ServerMenuItem[] = [
 // test用户的菜单数据（只有部分权限）
 const testMenus: ServerMenuItem[] = [
   {
-    path: '/',
-    component: 'Layout',
-    redirect: '/dashboard',
-    name: 'Root',
-    meta: {
-      title: '首页',
-      icon: 'home',
-      hidden: false,
-      alwaysShow: false,
-    },
-    children: [
-      {
-        path: '/dashboard',
-        component: 'dashboard/index',
-        name: 'Dashboard',
-        meta: {
-          title: '仪表盘',
-          icon: 'Odometer',
-          hidden: false,
-          keepAlive: true,
-          alwaysShow: false,
-        },
-      },
-    ],
-  },
-  {
     path: '/content',
     component: 'Layout',
     redirect: '/content/article',
@@ -275,7 +223,6 @@ export const userHandlers = [
 
   // 获取用户菜单
   http.get('/api/user/menus', ({ request }) => {
-    console.log('Mock intercepted:', request.url) // 添加这行来确认请求被拦截
     const authHeader = request.headers.get('Authorization')
 
     if (authHeader?.includes('admin-token')) {

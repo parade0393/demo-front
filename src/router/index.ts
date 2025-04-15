@@ -8,6 +8,7 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: () => import('@/views/login/index.vue'),
+      meta: { title: '登录', hidden: true },
     },
     {
       path: '/',
@@ -19,7 +20,7 @@ const router = createRouter({
           path: 'dashboard',
           name: 'Dashboard',
           component: () => import('@/views/dashboard/index.vue'),
-          meta: { title: '仪表盘' },
+          meta: { title: '仪表盘', hidden: false },
         },
         {
           path: '404',

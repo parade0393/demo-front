@@ -41,7 +41,6 @@ router.beforeEach(async (to, from, next) => {
         try {
           // 获取用户菜单
           const menuRes = await userApi.getUserMenus()
-          console.log('111111')
           // 生成动态路由
           permissionStore.generateDynamicRoutes(menuRes)
 

@@ -7,8 +7,7 @@ import { useRoute } from 'vue-router'
 import { useConfigStore } from '@/stores/config'
 import { LayoutStrategyFactory } from '@/layout/strategies/LayoutStrategyFactory'
 import type { LayoutStrategy } from '@/layout/strategies/LayoutStrategy'
-import type { MenuItem } from '@/config/menu'
-
+import type { RouteRecordRaw } from 'vue-router'
 /**
  * 使用布局策略
  * @returns 布局策略相关的数据和方法
@@ -49,12 +48,12 @@ export function useLayoutStrategy() {
   })
 
   // 获取顶部菜单项
-  const getTopMenuItems = (menuItems: MenuItem[]) => {
+  const getTopMenuItems = (menuItems: RouteRecordRaw[]) => {
     return currentStrategy.value.getTopMenuItems(menuItems)
   }
 
   // 获取侧边菜单项
-  const getSideMenuItems = (menuItems: MenuItem[]) => {
+  const getSideMenuItems = (menuItems: RouteRecordRaw[]) => {
     return currentStrategy.value.getSideMenuItems(menuItems, activeTopMenu.value)
   }
 
