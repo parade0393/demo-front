@@ -77,12 +77,12 @@ const handleClick = (path: string) => {
 
   <!-- 只有一个子节点且不需要显示子菜单的情况 -->
   <template v-else-if="visibleChildren.length === 1">
-    <recursive-menu-item
-      :menu-item="visibleChildren[0]"
-      :base-path="menuItem.path"
-      :show-sub-menu="showSubMenu"
-      @menu-click="handleClick"
-    />
+    <el-menu-item :index="visibleChildren[0].path" @click="handleClick(visibleChildren[0].path)">
+      <el-icon v-if="visibleChildren[0].meta?.icon">
+        <component :is="visibleChildren[0].meta.icon" />
+      </el-icon>
+      <span>{{ visibleChildren[0].meta?.title }}</span>
+    </el-menu-item>
   </template>
 
   <!-- 叶子节点的情况 -->
