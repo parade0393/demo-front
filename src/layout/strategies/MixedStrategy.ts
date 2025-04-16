@@ -3,33 +3,65 @@
  */
 import type { LayoutStrategy } from './LayoutStrategy'
 import type { RouteRecordRaw } from 'vue-router'
+import { getVisibleChildren, shouldShowSubMenu, getFullPath } from '@/utils/menu'
+
+/**
+ * 处理菜单项，使其符合显示规则
+ */
+const processMenuItem = (menuItem: RouteRecordRaw): RouteRecordRaw[] => {
+  const visibleChildren = getVisibleChildren(menuItem)
+
+  // 如果没有子节点或只有一个子节点且不需要显示子菜单，则返回自身
+  if (
+    visibleChildren.length === 0 ||
+    (visibleChildren.length === 1 && !shouldShowSubMenu(menuItem))
+  ) {
+    // 如果只有一个子节点，使用子节点的信息
+    if (visibleChildren.length === 1) {
+      return [
+        {
+          ...visibleChildren[0],
+          path: getFullPath(visibleChildren[0].path, menuItem.path), // 保持父级路径
+        },
+      ]
+    }
+    return [menuItem]
+  }
+
+  // 如果有多个子节点或需要显示子菜单，则返回自身（不包含子节点）
+  const { children: _, ...rest } = menuItem
+  return [rest as RouteRecordRaw]
+}
+
 export class MixedStrategy implements LayoutStrategy {
   /**
    * 获取顶部菜单项 - 混合模式只在顶部显示一级菜单
    */
   getTopMenuItems(menuItems: RouteRecordRaw[]): RouteRecordRaw[] {
-    // 只返回一级菜单，保持原始类型
-    return menuItems.map((item) => {
-      const { children: _, ...rest } = item
-      return rest as RouteRecordRaw
-    })
+    // 处理每个菜单项，使其符合显示规则
+    return menuItems.flatMap(processMenuItem)
   }
 
   /**
    * 获取侧边菜单项 - 混合模式在侧边显示当前激活顶级菜单的子菜单
    */
   getSideMenuItems(menuItems: RouteRecordRaw[], activeTopMenu: string): RouteRecordRaw[] {
+    console.log('menuItems', menuItems, activeTopMenu)
     // 查找当前激活的顶级菜单
     const activeMenu = menuItems.find((item) => item.path === activeTopMenu)
+    console.log('activeMenu', activeMenu)
 
     if (!activeMenu) return []
 
+    // 获取可见的子节点
+    const visibleChildren = getVisibleChildren(activeMenu)
+
     // 如果有子菜单且子菜单不为空，返回子菜单数组；否则返回自身作为数组
-    if (activeMenu.children?.length) {
+    if (visibleChildren.length) {
       // 处理子菜单的路径，确保包含父级路径
-      return activeMenu.children.map((child) => ({
+      return visibleChildren.map((child) => ({
         ...child,
-        path: `${activeMenu.path}/${child.path}`.replace(/\/+/g, '/'),
+        path: getFullPath(child.path, activeMenu.path),
       }))
     }
     return [activeMenu]
