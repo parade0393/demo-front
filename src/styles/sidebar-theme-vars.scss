@@ -5,17 +5,18 @@
 :root {
   // 通用侧边栏变量（默认使用经典蓝风格的值）
   --sidebar-bg: #304156;
+  // 侧边栏Logo区域背景色
   --sidebar-logo-bg: #263445;
+  // 侧边栏菜单区域背景色，包括弹出菜单
   --sidebar-menu-bg: #304156;
+  // 侧边栏菜单文字颜色
   --sidebar-menu-text: #bfcbd9;
+  // 侧边栏菜单悬浮时背景色
   --sidebar-menu-hover-bg: #263445;
+  // 侧边栏主内容区域背景色
   --sidebar-main-bg: #f0f2f5;
+  // 侧边栏边框颜色
   --sidebar-border: transparent;
-
-  // 暗黑模式下的变量覆盖
-  &.dark {
-    // 暗黑模式下的通用变量保持不变（因为默认是深色的）
-  }
 
   // 各种主题风格的变量值
   // 经典蓝风格变量
