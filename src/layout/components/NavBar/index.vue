@@ -8,8 +8,17 @@ import { useMenu } from '@/hooks/useMenu'
 import { usePermissionStore } from '@/stores/permission'
 import { storeToRefs } from 'pinia'
 
-const emit = defineEmits(['toggle-side-bar'])
 const { routes } = storeToRefs(usePermissionStore())
+
+const titleColor = computed(() => {
+  //左侧边栏和右侧边栏文字时且侧边栏是是经典蓝是文字颜色使用#303233,其他情况使用--sidebar-menu-text
+  return layoutMode.value === 'left-sidebar' || layoutMode.value === 'right-sidebar'
+    ? '#303233'
+    : 'var(--sidebar-menu-text)'
+})
+
+const emit = defineEmits(['toggle-side-bar'])
+
 // 注入侧边栏折叠状态
 const isCollapse = inject('isCollapse')
 const toggleSideBar = () => {
@@ -234,7 +243,7 @@ const openSettings = () => {
 
       .avatar-container {
         cursor: pointer;
-        margin-left: 10px;
+        margin: 0 10px;
 
         .avatar-wrapper {
           display: flex;
@@ -242,7 +251,10 @@ const openSettings = () => {
 
           .user-name {
             margin: 0 5px;
-            color: inherit;
+            color: v-bind(titleColor);
+          }
+          .el-icon--right {
+            color: v-bind(titleColor);
           }
         }
       }

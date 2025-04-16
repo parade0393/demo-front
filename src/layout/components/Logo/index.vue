@@ -13,7 +13,7 @@ interface Props {
   inNavbar?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   collapse: false,
   showTitle: true,
   className: '',
@@ -23,21 +23,6 @@ const props = withDefaults(defineProps<Props>(), {
 // 使用配置store获取主题色和布局模式
 const configStore = useConfigStore()
 const primaryColor = computed(() => configStore.config.theme.primaryColor)
-const sidebarStyle = computed(() => configStore.config.theme.sidebarStyle)
-
-// 根据是否在导航栏中动态计算标题颜色
-const titleColor = computed(() => {
-  // 如果在导航栏中（顶部菜单模式），使用深色文本
-  if (props.inNavbar) {
-    return '#303133'
-  }
-  // 否则根据侧边栏风格决定文本颜色
-  if (sidebarStyle.value === 'simple-white') {
-    return '#303133'
-  }
-  // 经典蓝风格使用白色文本
-  return '#fff'
-})
 </script>
 
 <template>
@@ -92,7 +77,7 @@ const titleColor = computed(() => {
   .logo-title {
     display: inline-block;
     margin: 0;
-    color: v-bind(titleColor);
+    color: var(--sidebar-menu-text);
     font-weight: 600;
     line-height: 50px;
     font-size: 16px;
