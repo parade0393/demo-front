@@ -7,7 +7,12 @@ import AppMenu from '@/components/AppMenu/index.vue'
 import { useMenu } from '@/hooks/useMenu'
 import { usePermissionStore } from '@/stores/permission'
 import { storeToRefs } from 'pinia'
+import { userApi } from '@/api'
+import { ElMessageBox } from 'element-plus'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+const permissionStore = usePermissionStore()
 const { routes } = storeToRefs(usePermissionStore())
 
 const titleColor = computed(() => {
@@ -35,11 +40,30 @@ const userInfo = ref({
   avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
 })
 
-// 模拟下拉菜单选项
+// 处理下拉菜单选项
 const handleCommand = (command: string) => {
   if (command === 'logout') {
     // 退出登录逻辑
-    console.log('退出登录')
+    ElMessageBox.confirm('确定要退出登录吗?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    })
+      .then(async () => {
+        try {
+          // 调用退出登录API
+          await userApi.logout()
+          // 清除权限和Token
+          permissionStore.resetPermission()
+          // 跳转到登录页
+          router.push('/login')
+        } catch (error) {
+          console.error('退出登录失败', error)
+        }
+      })
+      .catch(() => {
+        // 取消退出
+      })
   } else if (command === 'profile') {
     // 个人信息逻辑
     console.log('个人信息')
