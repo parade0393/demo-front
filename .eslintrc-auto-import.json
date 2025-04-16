@@ -96,6 +96,8 @@
     "useUserStore": true,
     "Layout": true,
     "constantRoutes": true,
-    "usePermissionStore": true
+    "usePermissionStore": true,
+    "Slot": true,
+    "Slots": true
   }
 }
