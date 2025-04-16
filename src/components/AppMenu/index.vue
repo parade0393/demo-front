@@ -48,7 +48,9 @@ const activeMenu = computed(() => {
 
 // 菜单点击处理
 const handleMenuClick = (path: string) => {
-  router.push(path)
+  // 确保路径以 / 开头
+  const fullPath = path.startsWith('/') ? path : `/${path}`
+  router.push(fullPath)
 }
 
 // 获取当前模式下应该显示的菜单项

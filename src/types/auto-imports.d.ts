@@ -120,7 +120,6 @@ declare module 'vue' {
     readonly Layout: UnwrapRef<(typeof import('../stores/permission'))['Layout']>
     readonly acceptHMRUpdate: UnwrapRef<(typeof import('pinia'))['acceptHMRUpdate']>
     readonly computed: UnwrapRef<(typeof import('vue'))['computed']>
-    readonly constantRoutes: UnwrapRef<(typeof import('../stores/permission'))['constantRoutes']>
     readonly createApp: UnwrapRef<(typeof import('vue'))['createApp']>
     readonly createPinia: UnwrapRef<(typeof import('pinia'))['createPinia']>
     readonly customRef: UnwrapRef<(typeof import('vue'))['customRef']>

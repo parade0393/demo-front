@@ -19,6 +19,17 @@ const emit = defineEmits<{
   (e: 'menu-click', path: string): void
 }>()
 
+// 获取完整路径
+const getFullPath = (path: string) => {
+  // 如果路径以 / 开头，说明是绝对路径，直接返回,一级菜单的路径是以 / 开头的
+  if (path.startsWith('/')) {
+    return path
+  }
+  // 否则拼接基础路径，会把所有连续的斜杠替换成一个斜杠，例如：/system/ + /user → /system//user，经过 replace 后变成 /system/user。
+  console.log('getFullPath', path, props.basePath)
+  return `${props.basePath}/${path}`.replace(/\/+/g, '/')
+}
+
 // 获取可见的子节点
 const visibleChildren = computed(() => {
   if (!props.menuItem.children || props.menuItem.children.length === 0) {
@@ -45,7 +56,7 @@ const shouldShowSubMenu = computed(() => {
 
 // 处理菜单点击
 const handleClick = (path: string) => {
-  emit('menu-click', path)
+  emit('menu-click', getFullPath(path))
 }
 </script>
 
@@ -53,7 +64,7 @@ const handleClick = (path: string) => {
   <!-- 有子节点且需要显示子菜单的情况 -->
   <el-sub-menu
     v-if="shouldShowSubMenu"
-    :index="menuItem.path"
+    :index="getFullPath(menuItem.path)"
     :popper-append-to-body="true"
     popper-class="custom-popper-menu"
   >
@@ -68,7 +79,7 @@ const handleClick = (path: string) => {
     <template v-for="child in visibleChildren" :key="child.path">
       <recursive-menu-item
         :menu-item="child"
-        :base-path="menuItem.path"
+        :base-path="getFullPath(menuItem.path)"
         :show-sub-menu="showSubMenu"
         @menu-click="handleClick"
       />
@@ -77,7 +88,10 @@ const handleClick = (path: string) => {
 
   <!-- 只有一个子节点且不需要显示子菜单的情况 -->
   <template v-else-if="visibleChildren.length === 1">
-    <el-menu-item :index="visibleChildren[0].path" @click="handleClick(visibleChildren[0].path)">
+    <el-menu-item
+      :index="getFullPath(visibleChildren[0].path)"
+      @click="handleClick(visibleChildren[0].path)"
+    >
       <el-icon v-if="visibleChildren[0].meta?.icon">
         <component :is="visibleChildren[0].meta.icon" />
       </el-icon>
@@ -88,7 +102,7 @@ const handleClick = (path: string) => {
   <!-- 叶子节点的情况 -->
   <el-menu-item
     v-else-if="!menuItem.meta?.hidden"
-    :index="menuItem.path"
+    :index="getFullPath(menuItem.path)"
     @click="handleClick(menuItem.path)"
   >
     <el-icon v-if="menuItem.meta?.icon">
