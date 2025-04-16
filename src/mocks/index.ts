@@ -72,7 +72,6 @@ export interface Article {
   author: string
   createTime: string
 }
-console.log(moduleHandlers)
 // Mock处理程序
 const handlers = [
   ...moduleHandlers,
@@ -177,26 +176,32 @@ const handlers = [
   }),
 ]
 
-console.log(handlers)
 // 创建MSW worker
 export const worker = setupWorker(...handlers)
 
+// 添加一个存储MSW就绪状态的Promise
+export let mswReady: Promise<void>
+
 /**
  * 启动MSW
+ * @returns Promise 表示MSW是否已经准备就绪
  */
-export function setupMSW() {
-  // 仅在开发环境启用
-  if (import.meta.env.MODE === 'development') {
-    worker
-      .start({
+export async function setupMSW(): Promise<void> {
+  // 检查是否启用mock服务
+  const enableMock = import.meta.env.VITE_ENABLE_MOCK === 'true'
+
+  if (enableMock) {
+    try {
+      await worker.start({
         onUnhandledRequest: 'bypass', // 对未处理的请求直接放行
         serviceWorker: {
           url: `${import.meta.env.BASE_URL}mockServiceWorker.js`,
         },
       })
-      .catch(console.error)
-
-    console.log('[MSW] Mock Service Worker 已启动')
+      console.log('[MSW] Mock Service Worker 已启动')
+    } catch (error) {
+      console.error(error)
+    }
   }
 }
 
