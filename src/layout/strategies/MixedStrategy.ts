@@ -3,7 +3,10 @@
  */
 import type { LayoutStrategy } from './LayoutStrategy'
 import type { RouteRecordRaw } from 'vue-router'
-import { getVisibleChildren, shouldShowSubMenu, getFullPath } from '@/utils/menu'
+import { getVisibleChildren, shouldShowSubMenu, processMenuItemPath } from '@/utils/menu'
+
+// 存储原始菜单项的映射
+const originalMenuMap = new Map<string, RouteRecordRaw>()
 
 /**
  * 处理菜单项，使其符合显示规则
@@ -18,12 +21,10 @@ const processMenuItem = (menuItem: RouteRecordRaw): RouteRecordRaw[] => {
   ) {
     // 如果只有一个子节点，使用子节点的信息
     if (visibleChildren.length === 1) {
-      return [
-        {
-          ...visibleChildren[0],
-          path: getFullPath(visibleChildren[0].path, menuItem.path), // 保持父级路径
-        },
-      ]
+      const processedItem = processMenuItemPath(visibleChildren[0], menuItem.path)
+      // 保存原始菜单项的引用
+      originalMenuMap.set(visibleChildren[0].path, menuItem)
+      return [processedItem]
     }
     return [menuItem]
   }
@@ -38,6 +39,8 @@ export class MixedStrategy implements LayoutStrategy {
    * 获取顶部菜单项 - 混合模式只在顶部显示一级菜单
    */
   getTopMenuItems(menuItems: RouteRecordRaw[]): RouteRecordRaw[] {
+    // 清空映射
+    originalMenuMap.clear()
     // 处理每个菜单项，使其符合显示规则
     return menuItems.flatMap(processMenuItem)
   }
@@ -46,23 +49,29 @@ export class MixedStrategy implements LayoutStrategy {
    * 获取侧边菜单项 - 混合模式在侧边显示当前激活顶级菜单的子菜单
    */
   getSideMenuItems(menuItems: RouteRecordRaw[], activeTopMenu: string): RouteRecordRaw[] {
-    console.log('menuItems', menuItems, activeTopMenu)
-    // 查找当前激活的顶级菜单
-    const activeMenu = menuItems.find((item) => item.path === activeTopMenu)
-    console.log('activeMenu', activeMenu)
+    // 查找原始菜单项
+    const originalMenu = originalMenuMap.get(activeTopMenu)
+    console.log('originalMenu', originalMenu)
+    if (originalMenu) {
+      // 如果有子菜单且子菜单不为空，返回子菜单数组；否则返回自身作为数组
+      const visibleChildren = getVisibleChildren(originalMenu)
+      console.log('visibleChildren', visibleChildren)
+      if (visibleChildren.length) {
+        // 处理子菜单的路径，确保包含父级路径
+        return visibleChildren.map((child) => processMenuItemPath(child, originalMenu.path))
+      }
+      return [originalMenu]
+    }
 
+    // 如果没有找到原始菜单项，说明是普通的一级菜单
+    const activeMenu = menuItems.find((item) => item.path === activeTopMenu)
     if (!activeMenu) return []
 
     // 获取可见的子节点
     const visibleChildren = getVisibleChildren(activeMenu)
-
-    // 如果有子菜单且子菜单不为空，返回子菜单数组；否则返回自身作为数组
     if (visibleChildren.length) {
       // 处理子菜单的路径，确保包含父级路径
-      return visibleChildren.map((child) => ({
-        ...child,
-        path: getFullPath(child.path, activeMenu.path),
-      }))
+      return visibleChildren.map((child) => processMenuItemPath(child, activeMenu.path))
     }
     return [activeMenu]
   }

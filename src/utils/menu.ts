@@ -41,3 +41,19 @@ export const getFullPath = (path: string, basePath: string = ''): string => {
   // 否则拼接基础路径
   return `${basePath}/${path}`.replace(/\/+/g, '/')
 }
+
+/**
+ * 处理菜单项路径
+ * @param menuItem 菜单项
+ * @param basePath 基础路径
+ * @returns 处理后的菜单项
+ */
+export const processMenuItemPath = (
+  menuItem: RouteRecordRaw,
+  basePath: string = '',
+): RouteRecordRaw => {
+  // 计算完整路径
+  const fullPath = getFullPath(menuItem.path, basePath)
+  menuItem.path = fullPath
+  return menuItem
+}
