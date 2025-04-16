@@ -65,103 +65,106 @@ function generateRoutes(menus: ServerMenuItem[]): RouteRecordRaw[] {
 }
 
 // 权限管理Store
-export const usePermissionStore = defineStore('permission', () => {
-  // 用户信息
-  const userInfo = ref<UserInfo | null>(null)
-  // 用户Token
-  const token = ref<string>('')
-  // 动态路由
-  const dynamicRoutes = ref<RouteRecordRaw[]>([])
-  // 所有路由（静态+动态）
-  const routes = computed(() => [...constantRoutes, ...dynamicRoutes.value])
+export const usePermissionStore = defineStore(
+  'permission',
+  () => {
+    // 用户信息
+    const userInfo = ref<UserInfo | null>(null)
+    // 用户Token
+    const token = ref<string>('')
+    // 动态路由
+    const dynamicRoutes = ref<RouteRecordRaw[]>([])
+    // 所有路由（静态+动态）
+    const routes = computed(() => [...constantRoutes, ...dynamicRoutes.value])
 
-  // 路由是否加载完成
-  const isRoutesLoaded = ref(false)
+    // 路由是否加载完成
+    const isRoutesLoaded = ref(false)
 
-  /**
-   * 设置用户信息
-   * @param info 用户信息
-   */
-  function setUserInfo(info: UserInfo) {
-    userInfo.value = info
-  }
-
-  /**
-   * 设置用户Token
-   * @param userToken 用户Token
-   */
-  function setToken(userToken: string) {
-    token.value = userToken
-    // 保存到localStorage
-    localStorage.setItem('token', userToken)
-  }
-
-  /**
-   * 获取Token
-   */
-  function getToken(): string {
-    if (!token.value) {
-      // 从localStorage获取
-      const storedToken = localStorage.getItem('token')
-      if (storedToken) {
-        token.value = storedToken
-      }
+    /**
+     * 设置用户信息
+     * @param info 用户信息
+     */
+    function setUserInfo(info: UserInfo) {
+      userInfo.value = info
     }
-    return token.value
-  }
 
-  /**
-   * 生成动态路由
-   * @param menus 后端返回的菜单数据
-   */
-  function generateDynamicRoutes(menus: ServerMenuItem[]) {
-    // 生成路由配置
-    const routes = generateRoutes(menus)
-    dynamicRoutes.value = routes
+    /**
+     * 设置用户Token
+     * @param userToken 用户Token
+     */
+    function setToken(userToken: string) {
+      token.value = userToken
+    }
 
-    // 添加路由
-    routes.forEach((route) => {
-      router.addRoute(route)
-    })
-    isRoutesLoaded.value = true
-  }
+    /**
+     * 获取Token
+     */
+    function getToken(): string {
+      return token.value
+    }
 
-  /**
-   * 重置权限状态
-   */
-  function resetPermission() {
-    userInfo.value = null
-    token.value = ''
-    dynamicRoutes.value = []
-    // 清除localStorage中的token
-    localStorage.removeItem('token')
-    // 重置路由
-    resetRouter()
-  }
+    /**
+     * 生成动态路由
+     * @param menus 后端返回的菜单数据
+     */
+    function generateDynamicRoutes(menus: ServerMenuItem[]) {
+      // 生成路由配置
+      const routes = generateRoutes(menus)
+      dynamicRoutes.value = routes
 
-  /**
-   * 重置路由
-   */
-  function resetRouter() {
-    // 移除所有动态添加的路由
-    dynamicRoutes.value.forEach((route) => {
-      if (route.name) {
-        router.removeRoute(route.name)
-      }
-    })
-    isRoutesLoaded.value = false
-  }
+      // 添加路由
+      routes.forEach((route) => {
+        router.addRoute(route)
+      })
+      isRoutesLoaded.value = true
+    }
 
-  return {
-    userInfo,
-    token,
-    routes,
-    dynamicRoutes,
-    setUserInfo,
-    setToken,
-    getToken,
-    generateDynamicRoutes,
-    resetPermission,
-    isRoutesLoaded,
-  }
-})
+    /**
+     * 重置权限状态
+     */
+    function resetPermission() {
+      userInfo.value = null
+      token.value = ''
+      dynamicRoutes.value = []
+      // 重置路由
+      resetRouter()
+    }
+
+    /**
+     * 重置路由
+     */
+    function resetRouter() {
+      // 移除所有动态添加的路由
+      dynamicRoutes.value.forEach((route) => {
+        if (route.name) {
+          router.removeRoute(route.name)
+        }
+      })
+      isRoutesLoaded.value = false
+    }
+
+    return {
+      userInfo,
+      token,
+      routes,
+      dynamicRoutes,
+      setUserInfo,
+      setToken,
+      getToken,
+      generateDynamicRoutes,
+      resetPermission,
+      isRoutesLoaded,
+    }
+  },
+  {
+    // 持久化配置
+    persist: {
+      // 自定义存储的key名
+      key: 'user-permission',
+      // 只持久化token和userInfo，不持久化路由等信息
+      pick: ['token', 'userInfo'],
+      // 使用localStorage作为存储引擎
+      storage: localStorage,
+    },
+  },
+)

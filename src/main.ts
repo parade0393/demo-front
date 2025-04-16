@@ -2,6 +2,7 @@ import '@/styles/index.scss' // 引入全局样式
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import ElementPlus from 'element-plus'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'element-plus/dist/index.css'
@@ -28,8 +29,11 @@ async function bootstrap() {
   }
 
   const app = createApp(App)
+  const pinia = createPinia()
+  // 使用持久化插件
+  pinia.use(piniaPluginPersistedstate)
 
-  app.use(createPinia())
+  app.use(pinia)
   app.use(router)
   app.use(ElementPlus, {
     locale: zhCn,
