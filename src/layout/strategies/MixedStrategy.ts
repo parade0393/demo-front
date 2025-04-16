@@ -5,7 +5,7 @@ import type { LayoutStrategy } from './LayoutStrategy'
 import type { RouteRecordRaw } from 'vue-router'
 import { getVisibleChildren, shouldShowSubMenu, processMenuItemPath } from '@/utils/menu'
 
-// 存储原始菜单项的映射
+// 存储原始菜单项的映射，键为处理后的路径，值为父级菜单
 const originalMenuMap = new Map<string, RouteRecordRaw>()
 
 /**
@@ -22,8 +22,8 @@ const processMenuItem = (menuItem: RouteRecordRaw): RouteRecordRaw[] => {
     // 如果只有一个子节点，使用子节点的信息
     if (visibleChildren.length === 1) {
       const processedItem = processMenuItemPath(visibleChildren[0], menuItem.path)
-      // 保存原始菜单项的引用
-      originalMenuMap.set(visibleChildren[0].path, menuItem)
+      // 保存父级菜单的引用
+      originalMenuMap.set(processedItem.path, menuItem)
       return [processedItem]
     }
     return [menuItem]
@@ -50,17 +50,12 @@ export class MixedStrategy implements LayoutStrategy {
    */
   getSideMenuItems(menuItems: RouteRecordRaw[], activeTopMenu: string): RouteRecordRaw[] {
     // 查找原始菜单项
-    const originalMenu = originalMenuMap.get(activeTopMenu)
-    console.log('originalMenu', originalMenu)
-    if (originalMenu) {
-      // 如果有子菜单且子菜单不为空，返回子菜单数组；否则返回自身作为数组
-      const visibleChildren = getVisibleChildren(originalMenu)
-      console.log('visibleChildren', visibleChildren)
-      if (visibleChildren.length) {
-        // 处理子菜单的路径，确保包含父级路径
-        return visibleChildren.map((child) => processMenuItemPath(child, originalMenu.path))
-      }
-      return [originalMenu]
+    const parentMenu = originalMenuMap.get(activeTopMenu)
+    if (parentMenu) {
+      // 从父级菜单中获取可见的子菜单
+      const visibleChildren = getVisibleChildren(parentMenu)
+      // 处理子菜单的路径，确保包含父级路径
+      return visibleChildren.map((child) => processMenuItemPath(child, parentMenu.path))
     }
 
     // 如果没有找到原始菜单项，说明是普通的一级菜单
@@ -69,11 +64,8 @@ export class MixedStrategy implements LayoutStrategy {
 
     // 获取可见的子节点
     const visibleChildren = getVisibleChildren(activeMenu)
-    if (visibleChildren.length) {
-      // 处理子菜单的路径，确保包含父级路径
-      return visibleChildren.map((child) => processMenuItemPath(child, activeMenu.path))
-    }
-    return [activeMenu]
+    // 处理子菜单的路径，确保包含父级路径
+    return visibleChildren.map((child) => processMenuItemPath(child, activeMenu.path))
   }
 
   /**
