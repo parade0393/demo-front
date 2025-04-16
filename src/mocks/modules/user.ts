@@ -226,13 +226,10 @@ export const userHandlers = [
     const authHeader = request.headers.get('Authorization')
 
     if (authHeader?.includes('admin-token')) {
-      console.log('admin-token')
       return HttpResponse.json(createResponse(adminMenus))
     } else if (authHeader?.includes('test-token')) {
-      console.log('test-token')
       return HttpResponse.json(createResponse(testMenus))
     }
-    console.log('未授权')
     // 未授权
     return HttpResponse.json(createResponse(null, 401, '未授权'), { status: 401 })
   }),
