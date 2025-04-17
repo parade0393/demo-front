@@ -33,31 +33,33 @@
 | 单元测试 | JUnit 5 + Mockito    | 测试框架和模拟框架                    |
 | 代码简化 | Lombok               | 减少样板代码的工具库                  |
 | 数据校验 | Hibernate Validator  | 基于注解的数据验证框架                |
+| 限流工具 | Guava RateLimiter    | 接口限流实现                          |
+| 数据加密 | AES/RSA              | 敏感数据加密                          |
 
 ### 2.2 系统架构图
 
 ```
 +------------------+     +------------------+     +------------------+
-|                  |     |                  |     |                  |
-|  前端应用        |     |  网关/负载均衡   |     |  认证授权服务    |
-|  (Vue/React)     |<--->|  (Nginx/Gateway) |<--->|  (Spring Security)|
-|                  |     |                  |     |                  |
+|--|--|--|--|--|
+| 前端应用 |  | 网关/负载均衡 |  | 认证授权服务 |
+| (Vue/React) | <---> | (Nginx/Gateway) | <---> | (Spring Security) |
+|--|--|--|--|--|
 +------------------+     +------------------+     +--------+--------+
                                                           |
                                                           v
 +------------------+     +------------------+     +------------------+
-|                  |     |                  |     |                  |
-|  业务服务层      |<--->|  数据访问层      |<--->|  数据库          |
-|  (Spring Boot)   |     |  (MyBatis-Plus)  |     |  (MySQL)         |
-|                  |     |                  |     |                  |
+|--|--|--|--|--|
+| 业务服务层 | <---> | 数据访问层 | <---> | 数据库 |
+| (Spring Boot) |  | (MyBatis-Plus) |  | (MySQL) |
+|--|--|--|--|--|
 +------------------+     +------------------+     +------------------+
         |                                                 |
         v                                                 v
 +------------------+                             +------------------+
-|                  |                             |                  |
-|  缓存服务        |                             |  文件存储服务    |
-|  (Redis)         |                             |  (本地/云存储)   |
-|                  |                             |                  |
+|--|--|--|
+| 缓存服务 |  | 文件存储服务 |
+| (Redis) |  | (本地/云存储) |
+|--|--|--|
 +------------------+                             +------------------+
 ```
 
@@ -122,7 +124,7 @@
     {
       "code": 200,
       "message": "success",
-      "data": null
+      "data": true
     }
     ```
 
@@ -145,8 +147,9 @@
         "email": "admin@example.com",
         "phone": "13800138000",
         "status": 1,
-        "roleId": [1, 2],
-        "deptId": [1, 2],
+        "roleIds": [1, 2],
+        "deptIds": [1, 2],
+        "primaryDeptId": 1,
         "createTime": "2023-01-01 00:00:00"
       }
     }
@@ -240,35 +243,7 @@
       "code": 200,
       "message": "success",
       "data": {
-        "id": 1,
-        "username": "admin",
-        "nickname": "管理员",
-        "email": "admin@example.com",
-        "phone": "13800138000",
-        "status": 1,
-        "roles": [
-          {
-            "id": 1,
-            "name": "超级管理员"
-          },
-          {
-            "id": 2,
-            "name": "部门经理"
-          }
-        ],
-        "departments": [
-          {
-            "id": 1,
-            "name": "总公司",
-            "isPrimary": true
-          },
-          {
-            "id": 2,
-            "name": "研发部",
-            "isPrimary": false
-          }
-        ],
-        "createTime": "2023-01-01 00:00:00"
+        "id": 1
       }
     }
     ```
@@ -296,37 +271,7 @@
     {
       "code": 200,
       "message": "success",
-      "data": {
-        "id": 1,
-        "username": "admin",
-        "nickname": "管理员",
-        "email": "admin@example.com",
-        "phone": "13800138000",
-        "status": 1,
-        "roles": [
-          {
-            "id": 1,
-            "name": "超级管理员"
-          },
-          {
-            "id": 2,
-            "name": "部门经理"
-          }
-        ],
-        "departments": [
-          {
-            "id": 1,
-            "name": "总公司",
-            "isPrimary": true
-          },
-          {
-            "id": 2,
-            "name": "研发部",
-            "isPrimary": false
-          }
-        ],
-        "createTime": "2023-01-01 00:00:00"
-      }
+      "data": true
     }
     ```
 
@@ -342,7 +287,7 @@
     {
       "code": 200,
       "message": "success",
-      "data": null
+      "data": true
     }
     ```
 
@@ -363,7 +308,7 @@
     {
       "code": 200,
       "message": "success",
-      "data": null
+      "data": true
     }
     ```
 
@@ -430,12 +375,7 @@
       "code": 200,
       "message": "success",
       "data": {
-        "id": 1,
-        "name": "总公司",
-        "parentId": 0,
-        "sort": 1,
-        "status": 1,
-        "createTime": "2023-01-01 00:00:00"
+        "id": 1
       }
     }
     ```
@@ -460,14 +400,7 @@
     {
       "code": 200,
       "message": "success",
-      "data": {
-        "id": 1,
-        "name": "总公司",
-        "parentId": 0,
-        "sort": 1,
-        "status": 1,
-        "createTime": "2023-01-01 00:00:00"
-      }
+      "data": true
     }
     ```
 
@@ -483,7 +416,7 @@
     {
       "code": 200,
       "message": "success",
-      "data": null
+      "data": true
     }
     ```
 
@@ -553,12 +486,7 @@
       "code": 200,
       "message": "success",
       "data": {
-        "id": 1,
-        "name": "超级管理员",
-        "code": "admin",
-        "status": 1,
-        "remark": "拥有所有权限",
-        "createTime": "2023-01-01 00:00:00"
+        "id": 1
       }
     }
     ```
@@ -589,14 +517,7 @@
     {
       "code": 200,
       "message": "success",
-      "data": {
-        "id": 1,
-        "name": "超级管理员",
-        "code": "admin",
-        "status": 1,
-        "remark": "拥有所有权限",
-        "createTime": "2023-01-01 00:00:00"
-      }
+      "data": true
     }
     ```
 
@@ -612,7 +533,7 @@
     {
       "code": 200,
       "message": "success",
-      "data": null
+      "data": true
     }
     ```
 
@@ -671,7 +592,7 @@
     {
       "code": 200,
       "message": "success",
-      "data": null
+      "data": true
     }
     ```
 
@@ -763,16 +684,7 @@
       "code": 200,
       "message": "success",
       "data": {
-        "id": 1,
-        "name": "Dashboard",
-        "path": "/dashboard",
-        "component": "dashboard/index",
-        "parentId": 0,
-        "icon": "Odometer",
-        "sort": 1,
-        "status": 1,
-        "type": 1,
-        "createTime": "2023-01-01 00:00:00"
+        "id": 1
       }
     }
     ```
@@ -801,18 +713,7 @@
     {
       "code": 200,
       "message": "success",
-      "data": {
-        "id": 1,
-        "name": "Dashboard",
-        "path": "/dashboard",
-        "component": "dashboard/index",
-        "parentId": 0,
-        "icon": "Odometer",
-        "sort": 1,
-        "status": 1,
-        "type": 1,
-        "createTime": "2023-01-01 00:00:00"
-      }
+      "data": true
     }
     ```
 
@@ -828,7 +729,7 @@
     {
       "code": 200,
       "message": "success",
-      "data": null
+      "data": true
     }
     ```
 
@@ -878,8 +779,7 @@
       ]
     }
     ```
-
-### 3.6 字典管理模块
+  ### 3.6 字典管理模块
 
 #### 3.6.1 字典类型列表
 
@@ -1235,6 +1135,56 @@
       "data": null
     }
     ```
+
+## 4. 接口设计规范
+
+### 4.1 统一响应格式
+
+所有接口统一使用以下响应格式：
+
+```json
+{
+  "code": 200, // 状态码：200成功，非200表示失败
+  "message": "success", // 响应消息
+  "data": {} // 响应数据
+}
+```
+
+#### 4.1.1 响应数据规范
+
+- **创建操作**：返回新创建对象的ID
+
+  ```json
+  { "data": { "id": 1 } }
+  ```
+
+- **更新操作**：返回布尔值表示成功或失败
+
+  ```json
+  { "data": true }
+  ```
+
+- **删除操作**：返回布尔值表示成功或失败
+
+  ```json
+  { "data": true }
+  ```
+
+- **查询操作**：返回查询结果对象或列表
+
+### 4.2 接口命名规范
+
+- **RESTful风格**：使用资源名词复数形式
+- **URL路径**：使用kebab-case命名法（小写字母，单词间用连字符分隔）
+- **请求方法**：
+  - GET：查询操作
+  - POST：创建和更新操作
+  - DELETE：删除操作（或使用POST /xxx/delete/{id}）
+
+### 4.3 接口参数规范
+
+- **查询参数**：使用URL查询参数（Query Parameters）
+- **创建/更新参数**：使用JSON格式请求体（Request Body）
 
 ## 4. 数据模型设计
 
