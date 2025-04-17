@@ -80,14 +80,14 @@ function handleRedirect(query: LocationQuery): RouteLocationRaw {
   const rawRedirect = (query.redirect as string) || defaultPath
 
   try {
-    // 6. 使用Vue Router解析路径
+    // 使用Vue Router解析路径
     const resolved = router.resolve(rawRedirect)
     return {
       path: resolved.path,
       query: resolved.query,
     }
   } catch {
-    // 7. 异常处理：返回安全路径
+    // 异常处理：返回安全路径
     return { path: defaultPath }
   }
 }
