@@ -1008,7 +1008,7 @@
     {
       "code": 200,
       "message": "success",
-      "data": null
+      "data": true
     }
     ```
 
@@ -1113,7 +1113,20 @@
 - **缓存策略**：
   - 缓存时间：默认24小时
   - 缓存更新：当相关数据发生变更时，自动更新缓存
-  - 缓存前缀：使用统一的前缀区分不同类型的缓存数据
+  - 缓存前缀：使用统一的前缀区分不同类型的缓存数据\
+- ** 缓存失效策略**：
+  1. 用户权限缓存：
+  - 用户角色变更时，主动清除该用户权限缓存
+  - 当角色权限变更时，主动清除所有关联该角色的用户权限缓存
+  - 当菜单或资源变更时，清除所有用户权限缓存
+  2. 字典数据缓存：
+  - 字典数据更新时，仅清除对应类型的字典缓存
+  - 字典类型删除时，清除所有关联该类型的字典数据缓存
+  3. 部门数据缓存：
+  - 部门数据变更时，清除部门树缓存，不影响用户权限缓存
+  4. 防缓存雪崩：
+  - 缓存过期时间添加随机因子，避免同时失效
+  - 实现缓存降级和熔断机制，防止缓存故障影响系统运行
 
 #### 3.9.2 缓存刷新
 
@@ -1132,7 +1145,7 @@
     {
       "code": 200,
       "message": "success",
-      "data": null
+      "data": true
     }
     ```
 
@@ -1179,37 +1192,98 @@
 - **请求方法**：
   - GET：查询操作
   - POST：创建和更新操作
-  - DELETE：删除操作（或使用POST /xxx/delete/{id}）
+  - 删除操作（使用POST /xxx/delete/{id}）
 
 ### 4.3 接口参数规范
 
 - **查询参数**：使用URL查询参数（Query Parameters）
 - **创建/更新参数**：使用JSON格式请求体（Request Body）
 
-## 4. 数据模型设计
+### 4.4 全局错误码表
 
-### 4.1 用户表(sys_user)
+| 错误码 | 错误信息           | 说明             |
+| ------ | ------------------ | ---------------- |
+| 200    | success            | 操作成功         |
+| 400    | Bad Request        | 请求参数错误     |
+| 401    | Unauthorized       | 未授权（未登录） |
+| 403    | Forbidden          | 权限不足         |
+| 404    | Not Found          | 资源不存在       |
+| 405    | Method Not Allowed | 请求方法不允许   |
+| 429    | Too Many Requests  | 请求频率超限     |
+| 500    | Server Error       | 服务器内部错误   |
+| 1001   | User Not Exist     | 用户不存在       |
+| 1002   | Password Error     | 密码错误         |
+| 1003   | Username Existed   | 用户名已存在     |
+| 1004   | Role Not Exist     | 角色不存在       |
+| 1005   | Dept Not Exist     | 部门不存在       |
+| 1006   | Menu Not Exist     | 菜单不存在       |
 
-| 字段名      | 类型         | 说明                |
-| ----------- | ------------ | ------------------- |
-| id          | bigint       | 主键ID              |
-| username    | varchar(50)  | 用户名              |
-| password    | varchar(100) | 密码（加密存储）    |
-| nickname    | varchar(50)  | 昵称                |
-| email       | varchar(100) | 邮箱                |
-| phone       | varchar(20)  | 手机号              |
-| avatar      | varchar(255) | 头像URL             |
-| status      | tinyint      | 状态（1正常 0禁用） |
-| role_id     | bigint       | 角色ID              |
-| dept_id     | bigint       | 部门ID              |
-| create_time | datetime     | 创建时间            |
-| update_time | datetime     | 更新时间            |
-| create_by   | varchar(50)  | 创建者              |
-| update_by   | varchar(50)  | 更新者              |
-| remark      | varchar(255) | 备注                |
-| deleted     | tinyint      | 是否删除（1是 0否） |
+### 4.5 接口安全增强
 
-### 4.2 角色表(sys_role)
+#### 4.5.1 限流方案
+
+系统采用多级限流策略：
+
+1. 全局限流：基于IP地址，默认每IP每秒最多100次请求
+2. 接口限流：针对特定接口，如登录接口每IP每分钟最多5次
+3. 用户限流：针对已登录用户，默认每用户每秒最多50次请求
+
+技术实现：
+
+1. 使用Guava RateLimiter实现单机限流
+2. Redis+Lua脚本实现分布式限流
+3. 通过注解方式灵活配置限流规则
+
+```java
+@RateLimit(limit = 5, period = 60)  // 限制每60秒内最多5次请求
+@GetMapping("/sensitive-api")
+public Result sensitiveApi() {
+    // 业务逻辑
+}
+```
+
+#### 4.5.2 CSRF防护策略
+
+前后端分离架构下的CSRF防护策略：
+
+1. 登录成功后生成CSRF Token，并在响应头中返回
+2. 前端存储Token并在后续请求中通过自定义请求头传递
+3. 服务端校验Token有效性
+
+#### 4.5.3 白名单路由
+
+以下接口不需要进行token验证：
+
+1. /api/login - 登录接口
+2. /api/captcha - 验证码接口
+3. /api/register - 注册接口（如系统支持自注册）
+4. /api/reset-password - 重置密码接口
+5. /api/swagger-ui/\*\* - Swagger文档
+6. /api/v3/api-docs/\*\* - OpenAPI文档
+7. /api/actuator/health - 健康检查接口
+
+## 5. 数据模型设计
+
+### 5.1 用户表(sys_user)
+
+| 字段名      | 类型         | 说明                      |
+| ----------- | ------------ | ------------------------- |
+| id          | bigint       | 主键ID                    |
+| username    | varchar(50)  | 用户名（唯一索引）        |
+| password    | varchar(100) | 密码（BCrypt加密）        |
+| nickname    | varchar(50)  | 昵称                      |
+| email       | varchar(100) | 邮箱（AES加密）           |
+| phone       | varchar(20)  | 手机号（AES加密）         |
+| avatar      | varchar(255) | 头像URL                   |
+| status      | tinyint      | 状态（0禁用 1正常 2锁定） |
+| create_time | datetime     | 创建时间                  |
+| update_time | datetime     | 更新时间                  |
+| create_by   | varchar(50)  | 创建者用户名              |
+| update_by   | varchar(50)  | 更新者用户名              |
+| remark      | varchar(255) | 备注                      |
+| deleted     | tinyint      | 是否删除（0否 1是）       |
+
+### 5.2 角色表(sys_role)
 
 | 字段名      | 类型         | 说明                |
 | ----------- | ------------ | ------------------- |
@@ -1224,7 +1298,7 @@
 | remark      | varchar(255) | 备注                |
 | deleted     | tinyint      | 是否删除（1是 0否） |
 
-### 4.3 角色资源表(sys_role_resource)
+### 5.3 角色资源表(sys_role_resource)
 
 | 字段名      | 类型        | 说明                             |
 | ----------- | ----------- | -------------------------------- |
@@ -1233,7 +1307,7 @@
 | resource_id | varchar(50) | 资源ID                           |
 | action      | varchar(50) | 操作权限（view/add/edit/delete） |
 
-### 4.4 部门表(sys_dept)
+### 5.4 部门表(sys_dept)
 
 | 字段名      | 类型        | 说明                |
 | ----------- | ----------- | ------------------- |
@@ -1248,107 +1322,124 @@
 | update_by   | varchar(50) | 更新者              |
 | deleted     | tinyint     | 是否删除（1是 0否） |
 
-### 4.5 菜单表(sys_menu)
+### 5.5 用户-角色关联表(sys_user_role)
 
-| 字段名      | 类型         | 说明                |
-| ----------- | ------------ | ------------------- |
-| id          | bigint       | 主键ID              |
-| name        | varchar(50)  | 菜单名称            |
-| path        | varchar(100) | 路由路径            |
-| component   | varchar(100) | 组件路径            |
-| parent_id   | bigint       | 父菜单ID            |
-| icon        | varchar(50)  | 图标                |
-| sort        | int          | 排序                |
-| status      | tinyint      | 状态（1正常 0禁用） |
-| type        | tinyint      | 类型（1菜单 2按钮） |
-| permission  | varchar(100) | 权限标识            |
-| create_time | datetime     | 创建时间            |
-| update_time | datetime     | 更新时间            |
-| create_by   | varchar(50)  | 创建者              |
-| update_by   | varchar(50)  | 更新者              |
-| deleted     | tinyint      | 是否删除（1是 0否） |
+| 字段名  | 类型   | 说明               |
+| ------- | ------ | ------------------ |
+| id      | bigint | 主键ID             |
+| user_id | bigint | 用户ID（复合索引） |
+| role_id | bigint | 角色ID（复合索引） |
 
-### 4.6 字典类型表(sys_dict_type)
+### 5.6 用户-部门关联表(sys_user_dept)
 
-| 字段名      | 类型         | 说明                |
-| ----------- | ------------ | ------------------- |
-| id          | bigint       | 主键ID              |
-| name        | varchar(50)  | 字典名称            |
-| type        | varchar(50)  | 字典类型            |
-| status      | tinyint      | 状态（1正常 0禁用） |
-| create_time | datetime     | 创建时间            |
-| update_time | datetime     | 更新时间            |
-| create_by   | varchar(50)  | 创建者              |
-| update_by   | varchar(50)  | 更新者              |
-| remark      | varchar(255) | 备注                |
-| deleted     | tinyint      | 是否删除（1是 0否） |
+| 字段名     | 类型    | 说明                  |
+| ---------- | ------- | --------------------- |
+| id         | bigint  | 主键ID                |
+| user_id    | bigint  | 用户ID（复合索引）    |
+| dept_id    | bigint  | 部门ID（复合索引）    |
+| is_primary | tinyint | 是否主部门（0否 1是） |
 
-### 4.7 字典数据表(sys_dict_data)
+### 5.7 菜单表(sys_menu)
 
-| 字段名       | 类型         | 说明                |
-| ------------ | ------------ | ------------------- |
-| id           | bigint       | 主键ID              |
-| dict_type_id | bigint       | 字典类型ID          |
-| dict_type    | varchar(50)  | 字典类型            |
-| label        | varchar(50)  | 字典标签            |
-| value        | varchar(50)  | 字典值              |
-| sort         | int          | 排序                |
-| status       | tinyint      | 状态（1正常 0禁用） |
-| create_time  | datetime     | 创建时间            |
-| update_time  | datetime     | 更新时间            |
-| create_by    | varchar(50)  | 创建者              |
-| update_by    | varchar(50)  | 更新者              |
-| remark       | varchar(255) | 备注                |
-| deleted      | tinyint      | 是否删除（1是 0否） |
+| 字段名      | 类型         | 说明                 |
+| ----------- | ------------ | -------------------- |
+| id          | bigint       | 主键ID               |
+| name        | varchar(50)  | 菜单名称             |
+| path        | varchar(100) | 路由路径             |
+| component   | varchar(100) | 组件路径             |
+| parent_id   | bigint       | 父菜单ID（普通索引） |
+| icon        | varchar(50)  | 图标                 |
+| sort        | int          | 排序                 |
+| status      | tinyint      | 状态（0禁用 1正常）  |
+| type        | tinyint      | 类型（1菜单 2按钮）  |
+| permission  | varchar(100) | 权限标识             |
+| create_time | datetime     | 创建时间             |
+| update_time | datetime     | 更新时间             |
+| create_by   | varchar(50)  | 创建者               |
+| update_by   | varchar(50)  | 更新者               |
+| deleted     | tinyint      | 是否删除（0否 1是）  |
 
-### 4.8 文件信息表(sys_file)
+### 5.8 字典类型表(sys_dict_type)
 
-| 字段名        | 类型         | 说明                |
-| ------------- | ------------ | ------------------- |
-| id            | bigint       | 主键ID              |
-| file_name     | varchar(100) | 文件名              |
-| original_name | varchar(100) | 原始文件名          |
-| file_url      | varchar(255) | 文件URL             |
-| file_size     | bigint       | 文件大小（字节）    |
-| file_type     | varchar(50)  | 文件类型            |
-| upload_time   | datetime     | 上传时间            |
-| upload_by     | varchar(50)  | 上传者              |
-| deleted       | tinyint      | 是否删除（1是 0否） |
+| 字段名      | 类型         | 说明                 |
+| ----------- | ------------ | -------------------- |
+| id          | bigint       | 主键ID               |
+| name        | varchar(50)  | 字典名称             |
+| type        | varchar(50)  | 字典类型（唯一索引） |
+| status      | tinyint      | 状态（0禁用 1正常）  |
+| create_time | datetime     | 创建时间             |
+| update_time | datetime     | 更新时间             |
+| create_by   | varchar(50)  | 创建者               |
+| update_by   | varchar(50)  | 更新者               |
+| remark      | varchar(255) | 备注                 |
+| deleted     | tinyint      | 是否删除（0否 1是）  |
 
-### 4.9 操作日志表(sys_operation_log)
+### 5.9 字典数据表(sys_dict_data)
 
-| 字段名         | 类型         | 说明                |
-| -------------- | ------------ | ------------------- |
-| id             | bigint       | 主键ID              |
-| username       | varchar(50)  | 操作用户            |
-| operation      | varchar(100) | 操作内容            |
-| method         | varchar(10)  | 请求方法            |
-| request_url    | varchar(255) | 请求URL             |
-| request_method | varchar(100) | 请求方法            |
-| request_params | text         | 请求参数            |
-| request_ip     | varchar(50)  | 请求IP              |
-| status         | tinyint      | 状态（1成功 0失败） |
-| error_msg      | text         | 错误消息            |
-| operation_time | datetime     | 操作时间            |
-| duration       | int          | 执行时长（毫秒）    |
+| 字段名       | 类型         | 说明                 |
+| ------------ | ------------ | -------------------- |
+| id           | bigint       | 主键ID               |
+| dict_type_id | bigint       | 字典类型ID           |
+| dict_type    | varchar(50)  | 字典类型（普通索引） |
+| label        | varchar(50)  | 字典标签             |
+| value        | varchar(50)  | 字典值               |
+| sort         | int          | 排序                 |
+| status       | tinyint      | 状态（0禁用 1正常）  |
+| create_time  | datetime     | 创建时间             |
+| update_time  | datetime     | 更新时间             |
+| create_by    | varchar(50)  | 创建者               |
+| update_by    | varchar(50)  | 更新者               |
+| remark       | varchar(255) | 备注                 |
+| deleted      | tinyint      | 是否删除（0否 1是）  |
 
-### 4.10 登录日志表(sys_login_log)
+### 5.10 文件信息表(sys_file)
 
-| 字段名         | 类型         | 说明                |
-| -------------- | ------------ | ------------------- |
-| id             | bigint       | 主键ID              |
-| username       | varchar(50)  | 用户名              |
-| status         | tinyint      | 状态（1成功 0失败） |
-| ip_address     | varchar(50)  | IP地址              |
-| login_location | varchar(100) | 登录地点            |
-| browser        | varchar(50)  | 浏览器              |
-| os             | varchar(50)  | 操作系统            |
-| login_time     | datetime     | 登录时间            |
-| message        | varchar(255) | 消息                |
+| 字段名        | 类型         | 说明                 |
+| ------------- | ------------ | -------------------- |
+| id            | bigint       | 主键ID               |
+| file_name     | varchar(100) | 文件名               |
+| original_name | varchar(100) | 原始文件名           |
+| file_url      | varchar(255) | 文件URL              |
+| file_size     | bigint       | 文件大小（字节）     |
+| file_type     | varchar(50)  | 文件类型（普通索引） |
+| upload_time   | datetime     | 上传时间（普通索引） |
+| upload_by     | varchar(50)  | 上传者               |
+| deleted       | tinyint      | 是否删除（0否 1是）  |
 
-## 5. 权限控制设计
+### 5.11 操作日志表(sys_operation_log)
 
-### 5.1 RBAC权限模型
+| 字段名         | 类型         | 说明                     |
+| -------------- | ------------ | ------------------------ |
+| id             | bigint       | 主键ID                   |
+| username       | varchar(50)  | 操作用户（普通索引）     |
+| operation      | varchar(100) | 操作内容                 |
+| method         | varchar(10)  | 请求方法                 |
+| request_url    | varchar(255) | 请求URL（普通索引）      |
+| request_method | varchar(100) | 请求方法                 |
+| request_params | text         | 请求参数（敏感信息脱敏） |
+| request_ip     | varchar(50)  | 请求IP                   |
+| status         | tinyint      | 状态（1成功 0失败）      |
+| error_msg      | text         | 错误消息                 |
+| operation_time | datetime     | 操作时间（普通索引）     |
+| duration       | int          | 执行时长（毫秒）         |
+
+### 5.12 登录日志表(sys_login_log)
+
+| 字段名         | 类型         | 说明                 |
+| -------------- | ------------ | -------------------- |
+| id             | bigint       | 主键ID               |
+| username       | varchar(50)  | 用户名（普通索引）   |
+| status         | tinyint      | 状态（1成功 0失败）  |
+| ip_address     | varchar(50)  | IP地址（AES加密）    |
+| login_location | varchar(100) | 登录地点             |
+| browser        | varchar(50)  | 浏览器               |
+| os             | varchar(50)  | 操作系统             |
+| login_time     | datetime     | 登录时间（普通索引） |
+| message        | varchar(255) | 消息                 |
+
+## 6. 权限控制设计
+
+### 6.1 RBAC权限模型
 
 本系统采用基于角色的访问控制（RBAC）模型，并进行了扩展，主要包括以下几个核心概念：
 
@@ -1358,9 +1449,9 @@
 - **资源（Resource）**：系统中的功能模块或数据对象。
 - **操作（Action）**：对资源可以执行的具体操作，如查看、新增、编辑、删除等。
 
-### 5.2 权限数据结构
+### 6.2 权限数据结构
 
-#### 5.2.1 用户-角色-权限关系
+#### 6.2.1 用户-角色-权限关系
 
 ```json
 {
@@ -1390,7 +1481,7 @@
 }
 ```
 
-#### 5.2.2 用户-部门关系
+#### 6.2.2 用户-部门关系
 
 ```json
 {
@@ -1410,7 +1501,7 @@
 }
 ```
 
-### 5.3 权限控制流程
+### 6.3 权限控制流程
 
 1. 用户登录系统，获取JWT令牌
 2. 系统加载用户关联的所有角色信息
@@ -1420,13 +1511,13 @@
 6. 前端根据用户权限动态生成菜单和按钮
 7. 对于数据权限，根据用户所属部门进行数据过滤
 
-### 5.4 权限注解设计
+### 6.4 权限注解设计
 
-使用Spring Security的注解进行权限控制：
+使用Spring Security的注解进行权限控制(自定义SpEL表达式:)：
 
 ```java
 // 控制器方法上的权限注解
-@PreAuthorize("hasAuthority('system:user:view')")
+@PreAuthorize("hasResourceAction('user-management', 'view')")
 public ResponseEntity<List<User>> getUserList() {
     // 业务逻辑
 }
@@ -1564,3 +1655,23 @@ public ResponseEntity<List<User>> getUserList() {
 | is_primary | tinyint | 是否主部门 |
 
 ## 10. 系统扩展性设计
+
+### 10.1 插件化设计
+
+- 系统提供了插件化扩展机制，方便根据业务需求进行扩展。
+
+### 10.2 模块化设计
+
+- 系统模块划分清晰，易于维护和扩展。
+
+### 10.3 可配置化
+
+- 系统参数可配置，方便根据业务需求进行调整。
+
+### 10.4 可扩展性
+
+- 系统提供了插件化扩展机制，方便根据业务需求进行扩展。
+
+### 10.5 可维护性
+
+- 系统模块划分清晰，易于维护和扩展。
