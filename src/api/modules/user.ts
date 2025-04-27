@@ -120,6 +120,6 @@ export default {
    * 退出登录
    */
   logout() {
-    return request.post<null>('/api/logout')
+    return request.post<null>('/api/auth/logout')
   },
 }

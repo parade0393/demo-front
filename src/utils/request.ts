@@ -77,7 +77,6 @@ class Request {
         // 添加系统版本号到header
         config.headers['X-System-Version'] = getSystemVersion()
         const userToken = getUserToken()
-        console.log('userToken', userToken)
         if (userToken) {
           config.headers.Authorization = `Bearer ${userToken}`
         } else {
