@@ -17,6 +17,9 @@ export interface LoginParams {
  */
 export interface LoginResult {
   token: string
+  refreshToken: string
+  expiresIn: number
+  tokenType: string
 }
 
 /**
@@ -92,7 +95,7 @@ export default {
    * @returns 登录结果
    */
   login(params: LoginParams) {
-    return request.post<LoginResult>('/api/login', params, {
+    return request.post<LoginResult>('/api/auth/login', params, {
       showLoading: true,
     })
   },
@@ -102,7 +105,7 @@ export default {
    * @returns 用户信息
    */
   getUserInfo() {
-    return request.get<UserInfo>('/api/user/info')
+    return request.get<UserInfo>('/api/auth/user/info')
   },
 
   /**
@@ -110,7 +113,7 @@ export default {
    * @returns 用户菜单
    */
   getUserMenus() {
-    return request.get<ServerMenuItem[]>('/api/user/menus')
+    return request.get<ServerMenuItem[]>('/api/auth/user/route')
   },
 
   /**

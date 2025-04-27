@@ -59,6 +59,13 @@ export default defineConfig(({ mode }) => {
     server: {
       port: env.VITE_PORT ? parseInt(env.VITE_PORT) : 6060,
       open: true,
+      proxy: {
+        '/api': {
+          target: env.VITE_PROXY_URL, //后端地址
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, '/api'), // 重写路径,"开头是 /api" 的地方,把它替换成 /api
+        },
+      },
     },
   }
   // 过滤掉 plugins 数组中的 false 值

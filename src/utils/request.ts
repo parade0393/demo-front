@@ -7,6 +7,8 @@ import axios from 'axios'
 import { ElMessage, ElLoading } from 'element-plus'
 import type { LoadingInstance } from 'element-plus/es/components/loading/src/loading'
 
+import { usePermissionStore } from '@/stores/permission'
+
 /**
  * 接口响应通用格式
  * @template T 响应数据类型
@@ -14,8 +16,8 @@ import type { LoadingInstance } from 'element-plus/es/components/loading/src/loa
 export interface ApiResponse<T = unknown> {
   /** 响应数据 */
   data: T
-  /** 错误码，0表示成功，其他表示失败 */
-  errorCode: number
+  /** 错误码，200表示成功，其他表示失败 */
+  code: number
   /** 错误信息 */
   errorMsg: string
 }
@@ -52,7 +54,8 @@ const getSystemVersion = (): string => {
 }
 
 const getUserToken = (): string => {
-  return localStorage.getItem('token') || ''
+  const permissionStore = usePermissionStore()
+  return permissionStore.getToken() || ''
 }
 
 /**
@@ -73,7 +76,13 @@ class Request {
 
         // 添加系统版本号到header
         config.headers['X-System-Version'] = getSystemVersion()
-        config.headers['Authorization'] = getUserToken()
+        const userToken = getUserToken()
+        console.log('userToken', userToken)
+        if (userToken) {
+          config.headers.Authorization = `Bearer ${userToken}`
+        } else {
+          delete config.headers.Authorization
+        }
 
         // 添加自定义headers
         if (requestOptions.customHeaders) {
@@ -108,9 +117,8 @@ class Request {
 
         const { data } = response
         const requestOptions = response.config as RequestOptions
-
         // 判断是否成功
-        if (data.errorCode !== 0) {
+        if (data.code !== 200) {
           // 显示错误信息
           ElMessage.error(data.errorMsg || '请求失败')
           return Promise.reject(data)

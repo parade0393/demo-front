@@ -47,7 +47,7 @@ const moduleHandlers = Object.values(modules)
 export function createResponse<T>(data: T, errorCode = 0, errorMsg = ''): ApiResponse<T> {
   return {
     data,
-    errorCode,
+    code: errorCode,
     errorMsg,
   }
 }
