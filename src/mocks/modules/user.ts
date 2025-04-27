@@ -168,7 +168,7 @@ const testMenus: ServerMenuItem[] = [
 // 用户相关的Mock处理程序
 export const userHandlers = [
   // 用户登录
-  http.post('/api/login', async ({ request }) => {
+  http.post('/api/auth/login', async ({ request }) => {
     // 模拟网络延迟
     await delay(500)
 
@@ -194,7 +194,7 @@ export const userHandlers = [
   }),
 
   // 获取用户信息
-  http.get('/api/user/info', ({ request }) => {
+  http.get('/api/auth/user/info', ({ request }) => {
     const authHeader = request.headers.get('Authorization')
 
     if (authHeader?.includes('admin-token')) {
@@ -222,7 +222,7 @@ export const userHandlers = [
   }),
 
   // 获取用户菜单
-  http.get('/api/user/menus', ({ request }) => {
+  http.get('/api/auth/user/routes', ({ request }) => {
     const authHeader = request.headers.get('Authorization')
 
     if (authHeader?.includes('admin-token')) {
@@ -235,7 +235,7 @@ export const userHandlers = [
   }),
 
   // 退出登录
-  http.post('/api/logout', () => {
+  http.post('/api/auth/logout', () => {
     return HttpResponse.json(createResponse(null))
   }),
 ]
