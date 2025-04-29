@@ -2,7 +2,6 @@
  * 用户相关API
  */
 import request from '@/utils/request'
-
 /**
  * 登录参数
  */

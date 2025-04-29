@@ -178,11 +178,11 @@ class Request {
    * @param options 请求配置
    * @returns Promise
    */
-  public get<T = unknown, R = T>(
+  public get<T>(
     url: string,
     params?: Record<string, unknown>,
     options?: RequestOptions,
-  ): Promise<R> {
+  ): Promise<T> {
     return this.instance.get(url, { params, ...options })
   }
 
@@ -193,11 +193,11 @@ class Request {
    * @param options 请求配置
    * @returns Promise
    */
-  public post<T = unknown, R = T>(
+  public post<T>(
     url: string,
     data?: Record<string, unknown>,
     options?: RequestOptions,
-  ): Promise<R> {
+  ): Promise<T> {
     return this.instance.post(url, data, options)
   }
 
@@ -208,11 +208,7 @@ class Request {
    * @param options 请求配置
    * @returns Promise
    */
-  public put<T = unknown, R = T>(
-    url: string,
-    data?: Record<string, unknown>,
-    options?: RequestOptions,
-  ): Promise<R> {
+  public put<T>(url: string, data?: Record<string, unknown>, options?: RequestOptions): Promise<T> {
     return this.instance.put(url, data, options)
   }
 
