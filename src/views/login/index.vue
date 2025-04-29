@@ -5,7 +5,7 @@ import { useRouter, useRoute } from 'vue-router'
 import type { FormInstance, FormRules } from 'element-plus'
 import { authApi } from '@/api'
 import { usePermissionStore } from '@/stores/permission'
-import type { LoginParams } from '@/api/modules/system/auth'
+import type { LoginParams } from '@/api'
 
 // 获取路由实例
 const router = useRouter()
