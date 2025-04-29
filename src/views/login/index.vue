@@ -3,9 +3,9 @@ import { ref, reactive } from 'vue'
 import type { LocationQuery, RouteLocationRaw } from 'vue-router'
 import { useRouter, useRoute } from 'vue-router'
 import type { FormInstance, FormRules } from 'element-plus'
-import { userApi } from '@/api'
+import { authApi } from '@/api'
 import { usePermissionStore } from '@/stores/permission'
-import type { LoginParams } from '@/api/modules/user'
+import type { LoginParams } from '@/api/modules/system/auth'
 
 // 获取路由实例
 const router = useRouter()
@@ -48,12 +48,12 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
       loading.value = true
       try {
         // 调用登录接口
-        const loginRes = await userApi.login(loginForm)
+        const loginRes = await authApi.login(loginForm)
         // 保存Token
         permissionStore.setToken(loginRes.token)
 
         // 获取用户信息
-        const userInfoRes = await userApi.getUserInfo()
+        const userInfoRes = await authApi.getUserInfo()
         permissionStore.setUserInfo(userInfoRes)
 
         //下面这行代码优化一下,需要考虑异常路由的情况

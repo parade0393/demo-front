@@ -4,7 +4,7 @@
  */
 import router from './index'
 import { usePermissionStore } from '@/stores/permission'
-import { userApi } from '@/api'
+import { authApi } from '@/api'
 import { ElMessage } from 'element-plus'
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 
@@ -40,7 +40,7 @@ router.beforeEach(async (to, from, next) => {
       } else {
         try {
           // 获取用户菜单
-          const menuRes = await userApi.getUserMenus()
+          const menuRes = await authApi.getUserMenus()
           // 生成动态路由
           permissionStore.generateDynamicRoutes(menuRes)
 

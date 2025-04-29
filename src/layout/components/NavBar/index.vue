@@ -7,7 +7,7 @@ import AppMenu from '@/components/AppMenu/index.vue'
 import { useMenu } from '@/hooks/useMenu'
 import { usePermissionStore } from '@/stores/permission'
 import { storeToRefs } from 'pinia'
-import { userApi } from '@/api'
+import { authApi } from '@/api'
 import { ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 
@@ -52,7 +52,7 @@ const handleCommand = (command: string) => {
       .then(async () => {
         try {
           // 调用退出登录API
-          await userApi.logout()
+          await authApi.logout()
           // 清除权限和Token
           permissionStore.resetPermission()
           // 跳转到登录页
