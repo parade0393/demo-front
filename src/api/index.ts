@@ -5,11 +5,13 @@
 
 // 导入各模块API
 import authApi from './modules/system/auth'
+import { menuApi } from './modules/system/menu'
 
 // 导出所有API
 export {
   // 认证相关
   authApi,
+  menuApi,
 }
 
 // 导出类型
