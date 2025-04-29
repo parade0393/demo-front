@@ -10,19 +10,6 @@ import type { LoadingInstance } from 'element-plus/es/components/loading/src/loa
 import { usePermissionStore } from '@/stores/permission'
 
 /**
- * 接口响应通用格式
- * @template T 响应数据类型
- */
-export interface ApiResponse<T = unknown> {
-  /** 响应数据 */
-  data: T
-  /** 错误码，200表示成功，其他表示失败 */
-  code: number
-  /** 错误信息 */
-  errorMsg: string
-}
-
-/**
  * 扩展的请求配置
  */
 export interface RequestOptions extends AxiosRequestConfig {
