@@ -100,6 +100,15 @@ export default {
   },
 
   /**
+   * 刷新Token
+   * @param refreshToken 刷新Token
+   * @returns 登录结果
+   */
+  refreshToken(refreshToken: string) {
+    return request.post<LoginResult>('/api/auth/refresh', {}, { refreshToken })
+  },
+
+  /**
    * 获取用户信息
    * @returns 用户信息
    */

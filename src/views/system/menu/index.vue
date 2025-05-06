@@ -177,7 +177,7 @@ onMounted(() => {
       :tree-props="{ children: 'children' }"
       style="width: 100%"
     >
-      <el-table-column prop="name" label="菜单名称" width="180" />
+      <el-table-column prop="name" label="菜单名称" min-width="180" />
       <el-table-column prop="type" label="菜单类型" width="100">
         <template #default="{ row }">
           <el-tag

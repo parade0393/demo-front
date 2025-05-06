@@ -6,7 +6,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { type RouteRecordRaw } from 'vue-router'
 import router from '@/router'
-import type { ServerMenuItem, UserInfo } from '@/api/modules/user'
+import type { ServerMenuItem, UserInfo } from '@/api/modules/system/auth'
 import { constantRoutes } from '@/router'
 // 布局组件
 export const Layout = () => import('@/layout/index.vue')
@@ -72,6 +72,8 @@ export const usePermissionStore = defineStore(
     const userInfo = ref<UserInfo | null>(null)
     // 用户Token
     const token = ref<string>('')
+    // 刷新Token
+    const freshToken = ref<string>('')
     // 动态路由
     const dynamicRoutes = ref<RouteRecordRaw[]>([])
     // 所有路由（静态+动态）
@@ -103,6 +105,13 @@ export const usePermissionStore = defineStore(
       return token.value
     }
 
+    function setRefreshToken(token: string) {
+      freshToken.value = token
+    }
+    function getRefreshToken(): string {
+      return freshToken.value
+    }
+
     /**
      * 生成动态路由
      * @param menus 后端返回的菜单数据
@@ -125,6 +134,7 @@ export const usePermissionStore = defineStore(
     function resetPermission() {
       userInfo.value = null
       token.value = ''
+      freshToken.value = ''
       dynamicRoutes.value = []
       // 重置路由
       resetRouter()
@@ -146,6 +156,7 @@ export const usePermissionStore = defineStore(
     return {
       userInfo,
       token,
+      freshToken,
       routes,
       dynamicRoutes,
       setUserInfo,
@@ -154,15 +165,16 @@ export const usePermissionStore = defineStore(
       generateDynamicRoutes,
       resetPermission,
       isRoutesLoaded,
+      setRefreshToken,
+      getRefreshToken,
     }
   },
   {
     // 持久化配置
     persist: {
       // 自定义存储的key名
-      key: 'user-permission',
-      // 只持久化token和userInfo，不持久化路由等信息
-      pick: ['token', 'userInfo'],
+      key: 'user-auth',
+      pick: ['token', 'freshToken', 'userInfo'],
       // 使用localStorage作为存储引擎
       storage: localStorage,
     },

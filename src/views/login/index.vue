@@ -51,6 +51,7 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
         const loginRes = await authApi.login(loginForm)
         // 保存Token
         permissionStore.setToken(loginRes.token)
+        permissionStore.setRefreshToken(loginRes.refreshToken)
 
         // 获取用户信息
         const userInfoRes = await authApi.getUserInfo()

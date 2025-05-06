@@ -8,6 +8,7 @@ import { ElMessage, ElLoading } from 'element-plus'
 import type { LoadingInstance } from 'element-plus/es/components/loading/src/loading'
 
 import { usePermissionStore } from '@/stores/permission'
+import type { LoginResult } from '@/api/modules/system/auth'
 
 /**
  * 扩展的请求配置
@@ -45,12 +46,19 @@ const getUserToken = (): string => {
   return permissionStore.getToken() || ''
 }
 
+const getRefreshToken = (): string => {
+  const permissionStore = usePermissionStore()
+  return permissionStore.getRefreshToken() || ''
+}
+
 /**
  * 请求类
  */
 class Request {
   private instance: AxiosInstance
   private loadingInstance: LoadingInstance | null = null
+  private isRefreshing = false
+  private requests: Array<(token: string) => void> = []
 
   constructor(config: RequestOptions) {
     // 创建axios实例
@@ -85,7 +93,6 @@ class Request {
             background: 'rgba(0, 0, 0, 0.7)',
           })
         }
-
         return config
       },
       (error: unknown) => {
@@ -113,7 +120,7 @@ class Request {
         // 根据配置返回data或完整响应
         return requestOptions.returnData ? data.data : data
       },
-      (error: unknown) => {
+      async (error: unknown) => {
         // 关闭loading
         if (this.loadingInstance) {
           this.loadingInstance.close()
@@ -122,22 +129,36 @@ class Request {
         // 处理错误
         let message = '网络请求失败'
         const axiosError = error as AxiosError
+        const originalRequest = axiosError.config
+
+        const errorMsg = (axiosError.response?.data as ApiResponse)?.message
+
         if (axiosError.response) {
-          switch (axiosError.response.status) {
-            case 401:
+          // 处理401错误（token过期）
+          if (axiosError.response.status === 401 && originalRequest) {
+            const permissionStore = usePermissionStore()
+            const userInfo = permissionStore.userInfo
+
+            // 确保用户已登录且有用户信息
+            if (userInfo) {
+              return this.handleTokenRefresh(originalRequest)
+            } else {
               message = '未授权，请重新登录'
-              break
-            case 403:
-              message = '拒绝访问'
-              break
-            case 404:
-              message = '请求地址错误'
-              break
-            case 500:
-              message = '服务器内部错误'
-              break
-            default:
-              message = `请求失败(${axiosError.response.status})`
+            }
+          } else {
+            switch (axiosError.response.status) {
+              case 403:
+                message = errorMsg || '拒绝访问'
+                break
+              case 404:
+                message = errorMsg || '请求地址错误'
+                break
+              case 500:
+                message = errorMsg || '服务器内部错误'
+                break
+              default:
+                message = errorMsg || `请求失败(${axiosError.response.status})`
+            }
           }
         } else if (axiosError.message && axiosError.message.includes('timeout')) {
           message = '请求超时'
@@ -177,15 +198,17 @@ class Request {
    * POST请求
    * @param url 请求地址
    * @param data 请求数据
+   * @param params 请求参数
    * @param options 请求配置
    * @returns Promise
    */
   public post<T>(
     url: string,
     data?: Record<string, unknown>,
+    params?: Record<string, unknown>,
     options?: RequestOptions,
   ): Promise<T> {
-    return this.instance.post(url, data, options)
+    return this.instance.post(url, data, { params, ...options })
   }
 
   /**
@@ -212,6 +235,72 @@ class Request {
     options?: RequestOptions,
   ): Promise<R> {
     return this.instance.delete(url, { params, ...options })
+  }
+
+  /**
+   * 处理token刷新逻辑
+   * @param originalRequest 原始请求配置
+   * @returns Promise
+   */
+  private async handleTokenRefresh(originalRequest: AxiosRequestConfig): Promise<unknown> {
+    // 如果已经在刷新中，将请求加入队列
+    if (this.isRefreshing) {
+      return new Promise((resolve) => {
+        this.requests.push((token: string) => {
+          // 更新原始请求的token
+          if (originalRequest.headers) {
+            originalRequest.headers.Authorization = `Bearer ${token}`
+          }
+          resolve(this.instance(originalRequest))
+        })
+      })
+    }
+
+    this.isRefreshing = true
+
+    try {
+      // 从localStorage中获取refreshToken
+      const refreshToken = getRefreshToken()
+
+      if (!refreshToken) {
+        throw new Error('No refresh token available')
+      }
+      // 创建一个新的axios实例来调用刷新token接口，避免循环依赖
+      const refreshResponse = await this.post<LoginResult>(
+        '/api/auth/refresh',
+        {},
+        { refreshToken },
+      )
+
+      const response = refreshResponse
+
+      // 更新token
+      const newToken = response.token
+      const permissionStore = usePermissionStore()
+      permissionStore.setToken(newToken)
+      permissionStore.setRefreshToken(response.refreshToken)
+
+      // 更新原始请求的token
+      if (originalRequest.headers) {
+        originalRequest.headers.Authorization = `Bearer ${newToken}`
+      }
+
+      // 执行队列中的请求
+      this.requests.forEach((callback) => callback(newToken))
+      this.requests = []
+
+      // 重试原始请求
+      return this.instance(originalRequest)
+    } catch (error) {
+      debugger
+      // 刷新token失败，清除用户信息并跳转到登录页
+      const permissionStore = usePermissionStore()
+      permissionStore.resetPermission()
+      window.location.href = '/login'
+      return Promise.reject(error)
+    } finally {
+      this.isRefreshing = false
+    }
   }
 }
 

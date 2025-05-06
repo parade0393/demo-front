@@ -8,5 +8,5 @@ interface ApiResponse<T = unknown> {
   /** 错误码，200表示成功，其他表示失败 */
   code: number
   /** 错误信息 */
-  errorMsg: string
+  message: string
 }
