@@ -218,8 +218,19 @@ onMounted(() => {
     </el-table>
 
     <!-- 添加/编辑菜单对话框 -->
-    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="600px" append-to-body>
+    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="700px" append-to-body>
       <el-form ref="formRef" :model="formData" :rules="rules" label-width="100px">
+        <el-form-item label="菜单类型" prop="type">
+          <el-radio-group v-model="formData.type" :disabled="dialogTitle === '编辑菜单'">
+            <el-radio-button
+              v-for="item in menuTypeOptions"
+              :key="item.value"
+              :label="item.value"
+              >{{ item.label }}</el-radio-button
+            >
+          </el-radio-group>
+        </el-form-item>
+
         <el-form-item label="上级菜单" prop="parent_id">
           <el-select v-model="formData.parent_id" placeholder="请选择上级菜单" style="width: 100%">
             <el-option :value="0" label="顶级菜单" />
@@ -231,58 +242,90 @@ onMounted(() => {
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="菜单类型" prop="type">
-          <el-select v-model="formData.type" placeholder="请选择菜单类型" style="width: 100%">
-            <el-option
-              v-for="item in menuTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="菜单名称" prop="name">
-          <el-input v-model="formData.name" placeholder="请输入菜单名称" />
-        </el-form-item>
-        <el-form-item label="路由名称" prop="route_name">
-          <el-input v-model="formData.route_name" placeholder="请输入路由名称" />
-        </el-form-item>
-        <el-form-item label="路由路径" prop="route_path">
-          <el-input v-model="formData.route_path" placeholder="请输入路由路径" />
-        </el-form-item>
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="菜单名称" prop="name">
+              <el-input v-model="formData.name" placeholder="请输入菜单名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="formData.type !== 3">
+            <el-form-item label="菜单图标" prop="icon">
+              <el-input v-model="formData.icon" placeholder="请输入图标名称" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="路由名称" prop="route_name">
+              <el-input v-model="formData.route_name" placeholder="请输入路由名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="路由路径" prop="route_path">
+              <el-input v-model="formData.route_path" placeholder="请输入路由路径" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <el-form-item label="组件路径" prop="component" v-if="formData.type === 2">
           <el-input v-model="formData.component" placeholder="请输入组件路径" />
         </el-form-item>
+
         <el-form-item label="权限标识" prop="perm" v-if="formData.type === 3">
           <el-input v-model="formData.perm" placeholder="请输入权限标识" />
         </el-form-item>
-        <el-form-item label="菜单图标" prop="icon" v-if="formData.type !== 3">
-          <el-input v-model="formData.icon" placeholder="请输入图标名称" />
-        </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input-number v-model="formData.sort" :min="0" :max="999" />
-        </el-form-item>
-        <el-form-item label="显示状态" prop="visible">
-          <el-radio-group v-model="formData.visible">
-            <el-radio :label="1">显示</el-radio>
-            <el-radio :label="0">隐藏</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="总是显示" prop="always_show" v-if="formData.type === 1">
-          <el-radio-group v-model="formData.always_show as number">
-            <el-radio :label="1">是</el-radio>
-            <el-radio :label="0">否</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="页面缓存" prop="keep_alive" v-if="formData.type === 2">
-          <el-radio-group v-model="formData.keep_alive as number">
-            <el-radio :label="1">是</el-radio>
-            <el-radio :label="0">否</el-radio>
-          </el-radio-group>
-        </el-form-item>
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="显示状态" prop="visible">
+              <el-switch
+                v-model="formData.visible"
+                inline-prompt
+                :active-value="1"
+                :inactive-value="0"
+                active-text="显示"
+                inactive-text="隐藏"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="formData.type === 1">
+            <el-form-item label="总是显示" prop="always_show">
+              <el-switch
+                v-model="formData.always_show as number"
+                inline-prompt
+                :active-value="1"
+                :inactive-value="0"
+                active-text="是"
+                inactive-text="否"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="排序" prop="sort">
+              <el-input-number v-model="formData.sort" :min="0" :max="999" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="页面缓存" prop="keep_alive" v-if="formData.type === 2">
+              <el-switch
+                v-model="formData.keep_alive as number"
+                :active-value="1"
+                :inactive-value="0"
+                active-text="是"
+                inactive-text="否"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <el-form-item label="重定向" prop="redirect" v-if="formData.type === 1">
           <el-input v-model="formData.redirect" placeholder="请输入重定向路径" />
         </el-form-item>
+
         <el-form-item label="路由参数" prop="params">
           <el-input v-model="formData.params" placeholder="请输入路由参数" />
         </el-form-item>
