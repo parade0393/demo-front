@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from 'vue'
-import { menuApi } from '@/api'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { menuApi } from '@/api/modules/system/menu'
+import IconSelector from '@/components/IconSelector/index.vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { MenuItem } from '@/api/modules/system/menu'
 
@@ -251,7 +252,7 @@ onMounted(() => {
           </el-col>
           <el-col :span="12" v-if="formData.type !== 3">
             <el-form-item label="菜单图标" prop="icon">
-              <el-input v-model="formData.icon" placeholder="请输入图标名称" />
+              <IconSelector v-model="formData.icon" placeholder="请选择图标" />
             </el-form-item>
           </el-col>
         </el-row>
