@@ -3,8 +3,8 @@
  */
 import { http, HttpResponse, delay } from 'msw'
 import { createResponse } from '../index'
-import type { UserInfo } from '@/api/modules/user'
-import type { ServerMenuItem } from '@/api/modules/user'
+import type { UserInfo } from '@/api/modules/system/auth'
+import type { ServerMenuItem } from '@/api/modules/system/auth'
 
 // admin用户的菜单数据
 const adminMenus: ServerMenuItem[] = [

@@ -40,22 +40,22 @@ const formRef = ref<FormInstance>()
 // 表单数据
 const formData = reactive<MenuItem>({
   id: 0,
-  parent_id: 0,
-  tree_path: null,
+  parentId: 0,
+  treePath: null,
   name: '',
   type: 1,
-  route_name: null,
-  route_path: null,
+  routeName: null,
+  routePath: null,
   component: null,
   perm: null,
-  always_show: 0,
-  keep_alive: 0,
+  alwaysShow: 0,
+  keepAlive: 0,
   visible: 1,
   sort: 0,
   icon: null,
   redirect: null,
-  create_time: '',
-  update_time: null,
+  createTime: '',
+  updateTime: null,
   params: null,
 })
 
@@ -79,22 +79,22 @@ const resetForm = () => {
   }
   Object.assign(formData, {
     id: 0,
-    parent_id: 0,
-    tree_path: null,
+    parentId: 0,
+    treePath: null,
     name: '',
     type: 1,
-    route_name: null,
-    route_path: null,
+    routeName: null,
+    routePath: null,
     component: null,
     perm: null,
-    always_show: 0,
-    keep_alive: 0,
+    alwaysShow: 0,
+    keepAlive: 0,
     visible: 1,
     sort: 0,
     icon: null,
     redirect: null,
-    create_time: '',
-    update_time: null,
+    createTime: '',
+    updateTime: null,
     params: null,
   })
 }
@@ -104,7 +104,7 @@ const handleAdd = (row?: MenuItem) => {
   resetForm()
   dialogTitle.value = '添加菜单'
   if (row) {
-    formData.parent_id = row.id
+    formData.parentId = row.id
   }
   dialogVisible.value = true
 }
@@ -123,10 +123,22 @@ const submitForm = async () => {
 
   await formRef.value.validate((valid) => {
     if (valid) {
+      console.log('提交表单', formData)
       // 这里应该调用保存API，目前模拟成功
-      ElMessage.success(formData.id ? '修改成功' : '添加成功')
-      dialogVisible.value = false
-      fetchMenuList() // 重新加载数据
+      const api = formData.id ? menuApi.updateMenuApi : menuApi.addMenuApi
+      api(formData)
+        .then(() => {
+          ElMessage.success(formData.id ? '修改成功' : '添加成功')
+          fetchMenuList() // 重新加载数据
+        })
+        .catch((error) => {
+          console.error('保存菜单失败', error)
+          ElMessage.error('保存菜单失败')
+        })
+        .finally(() => {
+          // 关闭对话框
+          dialogVisible.value = false
+        })
     }
   })
 }
@@ -232,8 +244,8 @@ onMounted(() => {
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="上级菜单" prop="parent_id">
-          <el-select v-model="formData.parent_id" placeholder="请选择上级菜单" style="width: 100%">
+        <el-form-item label="上级菜单" prop="parentId">
+          <el-select v-model="formData.parentId" placeholder="请选择上级菜单" style="width: 100%">
             <el-option :value="0" label="顶级菜单" />
             <el-option
               v-for="item in tableData"
@@ -259,13 +271,13 @@ onMounted(() => {
 
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="路由名称" prop="route_name">
-              <el-input v-model="formData.route_name" placeholder="请输入路由名称" />
+            <el-form-item label="路由名称" prop="routeName">
+              <el-input v-model="formData.routeName" placeholder="请输入路由名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="路由路径" prop="route_path">
-              <el-input v-model="formData.route_path" placeholder="请输入路由路径" />
+            <el-form-item label="路由路径" prop="routePath">
+              <el-input v-model="formData.routePath" placeholder="请输入路由路径" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -292,9 +304,9 @@ onMounted(() => {
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="formData.type === 1">
-            <el-form-item label="总是显示" prop="always_show">
+            <el-form-item label="总是显示" prop="alwaysShow">
               <el-switch
-                v-model="formData.always_show as number"
+                v-model="formData.alwaysShow as number"
                 inline-prompt
                 :active-value="1"
                 :inactive-value="0"
@@ -311,9 +323,9 @@ onMounted(() => {
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="页面缓存" prop="keep_alive" v-if="formData.type === 2">
+            <el-form-item label="页面缓存" prop="keepAlive" v-if="formData.type === 2">
               <el-switch
-                v-model="formData.keep_alive as number"
+                v-model="formData.keepAlive as number"
                 :active-value="1"
                 :inactive-value="0"
                 active-text="是"
