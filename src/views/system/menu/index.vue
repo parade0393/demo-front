@@ -226,7 +226,7 @@ onMounted(() => {
             <el-radio-button
               v-for="item in menuTypeOptions"
               :key="item.value"
-              :label="item.value"
+              :value="item.value"
               >{{ item.label }}</el-radio-button
             >
           </el-radio-group>
