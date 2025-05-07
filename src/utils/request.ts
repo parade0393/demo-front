@@ -202,10 +202,10 @@ class Request {
    * @param options 请求配置
    * @returns Promise
    */
-  public post<T>(
+  public post<T, R = Record<string, unknown>>(
     url: string,
-    data?: Record<string, unknown>,
-    params?: Record<string, unknown>,
+    data?: R,
+    params?: R,
     options?: RequestOptions,
   ): Promise<T> {
     return this.instance.post(url, data, { params, ...options })

@@ -6,13 +6,16 @@
 // 导入各模块API
 import authApi from './modules/system/auth'
 import { menuApi } from './modules/system/menu'
+import { roleApi } from './modules/system/role'
 
 // 导出所有API
 export {
   // 认证相关
   authApi,
   menuApi,
+  roleApi,
 }
 
 // 导出类型
 export type { LoginParams, LoginResult, ServerMenuItem } from './modules/system/auth'
+export type { RoleItem } from './modules/system/role'
