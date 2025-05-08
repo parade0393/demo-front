@@ -224,17 +224,13 @@ onMounted(() => {
         <el-form-item label="上级部门" prop="parentId">
           <el-tree-select
             v-model="formData.parentId"
-            :data="tableData"
+            :data="[{ id: 0, name: '顶级部门' }, ...tableData]"
             :props="{ label: 'name', children: 'children', value: 'id' }"
             placeholder="请选择上级部门"
             check-strictly
             :render-after-expand="false"
             style="width: 100%"
-          >
-            <template #prefix>
-              <el-option value="0" label="顶级部门" />
-            </template>
-          </el-tree-select>
+          />
         </el-form-item>
 
         <el-form-item label="部门名称" prop="name">
