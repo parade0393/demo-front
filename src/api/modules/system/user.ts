@@ -68,6 +68,20 @@ export interface UserQueryParams {
 }
 
 /**
+ * 用户表单数据（新增/编辑）
+ */
+export interface UserFormData
+  extends Omit<
+    UserItem,
+    'id' | 'createTime' | 'statusName' | 'deptName' | 'roleNames' | 'lastLoginTime'
+  > {
+  /** ID，编辑时必传 */
+  id?: number
+  /** 密码，新增时必传 */
+  password?: string
+}
+
+/**
  * 用户相关API
  */
 export const userApi = {
@@ -78,5 +92,32 @@ export const userApi = {
    */
   fetchUserPageApi(params: UserQueryParams) {
     return request.get<UserPageResult, UserQueryParams>('/api/user/list', params)
+  },
+
+  /**
+   * 获取用户详情
+   * @param id 用户ID
+   * @returns 用户详情
+   */
+  getUserDetailApi(id: number) {
+    return request.get<UserItem>(`/api/user/${id}`)
+  },
+
+  /**
+   * 新增用户
+   * @param data 用户数据
+   * @returns 是否成功
+   */
+  createUserApi(data: UserFormData) {
+    return request.post<boolean, UserFormData>('/api/user/create', data)
+  },
+
+  /**
+   * 更新用户
+   * @param data 用户数据
+   * @returns 是否成功
+   */
+  updateUserApi(data: UserFormData) {
+    return request.post<boolean, UserFormData>('/api/user/update', data)
   },
 }

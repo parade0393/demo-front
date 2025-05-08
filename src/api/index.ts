@@ -24,4 +24,4 @@ export {
 export type { LoginParams, LoginResult, ServerMenuItem } from './modules/system/auth'
 export type { RoleItem } from './modules/system/role'
 export type { DeptItem } from './modules/system/dept'
-export type { UserItem, UserPageResult, UserQueryParams } from './modules/system/user'
+export type { UserItem, UserPageResult, UserQueryParams, UserFormData } from './modules/system/user'

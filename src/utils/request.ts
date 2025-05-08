@@ -292,7 +292,6 @@ class Request {
       // 重试原始请求
       return this.instance(originalRequest)
     } catch (error) {
-      debugger
       // 刷新token失败，清除用户信息并跳转到登录页
       const permissionStore = usePermissionStore()
       permissionStore.resetPermission()
