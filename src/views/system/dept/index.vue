@@ -214,7 +214,7 @@ onMounted(() => {
             link
             :icon="Edit"
             @click="handleEdit(row)"
-            v-permission="'system:deot:edit'"
+            v-permission="'system:dept:edit'"
             >编辑</el-button
           >
           <el-button
@@ -222,7 +222,7 @@ onMounted(() => {
             link
             :icon="Delete"
             @click="handleDelete(row)"
-            v-permission="'system:deot:delete'"
+            v-permission="'system:dept:delete'"
             >删除</el-button
           >
         </template>
