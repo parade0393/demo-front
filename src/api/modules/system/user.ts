@@ -77,6 +77,6 @@ export const userApi = {
    * @returns 用户分页列表
    */
   fetchUserPageApi(params: UserQueryParams) {
-    return request.get<UserPageResult>('/api/user/list', params)
+    return request.get<UserPageResult, UserQueryParams>('/api/user/list', params)
   },
 }

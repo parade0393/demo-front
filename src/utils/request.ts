@@ -186,9 +186,9 @@ class Request {
    * @param options 请求配置
    * @returns Promise
    */
-  public get<T>(
+  public get<T, R = Record<string, unknown>>(
     url: string,
-    params?: Record<string, unknown>,
+    params?: R,
     options?: RequestOptions,
   ): Promise<T> {
     return this.instance.get(url, { params, ...options })
