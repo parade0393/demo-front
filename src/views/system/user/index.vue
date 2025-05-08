@@ -2,8 +2,8 @@
 import { ref, reactive, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Refresh, Plus, Edit, View } from '@element-plus/icons-vue'
-import { deptApi, userApi } from '@/api'
-import type { DeptItem, UserItem, UserQueryParams, UserFormData } from '@/api'
+import { deptApi, userApi, roleApi } from '@/api'
+import type { DeptItem, UserItem, UserQueryParams, UserFormData, RoleItem } from '@/api'
 
 // 部门树数据
 const deptTreeData = ref<DeptItem[]>([])
@@ -13,6 +13,8 @@ const currentDeptId = ref<number | undefined>(undefined)
 const userTableData = ref<UserItem[]>([])
 // 表格加载状态
 const tableLoading = ref(false)
+// 角色列表数据
+const roleListData = ref<RoleItem[]>([])
 // 分页信息
 const pagination = reactive({
   total: 0,
@@ -55,6 +57,7 @@ const userFormRules = {
   ],
   deptId: [{ required: true, message: '请选择部门', trigger: 'change' }],
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  roleIds: [{ required: true, message: '请选择角色', trigger: 'change' }],
 }
 const userFormRef = ref()
 
@@ -94,6 +97,17 @@ const fetchUserList = async () => {
     ElMessage.error('获取用户列表失败')
   } finally {
     tableLoading.value = false
+  }
+}
+
+// 获取角色列表数据
+const fetchRoleList = async () => {
+  try {
+    const res = await roleApi.fetchRoleListApi()
+    roleListData.value = res.filter((role) => role.status === 1) // 只显示正常状态的角色
+  } catch (error) {
+    console.error('获取角色列表失败', error)
+    ElMessage.error('获取角色列表失败')
   }
 }
 
@@ -234,6 +248,7 @@ watch(
 // 页面加载时获取数据
 onMounted(() => {
   fetchDeptTree()
+  fetchRoleList()
 })
 </script>
 
@@ -366,6 +381,23 @@ onMounted(() => {
             check-strictly
             :render-after-expand="false"
           />
+        </el-form-item>
+        <el-form-item label="角色" prop="roleIds">
+          <el-select
+            v-model="userForm.roleIds"
+            multiple
+            collapse-tags
+            collapse-tags-tooltip
+            placeholder="请选择角色"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="role in roleListData"
+              :key="role.id"
+              :label="role.name"
+              :value="role.id"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="userForm.status">

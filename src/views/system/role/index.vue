@@ -168,8 +168,6 @@ const handleAssignPerm = async (row: RoleItem) => {
   try {
     const res = await roleApi.getRoleMenusApi(row.id)
     checkedMenuIds.value = res
-    console.log('角色已有权限', checkedMenuIds.value)
-    console.log('树形控件', treeRef.value)
 
     // 使用nextTick确保DOM更新后再设置选中状态
     await nextTick()
