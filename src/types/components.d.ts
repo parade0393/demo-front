@@ -52,6 +52,7 @@ declare module 'vue' {
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    ElTree: typeof import('element-plus/es')['ElTree']
     IconSelector: typeof import('./../components/IconSelector/index.vue')['default']
     RecursiveMenuItem: typeof import('./../components/AppMenu/components/RecursiveMenuItem.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
