@@ -34,6 +34,15 @@ export interface DeptItem {
 }
 
 /**
+ * 部门表单数据（新增/编辑）
+ */
+export interface DeptFormData
+  extends Omit<DeptItem, 'id' | 'createTime' | 'updateTime' | 'children' | 'isDeleted'> {
+  /** ID，编辑时必传 */
+  id?: number
+}
+
+/**
  * 部门相关API
  */
 export const deptApi = {
@@ -43,5 +52,41 @@ export const deptApi = {
    */
   fetchDeptTreeApi() {
     return request.get<DeptItem[]>('/api/dept/tree')
+  },
+
+  /**
+   * 获取部门详情
+   * @param id 部门ID
+   * @returns 部门详情
+   */
+  getDeptDetailApi(id: number) {
+    return request.get<DeptItem>(`/api/dept/${id}`)
+  },
+
+  /**
+   * 新增部门
+   * @param data 部门数据
+   * @returns 是否成功
+   */
+  createDeptApi(data: DeptFormData) {
+    return request.post<boolean, DeptFormData>('/api/dept/create', data)
+  },
+
+  /**
+   * 更新部门
+   * @param data 部门数据
+   * @returns 是否成功
+   */
+  updateDeptApi(data: DeptFormData) {
+    return request.post<boolean, DeptFormData>('/api/dept/update', data)
+  },
+
+  /**
+   * 删除部门
+   * @param id 部门ID
+   * @returns 是否成功
+   */
+  deleteDeptApi(id: number) {
+    return request.get<boolean>('/api/dept/delete', { id })
   },
 }
