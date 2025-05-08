@@ -87,6 +87,6 @@ export const deptApi = {
    * @returns 是否成功
    */
   deleteDeptApi(id: number) {
-    return request.get<boolean>('/api/dept/delete', { id })
+    return request.get<boolean>('/api/dept/delete', { deptId: id })
   },
 }
