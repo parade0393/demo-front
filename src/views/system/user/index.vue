@@ -119,6 +119,8 @@ onMounted(() => {
           :highlight-current="true"
           :default-expand-all="true"
           @node-click="handleDeptClick"
+          :expand-on-click-node="false"
+          :current-node-key="currentDeptId"
         >
           <template #default="{ node }">
             <span class="custom-tree-node">
