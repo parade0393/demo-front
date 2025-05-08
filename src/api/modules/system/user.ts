@@ -42,29 +42,14 @@ export interface UserItem {
 /**
  * 用户列表分页结果
  */
-export interface UserPageResult {
-  /** 记录列表 */
-  records: UserItem[]
-  /** 总记录数 */
-  total: number
-  /** 每页记录数 */
-  size: number
-  /** 当前页码 */
-  current: number
-  /** 总页数 */
-  pages: number
-}
+export type UserPageResult = PageResult<UserItem>
 
 /**
  * 用户查询参数
  */
-export interface UserQueryParams {
+export interface UserQueryParams extends PageQueryParams {
   /** 部门ID */
   deptId?: number
-  /** 页码 */
-  current?: number
-  /** 每页记录数 */
-  size?: number
 }
 
 /**
