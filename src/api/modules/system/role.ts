@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import type { UserItem } from '../user'
 
 /**
  * 角色项接口
@@ -80,5 +81,14 @@ export const roleApi = {
    */
   assignRoleMenusApi(roleId: number, menuIds: number[]) {
     return request.post<boolean>(`/api/role/assign-menus`, { roleId, menuIds })
+  },
+
+  /**
+   * 获取角色用户列表
+   * @param roleId 角色ID
+   * @returns 用户列表分页结果
+   */
+  fetchRoleUsersApi(roleId: number) {
+    return request.get<PageResult<UserItem>>(`/api/role/users`, { roleId })
   },
 }
