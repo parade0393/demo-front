@@ -120,4 +120,7 @@ export const userApi = {
   updateUserApi(data: UserFormData) {
     return request.post<boolean, UserFormData>('/api/user/update', data)
   },
+  deleteUserApi(id: number) {
+    return request.get<boolean>(`/api/user/delete`, { userId: id })
+  },
 }

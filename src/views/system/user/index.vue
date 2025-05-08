@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Refresh, Plus, Edit, View } from '@element-plus/icons-vue'
+import { Refresh, Plus, Edit, View, Delete } from '@element-plus/icons-vue'
 import { deptApi, userApi, roleApi } from '@/api'
 import type { DeptItem, UserItem, UserQueryParams, UserFormData, RoleItem } from '@/api'
 
@@ -207,6 +207,30 @@ const handleViewUser = async (row: UserItem) => {
   }
 }
 
+// 删除用户
+const handleDeleteUser = async (row: UserItem) => {
+  try {
+    await ElMessageBox.confirm(`确定要删除用户 ${row.name} 吗？`, '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    })
+
+    const res = await userApi.deleteUserApi(row.id)
+    if (res) {
+      ElMessage.success('删除用户成功')
+      fetchUserList()
+    } else {
+      ElMessage.error('删除用户失败')
+    }
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('删除用户失败', error)
+      ElMessage.error('删除用户失败')
+    }
+  }
+}
+
 // 提交用户表单
 const submitUserForm = async () => {
   if (!userFormRef.value) return
@@ -328,6 +352,14 @@ onMounted(() => {
                 @click="handleEditUser(row)"
                 v-permission="['system:user:edit', 'system:role:query']"
                 >编辑</el-button
+              >
+              <el-button
+                type="danger"
+                :icon="Delete"
+                link
+                @click="handleDeleteUser(row)"
+                v-permission="['system:user:delete']"
+                >删除</el-button
               >
             </template>
           </el-table-column>
