@@ -124,7 +124,6 @@ const submitForm = async () => {
   await formRef.value.validate((valid) => {
     if (valid) {
       console.log('提交表单', formData)
-      // 这里应该调用保存API，目前模拟成功
       const api = formData.id ? menuApi.updateMenuApi : menuApi.addMenuApi
       api(formData)
         .then(() => {
@@ -179,7 +178,9 @@ onMounted(() => {
 <template>
   <div class="menu-container">
     <div class="menu-header">
-      <el-button type="primary" @click="handleAdd()">添加菜单</el-button>
+      <el-button type="primary" @click="handleAdd()" v-permission="'system:menu:add'"
+        >添加菜单</el-button
+      >
     </div>
 
     <el-table
@@ -223,9 +224,19 @@ onMounted(() => {
 
       <el-table-column label="操作" width="200" fixed="right">
         <template #default="{ row }">
-          <el-button type="primary" link @click="handleAdd(row)">添加子菜单</el-button>
-          <el-button type="primary" link @click="handleEdit(row)">编辑</el-button>
-          <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
+          <el-button type="primary" link @click="handleAdd(row)" v-permission="'system:menu:add'"
+            >添加子菜单</el-button
+          >
+          <el-button type="primary" link @click="handleEdit(row)" v-permission="'system:menu:edit'"
+            >编辑</el-button
+          >
+          <el-button
+            type="danger"
+            link
+            @click="handleDelete(row)"
+            v-permission="'system:menu:delete'"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>

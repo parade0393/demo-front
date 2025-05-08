@@ -172,7 +172,9 @@ onMounted(() => {
 <template>
   <div class="dept-container">
     <div class="dept-header">
-      <el-button type="primary" :icon="Plus" @click="handleAdd()">新增部门</el-button>
+      <el-button type="primary" :icon="Plus" @click="handleAdd()" v-permission="'system:dept:add'"
+        >新增部门</el-button
+      >
       <el-button :icon="Refresh" circle @click="refreshList" />
     </div>
 
@@ -199,9 +201,30 @@ onMounted(() => {
       <el-table-column prop="createTime" label="创建时间" min-width="180" />
       <el-table-column label="操作" width="280" fixed="right">
         <template #default="{ row }">
-          <el-button type="primary" link :icon="Plus" @click="handleAdd(row)">添加子部门</el-button>
-          <el-button type="primary" link :icon="Edit" @click="handleEdit(row)">编辑</el-button>
-          <el-button type="danger" link :icon="Delete" @click="handleDelete(row)">删除</el-button>
+          <el-button
+            type="primary"
+            link
+            :icon="Plus"
+            @click="handleAdd(row)"
+            v-permission="'system:dept:add'"
+            >添加子部门</el-button
+          >
+          <el-button
+            type="primary"
+            link
+            :icon="Edit"
+            @click="handleEdit(row)"
+            v-permission="'system:deot:edit'"
+            >编辑</el-button
+          >
+          <el-button
+            type="danger"
+            link
+            :icon="Delete"
+            @click="handleDelete(row)"
+            v-permission="'system:deot:delete'"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>

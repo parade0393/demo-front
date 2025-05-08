@@ -288,7 +288,13 @@ onMounted(() => {
           <div class="card-header">
             <span>用户列表</span>
             <div class="header-operations">
-              <el-button type="primary" :icon="Plus" @click="handleAddUser">新增</el-button>
+              <el-button
+                type="primary"
+                :icon="Plus"
+                @click="handleAddUser"
+                v-permission="['system:user:add', 'system:role:query']"
+                >新增</el-button
+              >
               <el-button :icon="Refresh" circle @click="refreshUserList" />
             </div>
           </div>
@@ -315,7 +321,12 @@ onMounted(() => {
               <el-button type="primary" :icon="View" link @click="handleViewUser(row)"
                 >查看</el-button
               >
-              <el-button type="primary" :icon="Edit" link @click="handleEditUser(row)"
+              <el-button
+                type="primary"
+                :icon="Edit"
+                link
+                @click="handleEditUser(row)"
+                v-permission="['system:user:edit', 'system:role:query']"
                 >编辑</el-button
               >
             </template>

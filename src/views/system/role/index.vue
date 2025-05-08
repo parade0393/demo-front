@@ -209,7 +209,9 @@ onMounted(() => {
 <template>
   <div class="role-container">
     <div class="role-header">
-      <el-button type="primary" @click="handleAdd">添加角色</el-button>
+      <el-button type="primary" @click="handleAdd" v-permission="'system:role:add'"
+        >添加角色</el-button
+      >
     </div>
 
     <el-table v-loading="loading" :data="tableData" row-key="id" border style="width: 100%">
@@ -227,9 +229,23 @@ onMounted(() => {
       <el-table-column prop="createTime" label="创建时间" min-width="180" />
       <el-table-column label="操作" width="280" fixed="right">
         <template #default="{ row }">
-          <el-button type="primary" link @click="handleAssignPerm(row)">分配权限</el-button>
-          <el-button type="primary" link @click="handleEdit(row)">编辑</el-button>
-          <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
+          <el-button
+            type="primary"
+            link
+            @click="handleAssignPerm(row)"
+            v-permission="['system:role:edit']"
+            >分配权限</el-button
+          >
+          <el-button type="primary" link @click="handleEdit(row)" v-permission="'system:role:edit'"
+            >编辑</el-button
+          >
+          <el-button
+            type="danger"
+            link
+            @click="handleDelete(row)"
+            v-permission="'system:role:delete'"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>

@@ -4,6 +4,7 @@ import { setupPinia } from './pinia'
 import { setupRouter } from './router'
 import { setupMock } from './mock'
 import { hideLoading, updateLoadingTip, getStartupTime, resetStartupTime } from './loading'
+import { setupDirectives } from '@/directives'
 
 export { setupMock, hideLoading, updateLoadingTip, getStartupTime, resetStartupTime }
 
@@ -20,4 +21,6 @@ export function setupPlugins(app: App): void {
   setupRouter(app)
   updateLoadingTip('正在加载UI组件...')
   setupElementPlus(app)
+  updateLoadingTip('正在注册自定义指令...')
+  setupDirectives(app)
 }
