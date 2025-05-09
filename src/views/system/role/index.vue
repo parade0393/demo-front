@@ -490,7 +490,7 @@ onMounted(() => {
       transition: all 0.3s;
 
       &:hover {
-        background-color: var(--el-fill-color-lighter);
+        background-color: var(--el-fill-color-light);
       }
 
       &-active {
