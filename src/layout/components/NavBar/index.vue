@@ -275,10 +275,10 @@ const openSettings = () => {
 
           .user-name {
             margin: 0 5px;
-            color: var(--el-text-color-regular);
+            color: var(--sidebar-menu-text);
           }
           .el-icon--right {
-            color: var(--el-text-color-regular);
+            color: var(--sidebar-menu-text);
           }
         }
       }
