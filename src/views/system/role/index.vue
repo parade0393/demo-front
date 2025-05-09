@@ -271,12 +271,6 @@ const handleTabChange = (tab: string) => {
   }
 }
 
-// 操作菜单相关
-const showOperationMenu = ref<number | null>(null)
-const toggleOperationMenu = (roleId: number | null) => {
-  showOperationMenu.value = roleId
-}
-
 onMounted(() => {
   fetchRoleList()
   fetchMenuTree()
@@ -324,45 +318,23 @@ onMounted(() => {
               <div class="role-code">{{ role.code }}</div>
             </div>
             <div class="role-actions">
-              <el-tag
-                size="small"
-                :type="role.status === 1 ? 'success' : 'info'"
-                class="role-status"
-              >
-                {{ role.status === 1 ? '正常' : '停用' }}
-              </el-tag>
-              <el-popover
-                placement="bottom"
-                :width="100"
+              <el-dropdown
                 trigger="click"
-                :visible="showOperationMenu === role.id"
-                @hide="toggleOperationMenu(null)"
+                @command="(command) => (command === 'edit' ? handleEdit(role) : handleDelete(role))"
+                class="role-dropdown"
               >
-                <template #reference>
-                  <el-button
-                    type="primary"
-                    link
-                    :icon="MoreFilled"
-                    @click.stop="toggleOperationMenu(role.id)"
-                  />
+                <el-button type="primary" link :icon="MoreFilled" @click.stop />
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="edit">
+                      <span v-permission="'system:role:edit'">编辑</span>
+                    </el-dropdown-item>
+                    <el-dropdown-item command="delete" style="color: #f56c6c">
+                      <span v-permission="'system:role:delete'">删除</span>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
                 </template>
-                <div class="operation-menu">
-                  <div
-                    class="operation-item"
-                    @click="handleEdit(role)"
-                    v-permission="'system:role:edit'"
-                  >
-                    编辑
-                  </div>
-                  <div
-                    class="operation-item danger"
-                    @click="handleDelete(role)"
-                    v-permission="'system:role:delete'"
-                  >
-                    删除
-                  </div>
-                </div>
-              </el-popover>
+              </el-dropdown>
             </div>
           </div>
         </div>
@@ -513,11 +485,9 @@ onMounted(() => {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px;
-      border-radius: 4px;
+      padding: 8px 12px;
       cursor: pointer;
       transition: all 0.3s;
-      border: 1px solid #ebeef5;
 
       &:hover {
         background-color: #f5f7fa;
@@ -552,6 +522,15 @@ onMounted(() => {
 
       .role-status {
         font-size: 12px;
+      }
+
+      .role-dropdown {
+        display: none;
+      }
+
+      &:hover .role-dropdown,
+      &-active .role-dropdown {
+        display: block;
       }
     }
   }
