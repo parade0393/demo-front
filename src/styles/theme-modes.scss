@@ -2,16 +2,17 @@
 
 // 暗色模式
 html.dark {
-  --el-bg-color: #1d1e1f;
-  --el-bg-color-page: #0a0a0a;
+  --el-bg-color: #141414;
+  --el-bg-color-page: #000000;
   --el-text-color-primary: #e5eaf3;
   --el-text-color-regular: #cfd3dc;
   --el-text-color-secondary: #a3a6ad;
   --el-border-color: #4c4d4f;
   --el-border-color-light: #363637;
-  --el-fill-color: #262727;
-  --el-fill-color-light: #1d1d1d;
-  --el-fill-color-blank: #000000;
+  --el-fill-color: #303030; //激活(选中)状态下的背景色
+  --el-fill-color-light: #262727; //悬停状态下的背景色
+  --el-fill-color-lighter: #1d1d1d; //表格隔行变色状态的背景色
+  --el-fill-color-blank: #1d1e1f;
   --el-mask-color: rgba(0, 0, 0, 0.8);
   --el-mask-color-extra-light: rgba(0, 0, 0, 0.3);
 
@@ -19,7 +20,7 @@ html.dark {
   color-scheme: dark; //告诉浏览器当前页面使用暗色方案，这会影响浏览器默认的滚动条、表单控件等原生元素的样式。
   --el-color-white: #ffffff;
   --el-color-black: #000000;
-  --el-color-primary-light-9: #1f1f1f;
+  --el-color-primary-light-9: #303030 !important;
 }
 
 // 哀悼模式（黑白模式）

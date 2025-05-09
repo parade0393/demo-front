@@ -172,6 +172,7 @@ const toggleSideBar = () => {
         padding: 0;
         height: calc(100% - 84px);
         overflow: hidden;
+        background-color: var(--el-bg-color-page);
       }
     }
   }
@@ -187,6 +188,7 @@ const toggleSideBar = () => {
       }
       .app-main-container {
         height: calc(100% - 94px);
+        background-color: var(--el-bg-color-page);
       }
     }
   }
@@ -228,6 +230,7 @@ const toggleSideBar = () => {
           padding: 0;
           height: calc(100% - 94px); // 60px顶部菜单 + 34px标签视图
           overflow: hidden;
+          background-color: var(--el-bg-color-page);
         }
       }
     }

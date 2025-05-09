@@ -490,12 +490,11 @@ onMounted(() => {
       transition: all 0.3s;
 
       &:hover {
-        background-color: #f5f7fa;
+        background-color: var(--el-fill-color-lighter);
       }
 
       &-active {
-        background-color: #ecf5ff;
-        border-color: #d9ecff;
+        background-color: var(--el-fill-color);
       }
 
       .role-info {

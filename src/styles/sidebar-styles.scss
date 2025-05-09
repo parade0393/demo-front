@@ -21,11 +21,6 @@
   }
 }
 
-// 主内容区域样式
-.main-container {
-  background-color: var(--sidebar-main-bg);
-}
-
 // 哀悼模式和色弱模式下的适配
 html.mourning,
 html.color-weak {
