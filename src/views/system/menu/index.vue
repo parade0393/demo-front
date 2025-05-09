@@ -282,13 +282,20 @@ onMounted(() => {
 
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="路由名称" prop="routeName">
-              <el-input v-model="formData.routeName" placeholder="请输入路由名称" />
+            <el-form-item label="路由路径" prop="routePath">
+              <el-input v-model="formData.routePath" placeholder="请输入路由路径" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="路由路径" prop="routePath">
-              <el-input v-model="formData.routePath" placeholder="请输入路由路径" />
+            <el-form-item label="重定向" prop="redirect">
+              <el-input v-model="formData.redirect" placeholder="请输入重定向地址" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="路由名称" prop="routeName">
+              <el-input v-model="formData.routeName" placeholder="请输入路由名称" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -345,10 +352,6 @@ onMounted(() => {
             </el-form-item>
           </el-col>
         </el-row>
-
-        <el-form-item label="重定向" prop="redirect" v-if="formData.type === 1">
-          <el-input v-model="formData.redirect" placeholder="请输入重定向路径" />
-        </el-form-item>
 
         <el-form-item label="路由参数" prop="params">
           <el-input v-model="formData.params" placeholder="请输入路由参数" />
