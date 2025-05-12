@@ -29,15 +29,19 @@ export default defineConfig(({ mode }) => {
       vueJsx(),
       mode === 'development' && vueDevTools(), //当 mode 不是 'development' 时， mode === 'development' && vueDevTools() 会返回 false,就不会加载这个插件
       AutoImport({
-        // 导入 Vue 函数，如：ref, reactive, toRef 等
+        // 自动导入 Element Plus 相关函数，如：ElMessage, ElMessageBox... (非组件)
+        // 注意：此处的ElementPlusResolver主要针对的是非组件的API方法，如ElMessage。
+        // 组件的自动导入由Components插件负责。
+        // eslint报错解决（生成全局声明文件）
         resolvers: [ElementPlusResolver()],
+        // 自动导入 Vue 相关函数，如：ref, reactive, toRef 等
         imports: ['vue', 'vue-router', 'pinia'],
         dts: 'src/types/auto-imports.d.ts', // 自动生成声明文件
         dirs: ['src/hooks', 'src/stores'], // 自动导入 hooks 和 stores
         vueTemplate: true, // 允许模板里也自动导入
         eslintrc: {
-          enabled: true,
-          filepath: './.eslintrc-auto-import.json',
+          enabled: true, // 默认false, true启用。生成一次就可以，避免每次工程启动都生成，一旦生成配置文件之后，最好把enable关掉，即改成false。否则这个文件每次会在重新加载的时候重新生成，这会导致eslint有时会找不到这个文件。当需要更新配置文件的时候，再重新打开
+          filepath: './.eslintrc-auto-import.json', // 生成json文件,eslintrc中引入
           globalsPropValue: true,
         },
       }),
@@ -47,7 +51,7 @@ export default defineConfig(({ mode }) => {
         extensions: ['vue', 'md'], // 支持 vue 和 md 组件
         deep: true, // 支持子目录递归
         dts: 'src/types/components.d.ts', // 自动生成声明文件
-        // 导入 Element Plus函数，如：ElMessage, ElMessageBox 等
+        // 自动注册 ElementPlus 组件
         resolvers: [ElementPlusResolver()],
       }),
     ],
