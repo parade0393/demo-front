@@ -102,7 +102,7 @@ const displayMenuItems = computed(() => {
 /* 全局样式，确保弹出菜单使用正确的背景色和hover背景色 */
 .custom-popper-menu {
   .el-menu {
-    background-color: var(--sidebar-menu-bg, #304156) !important;
+    background-color: var(--sidebar-bg, #304156) !important;
 
     .el-menu-item,
     .el-sub-menu__title {

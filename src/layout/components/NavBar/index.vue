@@ -110,7 +110,7 @@ const openSettings = () => {
           :menu-items="routes"
           :active-text-color="primaryColor"
           mode="horizontal"
-          :background-color="'var(--sidebar-menu-bg)'"
+          :background-color="'var(--sidebar-bg)'"
           :text-color="'var(--sidebar-menu-text)'"
         />
       </div>
@@ -169,7 +169,7 @@ const openSettings = () => {
   &.with-top-menu {
     height: 60px;
     padding: 0;
-    background-color: var(--sidebar-menu-bg);
+    background-color: var(--sidebar-bg);
     color: var(--sidebar-menu-text);
 
     .navbar__left {
@@ -186,7 +186,7 @@ const openSettings = () => {
       :deep(.el-menu) {
         border-bottom: none;
         height: 100%;
-        background-color: var(--sidebar-menu-bg) !important;
+        background-color: var(--sidebar-bg) !important;
 
         .el-menu-item {
           height: 60px;

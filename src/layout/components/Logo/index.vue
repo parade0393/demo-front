@@ -54,6 +54,7 @@ const primaryColor = computed(() => configStore.config.theme.primaryColor)
   padding: 10px;
   overflow: hidden;
   transition: all 0.3s;
+  background-color: var(--sidebar-logo-bg);
 
   &.collapse {
     padding: 10px 8px;

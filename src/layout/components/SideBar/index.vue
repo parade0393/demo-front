@@ -14,7 +14,7 @@ const isCollapse = inject('isCollapse', ref(false))
 const { primaryColor } = useMenu()
 
 // 使用CSS变量设置颜色
-const backgroundColor = computed(() => 'var(--sidebar-menu-bg)')
+const backgroundColor = computed(() => 'var(--sidebar-bg)')
 const textColor = computed(() => 'var(--sidebar-menu-text)')
 </script>
 
@@ -36,6 +36,7 @@ const textColor = computed(() => 'var(--sidebar-menu-text)')
 .sidebar {
   height: 100%;
   // 移除硬编码的背景色，使用sidebar-styles.scss中定义的样式
+  background-color: var(--sidebar-bg);
 
   .sidebar-menu {
     border-right: none;

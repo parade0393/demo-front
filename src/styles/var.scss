@@ -1,7 +1,129 @@
-// 统一样式在这里统一管理
-// 导入侧边栏主题变量
-@use './sidebar-theme-vars.scss';
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  $colors: (
+    'primary': (
+      'base': #4080ff,
+    ),
+    'success': (
+      'base': #23c343,
+    ),
+    'warning': (
+      'base': #ff9a2e,
+    ),
+    'danger': (
+      'base': #f76560,
+    ),
+    'info': (
+      'base': #a9aeb8,
+    ),
+  ),
 
+  $bg-color: (
+    'page': #f5f8fd,
+  )
+);
+
+// 侧边栏主题变量定义
+// 定义通用的侧边栏变量
 :root {
-  // 全局变量可以在这里定义
+  // 菜单栏背景色
+  --sidebar-bg: #304156;
+  // 侧边栏Logo区域背景色
+  --sidebar-logo-bg: #263445;
+  // 侧边栏菜单文字颜色
+  --sidebar-menu-text: #bfcbd9;
+  // 侧边栏菜单悬浮时背景色
+  --sidebar-menu-hover-bg: #263445;
+  // 侧边栏边框颜色
+  --sidebar-border: transparent;
+
+  // 各种主题风格的变量值
+  // 经典蓝风格变量
+  &.sidebar-classic-blue {
+    --sidebar-bg: #304156;
+    --sidebar-logo-bg: #263445;
+    --sidebar-menu-text: #bfcbd9;
+    --sidebar-menu-hover-bg: #263445;
+    --sidebar-border: transparent;
+  }
+
+  // 极简白风格变量
+  &.sidebar-simple-white {
+    --sidebar-bg: #ffffff;
+    --sidebar-logo-bg: #f5f7fa;
+    --sidebar-menu-text: #303133;
+    --sidebar-menu-hover-bg: #f5f7fa;
+    --sidebar-border: #e6e6e6;
+  }
+
+  // 暗夜紫风格变量
+  &.sidebar-dark-purple {
+    --sidebar-bg: #2b1c3d;
+    --sidebar-logo-bg: #1e1429;
+    --sidebar-menu-text: #c8b6db;
+    --sidebar-menu-hover-bg: #3a2853;
+    --sidebar-border: transparent;
+  }
+
+  // 暗黑模式下的主题覆盖
+  &.dark {
+    // 暗黑模式下极简白风格变量
+    &.sidebar-simple-white {
+      --sidebar-bg: #1d1e1f;
+      --sidebar-logo-bg: #18191a;
+      --sidebar-menu-text: #e5eaf3;
+      --sidebar-menu-hover-bg: #262727;
+      --sidebar-border: #2c2c2c;
+    }
+  }
+}
+
+// 哀悼模式（黑白模式）
+html.mourning {
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
+  filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='grayscale'><feColorMatrix type='matrix' values='0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0'/></filter></svg>#grayscale");
+  filter: progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);
+  -webkit-filter: grayscale(1);
+}
+
+// 色弱模式
+html.color-weak {
+  filter: invert(80%);
+  -webkit-filter: invert(80%);
+}
+
+// 暗色模式下的哀悼模式
+html.dark.mourning {
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
+}
+
+// 暗色模式下的色弱模式
+html.dark.color-weak {
+  filter: invert(80%);
+  -webkit-filter: invert(80%);
+}
+
+// Element Plus 样式覆盖
+.el-menu {
+  &.el-menu--horizontal,
+  &.el-menu--vertical {
+    .el-menu-item:not(.is-disabled):focus,
+    .el-menu-item:not(.is-disabled):hover {
+      background-color: var(--sidebar-menu-hover-bg) !important;
+      color: var(--sidebar-menu-text) !important;
+    }
+  }
+}
+
+// 弹出的子菜单样式覆盖
+.el-menu--popup {
+  .el-menu-item:not(.is-disabled):focus,
+  .el-menu-item:not(.is-disabled):hover {
+    background-color: var(--sidebar-menu-hover-bg) !important;
+    color: var(--sidebar-menu-text) !important;
+  }
 }
