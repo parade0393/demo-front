@@ -7,7 +7,6 @@ import {
   applyTheme,
   toggleSidebarStyle,
 } from '@/utils/theme'
-import type { AppConfig } from '@/types/config'
 import { defaultConfig } from '@/config/theme'
 
 // 创建配置中心store (添加持久化支持)

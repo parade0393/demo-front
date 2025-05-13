@@ -11,7 +11,7 @@ export const presetColors = [
 ]
 
 // 预设的布局模式选项
-export const layoutModes = [
+export const layoutModes: LayoutMode[] = [
   'left-sidebar', // 左侧菜单布局
   'right-sidebar', // 右侧菜单布局
   'top-menu', // 顶部菜单布局
@@ -19,7 +19,7 @@ export const layoutModes = [
 ] as const
 
 // 预设的标签页风格选项
-export const tagsViewStyles = [
+export const tagsViewStyles: TagsViewStyle[] = [
   'card', // 卡片式（带阴影）
   'line', // 线条式（只有底边框）
   'capsule', // 胶囊式（圆角）
@@ -27,7 +27,7 @@ export const tagsViewStyles = [
 ] as const
 
 // 预设的侧边栏风格选项
-export const sidebarStyles = [
+export const sidebarStyles: SidebarStyle[] = [
   'classic-blue', // 经典蓝色
   'simple-white', // 极简白色
   'dark-purple', // 暗夜紫色

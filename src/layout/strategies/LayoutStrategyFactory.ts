@@ -2,7 +2,6 @@
  * 布局策略工厂
  * 根据布局模式返回对应的布局策略实例
  */
-import type { LayoutMode } from '@/types/config'
 import type { LayoutStrategy } from './LayoutStrategy'
 import { LeftSidebarStrategy } from './LeftSidebarStrategy'
 import { RightSidebarStrategy } from './RightSidebarStrategy'
