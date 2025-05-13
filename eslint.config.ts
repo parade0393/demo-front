@@ -4,6 +4,16 @@ import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescri
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 import autoImportGlobals from './.eslintrc-auto-import.json' // 引入自动生成的 globals
 
+/**
+ * 配置 ESLint 规则和插件，适用于 Vue + TypeScript 项目。
+ *
+ * - `app/files-to-lint`：指定需要 lint 的文件类型（ts, mts, tsx, vue）。
+ * - `app/files-to-ignore`：指定需要忽略的文件夹（如 dist、coverage）。
+ * - 引入 Vue 相关的基础配置和推荐规则。
+ * - 针对 `.vue` 文件，强制组件名为多单词（允许 index 和 404 例外）。
+ * - `app/auto-import`：自动挂载全局变量，支持自动导入。
+ * - `app/unused-vars`：配置未使用变量的检测规则，允许以下划线开头的变量不报错。
+ */
 export default defineConfigWithVueTs(
   {
     name: 'app/files-to-lint',

@@ -6,9 +6,6 @@ import { http, HttpResponse, delay } from 'msw'
 import { setupWorker } from 'msw/browser'
 import type { RequestHandler } from 'msw'
 
-// 导入API响应类型
-import type { ApiResponse } from '@/utils/request'
-
 // 定义模块类型
 type ModuleType = {
   default?: unknown
@@ -48,7 +45,7 @@ export function createResponse<T>(data: T, errorCode = 0, errorMsg = ''): ApiRes
   return {
     data,
     code: errorCode,
-    errorMsg,
+    message: errorMsg,
   }
 }
 
