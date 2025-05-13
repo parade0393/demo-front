@@ -209,7 +209,7 @@ const openSettings = () => {
       background: transparent;
 
       .logo-title {
-        color: var(--el-text-color-primary);
+        color: inherit;
       }
     }
   }
@@ -227,10 +227,9 @@ const openSettings = () => {
       cursor: pointer;
       transition: background 0.3s;
       padding: 0 10px;
-      color: var(--el-text-color-regular);
 
       &:hover {
-        background: var(--el-mask-color-extra-light);
+        background: var(--sidebar-menu-hover-bg);
       }
     }
 

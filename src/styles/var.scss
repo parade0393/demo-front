@@ -127,3 +127,6 @@ html.dark.color-weak {
     color: var(--sidebar-menu-text) !important;
   }
 }
+.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+  background-color: var(--el-fill-color) !important;
+}
