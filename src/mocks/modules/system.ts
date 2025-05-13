@@ -3,8 +3,7 @@
  */
 import { http, HttpResponse, delay } from 'msw'
 import { createResponse } from '../index'
-import type { PaginationResult } from '@/api/modules/system'
-import type { UserInfo, RoleItem } from '@/api/modules/user'
+import type { UserInfo, RoleItem } from '@/api/modules/system/auth'
 
 // 用户列表数据
 const users: UserInfo[] = [
@@ -170,11 +169,12 @@ export const systemHandlers = [
     const list = users.slice(start, end)
 
     return HttpResponse.json(
-      createResponse<PaginationResult<UserInfo>>({
-        list,
-        total: users.length,
-        page,
-        pageSize,
+      createResponse<PageResult<UserInfo>>({
+        records: list,
+        total: roles.length,
+        current: page,
+        size: 10,
+        pages: pageSize,
       }),
     )
   }),
@@ -191,11 +191,12 @@ export const systemHandlers = [
     const list = roles.slice(start, end)
 
     return HttpResponse.json(
-      createResponse<PaginationResult<RoleItem>>({
-        list,
+      createResponse<PageResult<RoleItem>>({
+        records: list,
         total: roles.length,
-        page,
-        pageSize,
+        current: page,
+        size: 10,
+        pages: pageSize,
       }),
     )
   }),
