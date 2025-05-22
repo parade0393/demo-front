@@ -64,6 +64,6 @@ export const menuApi = {
     return request.post<boolean>('/api/menu/create', data)
   },
   deleteMenuApi(id: number) {
-    return request.get<boolean>('/api/menu/delete', { id })
+    return request.get<boolean>('/api/menu/delete', { menuId: id })
   },
 }

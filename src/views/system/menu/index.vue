@@ -143,16 +143,23 @@ const submitForm = async () => {
 }
 
 // 删除菜单
-const handleDelete = (_: MenuItem) => {
+const handleDelete = (item: MenuItem) => {
   ElMessageBox.confirm('确定要删除该菜单吗？', '警告', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
   })
     .then(() => {
-      // 这里应该调用删除API，目前模拟成功
-      ElMessage.success('删除成功')
-      fetchMenuList() // 重新加载数据
+      menuApi
+        .deleteMenuApi(item.id)
+        .then(() => {
+          ElMessage.success('删除成功')
+          fetchMenuList() // 重新加载数据
+        })
+        .catch((error) => {
+          console.error('删除菜单失败', error)
+          ElMessage.error('删除菜单失败')
+        })
     })
     .catch(() => {
       // 取消删除
