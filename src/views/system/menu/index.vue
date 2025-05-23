@@ -246,7 +246,7 @@ const filteredMenuData = computed(() => {
         </template>
       </el-table-column>
       <el-table-column prop="routeName" label="路由名称" width="180" />
-      <el-table-column prop="routePath" label="路由路径" width="180" />
+      <el-table-column prop="routePath" label="路由地址" width="180" />
       <el-table-column prop="component" label="组件路径" width="180" />
       <el-table-column prop="perm" label="权限标识" width="180" />
       <el-table-column prop="sort" label="排序" width="80" />
@@ -317,26 +317,64 @@ const filteredMenuData = computed(() => {
 
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="路由路径" prop="routePath">
-              <el-input v-model="formData.routePath" placeholder="请输入路由路径" />
+            <el-form-item label="路由地址" prop="routePath">
+              <template #label>
+                <div>
+                  路由地址
+                  <el-tooltip placement="bottom">
+                    <template #content>
+                      定义应用中不同页面对应的 URL 路径，目录需以 / 开头，菜单项不用。<br />例如：系统管理目录
+                      /system，系统管理下的用户管理菜单 user。
+                    </template>
+                    <el-icon><QuestionFilled /></el-icon>
+                  </el-tooltip>
+                </div>
+              </template>
+              <el-input v-model="formData.routePath" placeholder="user" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="12" v-if="formData.type === 1">
             <el-form-item label="重定向" prop="redirect">
               <el-input v-model="formData.redirect" placeholder="请输入重定向地址" />
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row :gutter="20">
+        <el-row :gutter="20" v-if="formData.type === 2">
           <el-col :span="12">
-            <el-form-item label="路由名称" prop="routeName">
-              <el-input v-model="formData.routeName" placeholder="请输入路由名称" />
+            <el-form-item prop="routeName">
+              <template #label>
+                <div>
+                  路由名称
+                  <el-tooltip placement="bottom">
+                    <template #content>
+                      如果需要开启缓存，需保证页面 defineOptions 中的 name
+                      与此处一致，建议使用驼峰。
+                    </template>
+                    <el-icon><QuestionFilled /></el-icon>
+                  </el-tooltip>
+                </div>
+              </template>
+              <el-input v-model="formData.routeName" placeholder="User" />
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-form-item label="组件路径" prop="component" v-if="formData.type === 2">
-          <el-input v-model="formData.component" placeholder="请输入组件路径" />
+          <template #label>
+            <div>
+              组件路径
+              <el-tooltip placement="bottom">
+                <template #content>
+                  组件页面完整路径，相对于 src/views/，如 system/user/index，缺省后缀 .vue
+                </template>
+                <el-icon><QuestionFilled /></el-icon>
+              </el-tooltip>
+            </div>
+          </template>
+          <el-input v-model="formData.component" placeholder="system/user/index">
+            <template #prepend>src/views/</template>
+            <template #append>.vue</template>
+          </el-input>
         </el-form-item>
 
         <el-form-item label="权限标识" prop="perm" v-if="formData.type === 3">
@@ -388,7 +426,7 @@ const filteredMenuData = computed(() => {
           </el-col>
         </el-row>
 
-        <el-form-item label="路由参数" prop="params">
+        <el-form-item label="路由参数" prop="params" v-if="formData.type === 2">
           <el-input v-model="formData.params" placeholder="请输入路由参数" />
         </el-form-item>
       </el-form>
