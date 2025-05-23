@@ -28,5 +28,16 @@ declare module 'vue-router' {
      * @default false
      */
     keepAlive?: boolean
+    /**
+     * 是否为外部链接
+     * true 是外部链接, false 不是外部链接
+     * @default false
+     */
+    isExternal?: boolean
+    /**
+     * 外部链接地址
+     * 当isExternal为true时有效
+     */
+    externalLink?: string
   }
 }

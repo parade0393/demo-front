@@ -47,8 +47,15 @@ const activeMenu = computed(() => {
 })
 
 // 菜单点击处理
-const handleMenuClick = (path: string) => {
-  // 确保路径以 / 开头
+const handleMenuClick = (path: string, meta?: Record<string, unknown>) => {
+  // 检查是否为外链
+  if (meta?.isExternal && meta.externalLink) {
+    // 外链，在新窗口打开
+    window.open(meta.externalLink, '_blank')
+    return
+  }
+
+  // 内部链接，确保路径以 / 开头
   const fullPath = path.startsWith('/') ? path : `/${path}`
   router.push(fullPath)
 }

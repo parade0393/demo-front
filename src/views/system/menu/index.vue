@@ -321,14 +321,15 @@ const filteredMenuData = computed(() => {
 
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="路由地址" prop="routePath">
+            <el-form-item label="路由地址" prop="routePath" v-if="formData.type !== 3">
               <template #label>
                 <div>
                   路由地址
                   <el-tooltip placement="bottom">
                     <template #content>
                       定义应用中不同页面对应的 URL 路径，目录需以 / 开头，菜单项不用。<br />例如：系统管理目录
-                      /system，系统管理下的用户管理菜单 user。
+                      /system，系统管理下的用户管理菜单 user。<br />如果是外链地址，需以 http(s)://
+                      开头。
                     </template>
                     <el-icon><QuestionFilled /></el-icon>
                   </el-tooltip>

@@ -27,6 +27,15 @@ router.beforeEach(async (to, from, next) => {
     } else {
       // 判断是否已获取用户信息
       if (permissionStore.isRoutesLoaded) {
+        // 注释掉冗余代码，因为在AppMenu组件中已经处理了外链点击逻辑
+        // 检查是否为外链路由（以/external-开头）
+        // if (to.path.startsWith('/external-') && to.meta?.isExternal && to.meta.externalLink) {
+        //   // 是外链路由，在新窗口打开原始URL
+        //   window.open(to.meta.externalLink as string, '_blank')
+        //   // 取消当前导航
+        //   return next(false)
+        // }
+
         if (to.matched.length === 0) {
           // 没有匹配到任何路由，重定向到404页面
           next({ path: '/404', replace: true })

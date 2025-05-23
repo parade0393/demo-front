@@ -22,15 +22,22 @@ function generateRoutes(menus: ServerMenuItem[]): RouteRecordRaw[] {
   const result: RouteRecordRaw[] = []
 
   for (const menu of menus) {
+    // 检查是否为外链（以http或https开头）
+    const isExternalLink = /^https?:\/\//.test(menu.path)
+
     const route: Partial<RouteRecordRaw> = {
-      path: menu.path,
-      name: menu.name,
+      // 如果是外链但需要以/开头（一级菜单），则使用特殊路径格式
+      path: isExternalLink && !menu.children?.length ? `/external-${menu.path}` : menu.path,
+      name: menu.path,
       meta: {
         title: menu.meta.title,
         icon: menu.meta.icon,
         hidden: menu.meta.hidden,
         keepAlive: menu.meta.keepAlive,
         alwaysShow: menu.meta.alwaysShow,
+        // 添加外链标记和原始URL
+        isExternal: isExternalLink,
+        externalLink: isExternalLink ? menu.path : undefined,
       },
     }
 
@@ -57,7 +64,6 @@ function generateRoutes(menus: ServerMenuItem[]): RouteRecordRaw[] {
     if (menu.children?.length) {
       route.children = generateRoutes(menu.children)
     }
-
     result.push(route as RouteRecordRaw)
   }
 
@@ -123,6 +129,7 @@ export const usePermissionStore = defineStore(
 
       // 添加路由
       routes.forEach((route) => {
+        console.log(route)
         router.addRoute(route)
       })
       isRoutesLoaded.value = true

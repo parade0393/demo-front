@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  (e: 'menu-click', path: string): void
+  (e: 'menu-click', path: string, meta?: Record<string, unknow>): void
 }>()
 
 // 获取可见的子节点
@@ -30,8 +30,8 @@ const shouldShowSubMenuComputed = computed(() => {
 })
 
 // 处理菜单点击
-const handleClick = (path: string) => {
-  emit('menu-click', getFullPath(path, props.basePath))
+const handleClick = (path: string, meta?: Record<string, unknow>) => {
+  emit('menu-click', getFullPath(path, props.basePath), meta)
 }
 </script>
 
@@ -65,7 +65,7 @@ const handleClick = (path: string) => {
   <template v-else-if="visibleChildren.length === 1">
     <el-menu-item
       :index="getFullPath(visibleChildren[0].path, basePath)"
-      @click="handleClick(visibleChildren[0].path)"
+      @click="handleClick(visibleChildren[0].path, visibleChildren[0].meta)"
     >
       <el-icon v-if="visibleChildren[0].meta?.icon">
         <component :is="visibleChildren[0].meta.icon" />
@@ -78,7 +78,7 @@ const handleClick = (path: string) => {
   <el-menu-item
     v-else-if="!menuItem.meta?.hidden"
     :index="getFullPath(menuItem.path, basePath)"
-    @click="handleClick(menuItem.path)"
+    @click="handleClick(menuItem.path, menuItem.meta)"
   >
     <el-icon v-if="menuItem.meta?.icon">
       <component :is="menuItem.meta.icon" />
