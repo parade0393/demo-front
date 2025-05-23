@@ -126,6 +126,10 @@ const submitForm = async () => {
   await formRef.value.validate((valid) => {
     if (valid) {
       console.log('提交表单', formData)
+      if (formData.type == 1 && formData.component != 'Layout') {
+        //目录类型的菜单，组件路径必须为 Layout
+        formData.component = 'Layout'
+      }
       const api = formData.id ? menuApi.updateMenuApi : menuApi.addMenuApi
       api(formData)
         .then(() => {
