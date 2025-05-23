@@ -186,7 +186,7 @@ onMounted(() => {
 // 过滤掉type为3的菜单项（按钮），包括子菜单中的按钮
 const filteredMenuData = computed(() => {
   // 深度过滤树形结构
-  const deepFilter = (items: MenuItem[]) => {
+  const deepFilter = (items: MenuItem[]): MenuItem[] => {
     return items
       .filter((item) => item.type !== 3)
       .map((item) => {
