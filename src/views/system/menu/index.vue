@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { menuApi } from '@/api/modules/system/menu'
 import IconSelector from '@/components/IconSelector/index.vue'
@@ -101,6 +101,8 @@ const resetForm = () => {
 
 // 打开添加菜单对话框
 const handleAdd = (row?: MenuItem) => {
+  console.log(row)
+  console.log(tableData.value)
   resetForm()
   dialogTitle.value = '添加菜单'
   if (row) {
@@ -180,6 +182,26 @@ const formatMenuType = (row: MenuItem) => {
 onMounted(() => {
   fetchMenuList()
 })
+
+// 过滤掉type为3的菜单项（按钮），包括子菜单中的按钮
+const filteredMenuData = computed(() => {
+  // 深度过滤树形结构
+  const deepFilter = (items: MenuItem[]) => {
+    return items
+      .filter((item) => item.type !== 3)
+      .map((item) => {
+        if (item.children && item.children.length > 0) {
+          return {
+            ...item,
+            children: deepFilter(item.children),
+          }
+        }
+        return item
+      })
+  }
+
+  return deepFilter(tableData.value)
+})
 </script>
 
 <template>
@@ -229,10 +251,15 @@ onMounted(() => {
       <el-table-column prop="perm" label="权限标识" width="180" />
       <el-table-column prop="sort" label="排序" width="80" />
 
-      <el-table-column label="操作" width="200" fixed="right">
+      <el-table-column label="操作" width="200" fixed="right" align="center">
         <template #default="{ row }">
-          <el-button type="primary" link @click="handleAdd(row)" v-permission="'system:menu:add'"
-            >添加子菜单</el-button
+          <el-button
+            v-if="row.type !== 3"
+            type="primary"
+            link
+            @click="handleAdd(row)"
+            v-permission="'system:menu:add'"
+            >新增</el-button
           >
           <el-button type="primary" link @click="handleEdit(row)" v-permission="'system:menu:edit'"
             >编辑</el-button
@@ -263,15 +290,16 @@ onMounted(() => {
         </el-form-item>
 
         <el-form-item label="上级菜单" prop="parentId">
-          <el-select v-model="formData.parentId" placeholder="请选择上级菜单" style="width: 100%">
-            <el-option :value="0" label="顶级菜单" />
-            <el-option
-              v-for="item in tableData"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
+          <el-tree-select
+            v-model="formData.parentId"
+            placeholder="请选择上级菜单"
+            style="width: 100%"
+            :data="[{ id: 0, name: '顶级菜单', children: filteredMenuData }]"
+            node-key="id"
+            :props="{ label: 'name', children: 'children' }"
+            check-strictly
+            default-expand-all
+          />
         </el-form-item>
 
         <el-row :gutter="20">
