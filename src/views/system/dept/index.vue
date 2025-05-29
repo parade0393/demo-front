@@ -6,6 +6,10 @@ import { deptApi } from '@/api/modules/system/dept'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { DeptItem, DeptFormData } from '@/api/modules/system/dept'
 
+defineOptions({
+  name: 'SystemDept',
+})
+
 // 表格数据
 const tableData = ref<DeptItem[]>([])
 const loading = ref(false)

@@ -9,6 +9,10 @@ import type { RoleItem } from '@/api/modules/system/role'
 import type { MenuItem } from '@/api/modules/system/menu'
 import type { UserItem } from '@/api'
 
+defineOptions({
+  name: 'SystemRole',
+})
+
 // 角色列表数据
 const roleList = ref<RoleItem[]>([])
 const filteredRoleList = ref<RoleItem[]>([])

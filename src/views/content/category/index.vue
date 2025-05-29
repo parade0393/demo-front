@@ -1,4 +1,8 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+defineOptions({
+  name: 'ContentCategory',
+})
+</script>
 
 <template>
   <div>category</div>

@@ -28,7 +28,7 @@ function generateRoutes(menus: ServerMenuItem[]): RouteRecordRaw[] {
     const route: Partial<RouteRecordRaw> = {
       // 如果是外链但需要以/开头（一级菜单），则使用特殊路径格式
       path: isExternalLink && !menu.children?.length ? `/external-${menu.path}` : menu.path,
-      name: menu.path,
+      name: menu.name || menu.path.replace(/^\//, ''), // 如果没有name，则使用path作为name
       meta: {
         title: menu.meta.title,
         icon: menu.meta.icon,

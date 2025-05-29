@@ -5,6 +5,10 @@ import { Refresh, Plus, Edit, View, Delete } from '@element-plus/icons-vue'
 import { deptApi, userApi, roleApi } from '@/api'
 import type { DeptItem, UserItem, UserQueryParams, UserFormData, RoleItem } from '@/api'
 
+defineOptions({
+  name: 'SystemUser',
+})
+
 // 部门树数据
 const deptTreeData = ref<DeptItem[]>([])
 // 当前选中的部门ID

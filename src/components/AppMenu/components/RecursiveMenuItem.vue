@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  (e: 'menu-click', path: string, meta?: Record<string, unknow>): void
+  (e: 'menu-click', path: string, meta?: Record<string, unknown>): void
 }>()
 
 // 获取可见的子节点
@@ -30,7 +30,7 @@ const shouldShowSubMenuComputed = computed(() => {
 })
 
 // 处理菜单点击
-const handleClick = (path: string, meta?: Record<string, unknow>) => {
+const handleClick = (path: string, meta?: Record<string, unknown>) => {
   emit('menu-click', getFullPath(path, props.basePath), meta)
 }
 </script>

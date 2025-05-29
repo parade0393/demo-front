@@ -99,6 +99,7 @@
     "usePermissionStore": true,
     "Slot": true,
     "Slots": true,
-    "ElMessageBox": true
+    "ElMessageBox": true,
+    "useNavigation": true
   }
 }

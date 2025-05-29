@@ -1,16 +1,29 @@
 <script lang="ts" setup>
-import { RouterView } from 'vue-router'
-import { inject, ref } from 'vue'
-
+import { RouterView, useRouter } from 'vue-router'
+import { inject, ref, watch } from 'vue'
+import { useNavigation } from '@/hooks/useNavigation'
 // 注入刷新视图的key
 const refreshViewKey = inject('refreshViewKey', ref(0))
+const { keepAliveComponents, handleRouteChange } = useNavigation()
+
+const router = useRouter()
+
+// 监听路由变化
+watch(
+  () => router.currentRoute.value,
+  (to, from) => {
+    handleRouteChange(to, from)
+  },
+)
 </script>
 
 <template>
   <div class="app-main">
     <router-view v-slot="{ Component }">
       <transition name="fade-transform" mode="out-in">
-        <component :is="Component" :key="refreshViewKey" />
+        <keep-alive :include="keepAliveComponents">
+          <component :is="Component" :key="refreshViewKey" />
+        </keep-alive>
       </transition>
     </router-view>
   </div>

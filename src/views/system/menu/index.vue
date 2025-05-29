@@ -6,6 +6,10 @@ import IconSelector from '@/components/IconSelector/index.vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { MenuItem } from '@/api/modules/system/menu'
 
+defineOptions({
+  name: 'SystemMenu',
+})
+
 // 菜单类型选项
 const menuTypeOptions = [
   { label: '目录', value: 1 },
