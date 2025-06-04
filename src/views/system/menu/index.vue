@@ -3,6 +3,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { menuApi } from '@/api/modules/system/menu'
 import IconSelector from '@/components/IconSelector/index.vue'
+import { Plus, Delete } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { MenuItem } from '@/api/modules/system/menu'
 
@@ -40,6 +41,30 @@ const fetchMenuList = async () => {
 const dialogVisible = ref(false)
 const dialogTitle = ref('添加菜单')
 const formRef = ref<FormInstance>()
+
+// 路由参数列表
+interface RouteParam {
+  id: string
+  key: string
+  value: string
+}
+
+const routeParams = ref<RouteParam[]>([])
+
+// 生成唯一ID
+const generateUniqueId = () => {
+  return 'param_' + Date.now() + '_' + Math.floor(Math.random() * 1000)
+}
+
+// 添加路由参数
+const addRouteParam = () => {
+  routeParams.value.push({ id: generateUniqueId(), key: '', value: '' })
+}
+
+// 删除路由参数
+const removeRouteParam = (index: number) => {
+  routeParams.value.splice(index, 1)
+}
 
 // 表单数据
 const formData = reactive<MenuItem>({
@@ -101,6 +126,8 @@ const resetForm = () => {
     updateTime: null,
     params: null,
   })
+  // 清空路由参数列表
+  routeParams.value = []
 }
 
 // 打开添加菜单对话框
@@ -120,6 +147,27 @@ const handleEdit = (row: MenuItem) => {
   resetForm()
   dialogTitle.value = '编辑菜单'
   Object.assign(formData, row)
+
+  // 解析路由参数
+  if (formData.params) {
+    try {
+      const paramsArray = JSON.parse(formData.params)
+      routeParams.value = paramsArray.map((item: { key: string; value: string }) => {
+        if (typeof item === 'object' && item.key && item.value) {
+          return { id: generateUniqueId(), key: item.key, value: item.value }
+        } else {
+          return { id: generateUniqueId(), key: item, value: '' }
+        }
+      })
+    } catch (error) {
+      console.error('解析路由参数失败', error)
+      // 如果解析失败，尝试将整个字符串作为一个参数的key
+      if (formData.params) {
+        routeParams.value = [{ id: generateUniqueId(), key: formData.params, value: '' }]
+      }
+    }
+  }
+
   dialogVisible.value = true
 }
 
@@ -129,6 +177,15 @@ const submitForm = async () => {
 
   await formRef.value.validate((valid) => {
     if (valid) {
+      // 处理路由参数
+      if (routeParams.value.length > 0) {
+        // 只保留key和value字段，不包含id字段
+        const paramsToSubmit = routeParams.value.map(({ key, value }) => ({ key, value }))
+        formData.params = JSON.stringify(paramsToSubmit)
+      } else {
+        formData.params = null
+      }
+
       console.log('提交表单', formData)
       if (formData.type == 1 && formData.component != 'Layout') {
         //目录类型的菜单，组件路径必须为 Layout
@@ -436,7 +493,32 @@ const filteredMenuData = computed(() => {
         </el-row>
 
         <el-form-item label="路由参数" prop="params" v-if="formData.type === 2">
-          <el-input v-model="formData.params" placeholder="请输入路由参数" />
+          <div v-if="routeParams.length === 0" class="route-params-empty">
+            <el-button type="primary" @click="addRouteParam" plain>
+              <el-icon><Plus /></el-icon> 添加路由参数
+            </el-button>
+          </div>
+          <div v-else class="route-params-list">
+            <div v-for="(param, index) in routeParams" :key="param.id" class="route-param-item">
+              <el-input v-model="param.key" placeholder="参数名" class="param-input" />
+              <span class="param-separator">=</span>
+              <el-input v-model="param.value" placeholder="参数值" class="param-input" />
+              <div class="param-actions">
+                <el-button type="primary" circle @click="addRouteParam" size="small">
+                  <el-icon><Plus /></el-icon>
+                </el-button>
+                <el-button
+                  type="danger"
+                  circle
+                  @click="removeRouteParam(index)"
+                  size="small"
+                  :disabled="routeParams.length === 1"
+                >
+                  <el-icon><Delete /></el-icon>
+                </el-button>
+              </div>
+            </div>
+          </div>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -461,5 +543,31 @@ const filteredMenuData = computed(() => {
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
+}
+
+.route-params-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.route-param-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.param-input {
+  flex: 1;
+}
+
+.param-separator {
+  margin: 0 5px;
+  color: var(--el-text-color-secondary);
+}
+
+.param-actions {
+  display: flex;
+  gap: 5px;
 }
 </style>
