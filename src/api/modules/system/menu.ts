@@ -39,7 +39,7 @@ export interface MenuItem {
   /** 更新时间 */
   updateTime: string | null
   /** 路由参数 */
-  params: string | null
+  query: string | null
   /** 子菜单 */
   children?: MenuItem[]
 }

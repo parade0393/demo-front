@@ -85,7 +85,7 @@ const formData = reactive<MenuItem>({
   redirect: null,
   createTime: '',
   updateTime: null,
-  params: null,
+  query: null,
 })
 
 // 表单校验规则
@@ -149,9 +149,9 @@ const handleEdit = (row: MenuItem) => {
   Object.assign(formData, row)
 
   // 解析路由参数
-  if (formData.params) {
+  if (formData.query) {
     try {
-      const paramsArray = JSON.parse(formData.params)
+      const paramsArray = JSON.parse(formData.query)
       routeParams.value = paramsArray.map((item: { key: string; value: string }) => {
         if (typeof item === 'object' && item.key && item.value) {
           return { id: generateUniqueId(), key: item.key, value: item.value }
@@ -162,8 +162,8 @@ const handleEdit = (row: MenuItem) => {
     } catch (error) {
       console.error('解析路由参数失败', error)
       // 如果解析失败，尝试将整个字符串作为一个参数的key
-      if (formData.params) {
-        routeParams.value = [{ id: generateUniqueId(), key: formData.params, value: '' }]
+      if (formData.query) {
+        routeParams.value = [{ id: generateUniqueId(), key: formData.query, value: '' }]
       }
     }
   }
@@ -181,9 +181,9 @@ const submitForm = async () => {
       if (routeParams.value.length > 0) {
         // 只保留key和value字段，不包含id字段
         const paramsToSubmit = routeParams.value.map(({ key, value }) => ({ key, value }))
-        formData.params = JSON.stringify(paramsToSubmit)
+        formData.query = JSON.stringify(paramsToSubmit)
       } else {
-        formData.params = null
+        formData.query = null
       }
 
       console.log('提交表单', formData)
