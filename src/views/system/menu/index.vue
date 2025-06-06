@@ -504,16 +504,16 @@ const filteredMenuData = computed(() => {
               <span class="param-separator">=</span>
               <el-input v-model="param.value" placeholder="参数值" class="param-input" />
               <div class="param-actions">
-                <el-button type="primary" circle @click="addRouteParam" size="small">
+                <el-button
+                  type="primary"
+                  circle
+                  @click="addRouteParam"
+                  v-if="index === routeParams.length - 1"
+                  size="small"
+                >
                   <el-icon><Plus /></el-icon>
                 </el-button>
-                <el-button
-                  type="danger"
-                  circle
-                  @click="removeRouteParam(index)"
-                  size="small"
-                  :disabled="routeParams.length === 1"
-                >
+                <el-button type="danger" circle @click="removeRouteParam(index)" size="small">
                   <el-icon><Delete /></el-icon>
                 </el-button>
               </div>
