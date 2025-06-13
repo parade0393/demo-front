@@ -1,7 +1,12 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
-import { getVisibleChildren, shouldShowSubMenu, getFullPath } from '@/utils/menu'
+import {
+  getVisibleChildren,
+  shouldShowSubMenu,
+  getFullPathWithQuery,
+  getFullPath,
+} from '@/utils/menu'
 
 interface Props {
   /** 菜单项 */
@@ -31,7 +36,9 @@ const shouldShowSubMenuComputed = computed(() => {
 
 // 处理菜单点击
 const handleClick = (path: string, meta?: Record<string, unknown>) => {
-  emit('menu-click', getFullPath(path, props.basePath), meta)
+  const queryString = meta?.query as string | undefined
+  const fullPath = getFullPathWithQuery(path, props.basePath, queryString)
+  emit('menu-click', fullPath, meta)
 }
 </script>
 

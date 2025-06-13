@@ -38,6 +38,7 @@ export interface ServerMenuItemMeta {
   hidden?: boolean
   keepAlive?: boolean
   alwaysShow?: boolean
+  query?: string
 }
 
 /**

@@ -51,12 +51,13 @@ const handleMenuClick = (path: string, meta?: Record<string, unknown>) => {
   // 检查是否为外链
   if (meta?.isExternal && meta.externalLink) {
     // 外链，在新窗口打开
-    window.open(meta.externalLink, '_blank')
+    window.open(meta.externalLink as string, '_blank')
     return
   }
 
   // 内部链接，确保路径以 / 开头
   const fullPath = path.startsWith('/') ? path : `/${path}`
+
   router.push(fullPath)
 }
 
