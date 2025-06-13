@@ -108,24 +108,14 @@ html.dark.color-weak {
 }
 
 // Element Plus 样式覆盖
-.el-menu {
-  &.el-menu--horizontal,
-  &.el-menu--vertical {
-    .el-menu-item:not(.is-disabled):focus,
-    .el-menu-item:not(.is-disabled):hover {
-      background-color: var(--sidebar-menu-hover-bg) !important;
-      color: var(--sidebar-menu-text) !important;
-    }
-  }
+.el-menu-item:hover {
+  background-color: var(--sidebar-menu-hover-bg) !important;
 }
-
-// 弹出的子菜单样式覆盖
-.el-menu--popup {
-  .el-menu-item:not(.is-disabled):focus,
-  .el-menu-item:not(.is-disabled):hover {
-    background-color: var(--sidebar-menu-hover-bg) !important;
-    color: var(--sidebar-menu-text) !important;
-  }
+.el-menu-item.is-active {
+  color: var(--el-color-primary) !important;
+}
+.el-sub-menu__title:hover {
+  background-color: var(--sidebar-menu-hover-bg) !important;
 }
 .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
   background-color: var(--el-fill-color) !important;
