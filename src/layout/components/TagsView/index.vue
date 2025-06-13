@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, watch, computed, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { getFullPathWithQuery } from '@/utils/menu'
 
 // 注入刷新视图的方法
 const refreshView = inject('refreshView') as () => void
@@ -29,21 +30,22 @@ watch(
   () => route.path,
   (newPath) => {
     // 忽略重定向路由和隐藏路由
+    const fullPath = getFullPathWithQuery(newPath, '', route.meta.query as string | undefined)
     if (
       newPath &&
       !newPath.startsWith('/redirect') &&
       !route.meta.hidden &&
-      !visitedViews.value.some((v) => v.path === newPath)
+      !visitedViews.value.some((v) => v.path === fullPath)
     ) {
       visitedViews.value.push({
-        path: newPath,
+        path: fullPath,
         title: (route.meta.title as string) || '未命名页面',
         name: route.name as string,
       })
     }
     // 如果不是重定向路由，则更新激活的标签
     if (!newPath.startsWith('/redirect')) {
-      activeTag.value = newPath
+      activeTag.value = fullPath
     }
   },
   { immediate: true },
