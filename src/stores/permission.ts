@@ -10,6 +10,7 @@ import type { ServerMenuItem, UserInfo } from '@/api/modules/system/auth'
 import { constantRoutes } from '@/router'
 // 布局组件
 export const Layout = () => import('@/layout/index.vue')
+const EmptyParent = () => import('@/layout/EmptyParent.vue')
 
 // 使用 import.meta.glob 动态导入所有视图组件
 const modules = import.meta.glob('../views/**/*.vue')
@@ -50,6 +51,8 @@ function generateRoutes(menus: ServerMenuItem[]): RouteRecordRaw[] {
     // 处理组件
     if (menu.component?.toString() === 'Layout') {
       route.component = Layout
+    } else if (menu.component?.toString() === 'EmptyParent') {
+      route.component = EmptyParent
     } else if (menu.component) {
       // 检查组件是否存在
       const modulePath = `../views/${menu.component}.vue`
@@ -126,11 +129,11 @@ export const usePermissionStore = defineStore(
     function generateDynamicRoutes(menus: ServerMenuItem[]) {
       // 生成路由配置
       const routes = generateRoutes(menus)
+      console.log('Generated dynamic routes:', routes)
       dynamicRoutes.value = routes
 
       // 添加路由
       routes.forEach((route) => {
-        console.log(route)
         router.addRoute(route)
       })
       isRoutesLoaded.value = true

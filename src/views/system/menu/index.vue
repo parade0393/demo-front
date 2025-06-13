@@ -187,9 +187,15 @@ const submitForm = async () => {
       }
 
       console.log('提交表单', formData)
-      if (formData.type == 1 && formData.component != 'Layout') {
-        //目录类型的菜单，组件路径必须为 Layout
+      if (
+        formData.type == 1 &&
+        formData.treePath?.indexOf(',') === -1 &&
+        formData.component != 'Layout'
+      ) {
+        //顶级目录类型的菜单，组件路径必须为 Layout
         formData.component = 'Layout'
+      } else if (formData.type == 1 && !formData.component) {
+        formData.component = 'EmptyParent'
       }
       const api = formData.id ? menuApi.updateMenuApi : menuApi.addMenuApi
       api(formData)
@@ -425,13 +431,17 @@ const filteredMenuData = computed(() => {
           </el-col>
         </el-row>
 
-        <el-form-item label="组件路径" prop="component" v-if="formData.type === 2">
+        <el-form-item
+          label="组件路径"
+          prop="component"
+          v-if="formData.type === 2 || formData.type === 1"
+        >
           <template #label>
             <div>
               组件路径
               <el-tooltip placement="bottom">
                 <template #content>
-                  组件页面完整路径，相对于 src/views/，如 system/user/index，缺省后缀 .vue
+                  组件页面完整路径，相对于 src/views/，如 system/user/index，缺省后缀 .vue<br />一级目录固定为Layout,非一级目录默认为EmptyParent
                 </template>
                 <el-icon><QuestionFilled /></el-icon>
               </el-tooltip>
