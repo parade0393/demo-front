@@ -38,7 +38,7 @@ function generateRoutes(menus: ServerMenuItem[]): RouteRecordRaw[] {
         // 添加外链标记和原始URL
         isExternal: isExternalLink,
         externalLink: isExternalLink ? menu.path : undefined,
-        query: menu.meta.query || {},
+        query: menu.meta.query || undefined,
       },
     }
 
