@@ -13,14 +13,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const permissionStore = usePermissionStore()
-const { routes } = storeToRefs(usePermissionStore())
-
-// const titleColor = computed(() => {
-//   //左侧边栏和右侧边栏文字时且侧边栏是是经典蓝是文字颜色使用#303233,其他情况使用--sidebar-menu-text
-//   return layoutMode.value === 'left-sidebar' || layoutMode.value === 'right-sidebar'
-//     ? '#303233'
-//     : 'var(--sidebar-menu-text)'
-// })
+const { routes, userInfo } = storeToRefs(usePermissionStore())
 
 const emit = defineEmits(['toggle-side-bar'])
 
@@ -33,12 +26,6 @@ const toggleSideBar = () => {
 
 // 使用菜单hooks获取相关数据和方法
 const { layoutMode, primaryColor, showTopMenu } = useMenu()
-
-// 模拟用户数据
-const userInfo = ref({
-  name: '管理员',
-  avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-})
 
 // 处理下拉菜单选项
 const handleCommand = (command: string) => {
@@ -66,7 +53,7 @@ const handleCommand = (command: string) => {
       })
   } else if (command === 'profile') {
     // 个人信息逻辑
-    console.log('个人信息')
+    // router.push('/profile')
   }
 }
 
@@ -126,8 +113,14 @@ const openSettings = () => {
 
         <el-dropdown class="avatar-container" trigger="click" @command="handleCommand">
           <div class="avatar-wrapper">
-            <el-avatar :size="30" :src="userInfo.avatar" />
-            <span class="user-name">{{ userInfo.name }}</span>
+            <el-avatar
+              :size="30"
+              :src="
+                userInfo?.avatar ||
+                'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
+              "
+            />
+            <span class="user-name">{{ userInfo?.name }}</span>
             <el-icon class="el-icon--right">
               <arrow-down />
             </el-icon>

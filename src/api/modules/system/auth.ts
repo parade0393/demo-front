@@ -65,6 +65,9 @@ export interface UserInfo {
   createTime: string
   /** 权限列表 */
   permissions?: string[]
+  name: string
+  avatar: string
+  userId: number
 }
 
 export interface RoleItem {
