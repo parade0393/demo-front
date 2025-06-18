@@ -52,6 +52,19 @@ const getRefreshToken = (): string => {
 }
 
 /**
+ * 构建认证请求头
+ */
+export const buildAuthHeaders = (): Record<string, string> => {
+  const headers: Record<string, string> = {}
+  headers['X-System-Version'] = getSystemVersion()
+  const userToken = getUserToken()
+  if (userToken) {
+    headers.Authorization = `Bearer ${userToken}`
+  }
+  return headers
+}
+
+/**
  * 请求类
  */
 class Request {
@@ -69,13 +82,12 @@ class Request {
       (config) => {
         const requestOptions = config as RequestOptions
 
-        // 添加系统版本号到header
-        config.headers['X-System-Version'] = getSystemVersion()
-        const userToken = getUserToken()
-        if (userToken) {
-          config.headers.Authorization = `Bearer ${userToken}`
-        } else {
-          delete config.headers.Authorization
+        // 合并认证请求头
+        const authHeaders = buildAuthHeaders()
+        for (const key in authHeaders) {
+          if (Object.prototype.hasOwnProperty.call(authHeaders, key)) {
+            config.headers[key] = authHeaders[key]
+          }
         }
 
         // 添加自定义headers
@@ -235,6 +247,29 @@ class Request {
     options?: RequestOptions,
   ): Promise<R> {
     return this.instance.delete(url, { params, ...options })
+  }
+
+  /**
+   * 上传文件请求
+   * @param url 请求地址
+   * @param data 请求数据 FormData
+   * @param params 请求参数
+   * @param options 请求配置
+   * @returns Promise
+   */
+  public upload<T, R = Record<string, unknown>>(
+    data: FormData,
+    params?: R,
+    options?: RequestOptions,
+  ): Promise<T> {
+    const config: RequestOptions = {
+      ...options,
+      headers: {
+        ...(options?.headers || {}),
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+    return this.instance.post('/api/upload/single', data, { params, ...config })
   }
 
   /**
